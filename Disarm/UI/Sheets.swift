@@ -614,7 +614,7 @@ struct HelpView: View {
             .navigationTitle("How to Play")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                Button("Start") { engine.state.tutorialSeen = true; dismiss() }
+                Button("Start") { dismiss() }
             }
         }
     }

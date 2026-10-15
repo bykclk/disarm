@@ -210,6 +210,24 @@ final class GameEngine {
 
     var lineConnected: Bool { state.grid.sinkReachable(from: state.location.sourcePos) }
 
+    /// Tek seferlik ipucu kartı; öğretici adımı yoksa gösterilir.
+    var pendingHint: Hint? { tutorialStep == nil ? Hint.pending(for: state) : nil }
+
+    func dismissHint(_ h: Hint) {
+        state.seenHints.insert(h)
+        audio.play(.tap, volume: 0.5)
+        save()
+    }
+
+    func perform(_ action: Hint.Action, from hint: Hint) {
+        dismissHint(hint)
+        switch action {
+        case .openContracts: sheet = .contracts
+        case .openUpgrades: sheet = .upgrades
+        case .openCampaign: sheet = .campaign
+        }
+    }
+
     func tick(dt rawDt: Double) {
         guard !paused else { return }
         if case .file = sheet { return } // dosya incelenirken hat durur

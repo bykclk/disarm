@@ -38,6 +38,8 @@ public struct GameState: Codable, Hashable, Sendable {
     public var prestige: Int
     /// Bu kampanyada tüm sözleşmeler bir kez bitti mi? (Sonsuz oyun sürer, prestij açılır.)
     public var campaignCompleted: Bool
+    /// Kapatılmış ipucu kartları; prestijde korunur.
+    public var seenHints: Set<Hint>
 
     public init(seed: UInt64 = UInt64(Date().timeIntervalSince1970)) {
         money = Self.startingMoney
@@ -56,6 +58,7 @@ public struct GameState: Codable, Hashable, Sendable {
         tutorialSeen = false
         prestige = 0
         campaignCompleted = false
+        seenHints = []
     }
 
     // MARK: - Kampanya ve prestij
@@ -88,10 +91,12 @@ public struct GameState: Codable, Hashable, Sendable {
     public mutating func startNewCampaign() {
         let keptStats = stats
         let seenTutorial = tutorialSeen
+        let keptHints = seenHints
         let nextPrestige = prestige + 1
         self = GameState(seed: rngSeed &+ 1)
         stats = keptStats
         tutorialSeen = seenTutorial
+        seenHints = keptHints
         prestige = nextPrestige
         money += Self.prestigeStartingBonus * nextPrestige
     }

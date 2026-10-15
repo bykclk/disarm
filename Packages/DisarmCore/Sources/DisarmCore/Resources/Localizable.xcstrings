@@ -1000,6 +1000,146 @@
           }
         }
       }
+    },
+    "Scripts have joined the macros. A Filter drops only one part type: add a second filter set to Script, or put a cheap Signature Scanner at the front to catch known threats before parsing.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Makrolara betikler eklendi. Filtre yalnızca tek parça türünü düşürür: Betik hedefli ikinci bir filtre ekle ya da en öne ucuz bir İmza Tarayıcı koyup bilinen tehditleri ayrıştırmadan önce yakala."
+          }
+        }
+      }
+    },
+    "The agency pays for image quality. Filters don't touch images, but a low-level Transformer would ruin them; keep the line simple here.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajans görsel kalitesine para öder. Filtreler görsellere dokunmaz ama düşük seviyeli Dönüştürücü mahveder; burada hattı sade tut."
+          }
+        }
+      }
+    },
+    "This customer keeps its scripts. Don't filter Script: a Signature Scanner removes only the malicious ones and leaves the source code alone.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu müşteri betiklerini korur. Betik filtreleme: İmza Tarayıcı yalnızca zararlıları siler, kaynak koda dokunmaz."
+          }
+        }
+      }
+    },
+    "Modules can be upgraded: a level 2 Parser opens nested archives, a level 2 Scanner looks inside ZIPs. Open Upgrades from the menu.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modüller yükseltilebilir: seviye 2 Ayrıştırıcı iç içe arşivleri açar, seviye 2 Tarayıcı ZIP içine bakar. Menüden Yükseltmeler'i aç."
+          }
+        }
+      }
+    },
+    "New site, new tools: the Router diverts one container type sideways and the Transformer destroys hidden data. Bigger grid, faster flow; rebuild your line.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yeni mekân, yeni araçlar: Yönlendirici bir kap türünü yana ayırır, Dönüştürücü gizli veriyi yok eder. Daha büyük alan, daha hızlı akış; hattını yeniden kur."
+          }
+        }
+      }
+    },
+    "The payload hides one layer down. A level 1 Parser never sees it: upgrade the Parser to level 2 before the breaches pile up.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yük bir kat içeride saklı. Seviye 1 Ayrıştırıcı onu hiç görmez: ihlaller birikmeden Ayrıştırıcı'yı seviye 2'ye yükselt."
+          }
+        }
+      }
+    },
+    "Hidden data sits inside images. Only the Transformer destroys it, but level 1 wrecks image quality and the publisher wants 85%. Upgrade it.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gizli veri görsellerin içinde. Onu yalnızca Dönüştürücü yok eder ama seviye 1 görsel kalitesini mahveder, yayınevi %85 ister. Yükselt."
+          }
+        }
+      }
+    },
+    "Polyglot files are PDF and ZIP at once. Only a level 3 Parser exposes the second identity; the scanner is blind to it.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Polyglot dosyalar aynı anda hem PDF hem ZIP. İkinci kimliği yalnızca seviye 3 Ayrıştırıcı ortaya çıkarır; tarayıcı buna kördür."
+          }
+        }
+      }
+    },
+    "Images must stay above 90% and hidden patient data must go. Only a level 3 Transformer is gentle enough.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görseller %90 üstünde kalmalı, gizli hasta verisi gitmeli. Yeterince nazik olan yalnızca seviye 3 Dönüştürücü."
+          }
+        }
+      }
+    },
+    "Zero active content: even harmless macros, scripts and embedded files count as complaints here. Filter all three and let the Transformer handle the rest.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sıfır aktif içerik: zararsız makro, betik ve gömülü dosyalar bile burada şikayet sayılır. Üçünü de filtrele, kalanı Dönüştürücü halletsin."
+          }
+        }
+      }
+    },
+    "Threats without signatures: the scanner can't see them, and some archives nest three deep. A level 3 Parser plus the Transformer is the only answer.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İmzasız tehditler: tarayıcı onları göremez, bazı arşivler üç kat iç içe. Tek çare seviye 3 Ayrıştırıcı artı Dönüştürücü."
+          }
+        }
+      }
+    },
+    "Encrypted archives can't be opened or scanned. Tap a Router, switch it to Encrypted files and point its side output at a Quarantine. Harmless ones are lost income; the rest would be breaches.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şifreli arşivler açılamaz ve taranamaz. Bir Yönlendirici'ye dokun, Şifreli dosyalar moduna al ve yan çıkışını Karantina'ya çevir. Zararsızlar kayıp gelir, diğerleri ihlal olurdu."
+          }
+        }
+      }
+    },
+    "Air-gapped network: no signature updates. The scanner only recognizes ancient macros; disarm everything with Parser, Filters and Transformer.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Air-gapped ağ: imza güncellemesi yok. Tarayıcı yalnızca eski makroları tanır; her şeyi Ayrıştırıcı, Filtreler ve Dönüştürücü ile etkisizleştir."
+          }
+        }
+      }
+    },
+    "Every contract delivered. The Campaign page now offers a new campaign with permanent bonuses.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tüm sözleşmeler teslim edildi. Kampanya sayfası artık kalıcı bonuslu yeni bir kampanya sunuyor."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

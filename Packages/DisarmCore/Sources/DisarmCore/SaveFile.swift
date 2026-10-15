@@ -333,7 +333,7 @@ extension GameState {
     enum CodingKeys: String, CodingKey {
         case money, reputation, currentLocation, unlockedLocations, layouts, contracts
         case moduleLevels, beltLevel, intakeLevel, stats, lastSaved, incomeRatePerSec, rngSeed, tutorialSeen
-        case prestige, campaignCompleted
+        case prestige, campaignCompleted, seenHints
     }
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -354,6 +354,7 @@ extension GameState {
         tutorialSeen = c.decodeOr(Bool.self, .tutorialSeen, false)
         prestige = max(0, c.decodeOr(Int.self, .prestige, 0))
         campaignCompleted = c.decodeOr(Bool.self, .campaignCompleted, false)
+        seenHints = c.decodeEnumSet(.seenHints)
         // Yerleşim/sözleşme eksikleri SaveMigrator.repair ile tamamlanır.
     }
 }

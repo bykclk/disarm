@@ -15,6 +15,10 @@
 - Sesler `scripts/make-sounds.swift` ile sentezlenir → `Disarm/Resources/Sounds/*.wav` (git'te). Yeni efekt: betiğe `sfx(...)` ekle, `AudioManager.Sfx` enum'una aynı adı ekle, betiği çalıştır.
 - Görsel efektler: motor `fx: [FxEvent]` kuyruğuna yazar, `GameScene.drainFx()` her karede tüketir. Yeni efekt için önce `FxEvent` case'i.
 
+## Öğretici
+- Küçük ofisin ilk sözleşmesi: `GameEngine.tutorialStep` (durumdan türeyen 5 adım, ilk teslimatta biter).
+- Sonrası: `DisarmCore/Hints.swift` içindeki tek seferlik ipucu kartları. Yeni ipucu için `Hint` case'i + `applies(to:)` + `text` (L, iki katalog) + `icon`, isteğe bağlı `action`; görülenler `GameState.seenHints`. Test: `HintTests.everyHintHasTextAndIsReachable`.
+
 ## Kurallar
 - Oyun kuralı değişiklikleri önce `DisarmCore`'a, testiyle birlikte. UI yalnızca durumu gösterir.
 - Swift 6 strict concurrency açık. Motor `@MainActor`; SpriteKit `update` içinden `engine.tick(dt:)` çağrılır.

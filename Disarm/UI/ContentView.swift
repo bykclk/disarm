@@ -265,6 +265,32 @@ struct GuidanceBanner: View {
             .padding(.horizontal, 12).padding(.vertical, 8)
             .background(Color(Theme.accent).opacity(0.15))
             .transition(.opacity)
+        } else if let hint = engine.pendingHint {
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: hint.icon)
+                    .font(.title3).foregroundStyle(Color(Theme.warning)).frame(width: 24)
+                    .padding(.top, 2)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(hint.text).font(.caption).foregroundStyle(.white)
+                    HStack(spacing: 10) {
+                        if let action = hint.action {
+                            Button { engine.perform(action, from: hint) } label: {
+                                Text(actionTitle(action)).font(.caption.bold())
+                            }
+                            .buttonStyle(.borderedProminent).controlSize(.mini).tint(Color(Theme.warning))
+                        }
+                        Button { withAnimation { engine.dismissHint(hint) } } label: {
+                            Text("Got it").font(.caption.bold())
+                        }
+                        .buttonStyle(.bordered).controlSize(.mini).tint(.white)
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 12).padding(.vertical, 8)
+            .background(Color(Theme.warning).opacity(0.15))
+            .transition(.move(edge: .top).combined(with: .opacity))
+            .accessibilityElement(children: .combine)
         } else if !engine.lineConnected {
             HStack(spacing: 8) {
                 Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(Color(Theme.warning))
@@ -273,6 +299,14 @@ struct GuidanceBanner: View {
             }
             .padding(.horizontal, 12).padding(.vertical, 6)
             .background(Color(Theme.warning).opacity(0.15))
+        }
+    }
+
+    func actionTitle(_ a: Hint.Action) -> LocalizedStringKey {
+        switch a {
+        case .openContracts: "Contracts"
+        case .openUpgrades: "Upgrades"
+        case .openCampaign: "Campaign"
         }
     }
 }

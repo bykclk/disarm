@@ -1711,6 +1711,16 @@
           }
         }
       }
+    },
+    "Got it": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anladım"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
