@@ -219,7 +219,7 @@ final class GameScene: SKScene {
         label.position = CGPoint(x: 0, y: -cs * 0.32)
         switch m.kind {
         case .filter: label.text = m.config.filterTarget.displayName.uppercased()
-        case .router: label.text = m.config.routeTarget.displayName
+        case .router: label.text = m.config.routeEncrypted ? String(localized: "LOCK") : m.config.routeTarget.displayName
         default: label.text = m.kind.shortName
         }
         n.addChild(label)
@@ -530,7 +530,7 @@ final class ItemNode: SKNode {
     private var cs: CGFloat = 0
 
     func configure(_ f: FileItem, cs: CGFloat) {
-        let sig = "\(f.container.rawValue)|\(f.isOpen)|\(f.exposedDepth)|\(f.polyglot)|\(Int(f.imageQuality * 100))|" +
+        let sig = "\(f.container.rawValue)|\(f.isOpen)|\(f.exposedDepth)|\(f.polyglot)|\(f.encrypted)|\(Int(f.imageQuality * 100))|" +
             f.parts.map { "\($0.kind.rawValue)\($0.depth)\($0.malicious ? "!" : "")" }.joined(separator: ",") + "|\(Int(cs))"
         guard sig != signature else { return }
         signature = sig
@@ -565,6 +565,31 @@ final class ItemNode: SKNode {
             l.fontSize = cs * 0.11
             l.verticalAlignmentMode = .center
             badge.addChild(l)
+            addChild(badge)
+        }
+
+        if f.encrypted {
+            // Kilit: dosyanın sağ üst köşesinde sarı rozet, gövde koyulaşır.
+            body.fillColor = color.withAlphaComponent(0.7)
+            body.strokeColor = Theme.warning
+            body.lineWidth = 1.5
+            let badge = SKShapeNode(circleOfRadius: cs * 0.09)
+            badge.fillColor = Theme.warning
+            badge.strokeColor = UIColor(white: 0, alpha: 0.6)
+            badge.lineWidth = 1
+            badge.position = CGPoint(x: w * 0.5, y: h * 0.5)
+            badge.zPosition = 2
+            let shackle = SKShapeNode(rectOf: CGSize(width: cs * 0.06, height: cs * 0.06), cornerRadius: cs * 0.03)
+            shackle.fillColor = .clear
+            shackle.strokeColor = .black
+            shackle.lineWidth = 1.2
+            shackle.position = CGPoint(x: 0, y: cs * 0.03)
+            badge.addChild(shackle)
+            let lockBody = SKShapeNode(rectOf: CGSize(width: cs * 0.09, height: cs * 0.065), cornerRadius: cs * 0.012)
+            lockBody.fillColor = .black
+            lockBody.strokeColor = .clear
+            lockBody.position = CGPoint(x: 0, y: -cs * 0.02)
+            badge.addChild(lockBody)
             addChild(badge)
         }
 

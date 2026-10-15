@@ -96,6 +96,11 @@ final class GameEngine {
             sim = Simulation(seed: 11)
             sheet = nil
         }
+        if args.contains("-demoBank") {
+            state = Self.demoBankState()
+            sim = Simulation(seed: 12)
+            sheet = nil
+        }
         if args.contains("-skipHelp") { sheet = nil }
         if let i = args.firstIndex(of: "-sheet"), i + 1 < args.count {
             switch args[i + 1] {
@@ -108,6 +113,34 @@ final class GameEngine {
             }
         }
         layoutVersion += 1
+    }
+
+    /// Geliştirme: Özel Bankacılık (seviye 6, şifreli arşivler) için yönlendirici→karantina hattı.
+    static func demoBankState() -> GameState {
+        var s = GameState(seed: 12)
+        s.money = 80_000
+        s.reputation = 300
+        s.tutorialSeen = true
+        _ = s.unlockLocation(.company)
+        _ = s.unlockLocation(.bank)
+        _ = s.switchLocation(.bank)
+        s.progress.index = 2
+        s.moduleLevels[.parser] = 3
+        s.moduleLevels[.transformer] = 2
+        s.placeModule(.router, at: GridPos(1, 6), facing: .right)
+        s.configure(at: GridPos(1, 6)) { $0.routeEncrypted = true }
+        s.placeModule(.quarantine, at: GridPos(1, 7), facing: .down)
+        s.placeModule(.parser, at: GridPos(2, 6), facing: .right)
+        s.placeModule(.filter, at: GridPos(3, 6), facing: .right)
+        s.configure(at: GridPos(3, 6)) { $0.filterTarget = .macro }
+        s.placeModule(.filter, at: GridPos(4, 6), facing: .right)
+        s.configure(at: GridPos(4, 6)) { $0.filterTarget = .script }
+        s.placeModule(.filter, at: GridPos(5, 6), facing: .right)
+        s.configure(at: GridPos(5, 6)) { $0.filterTarget = .embeddedFile }
+        s.placeModule(.transformer, at: GridPos(6, 6), facing: .right)
+        s.placeModule(.packager, at: GridPos(7, 6), facing: .right)
+        s.money = 20_000
+        return s
     }
 
     /// Geliştirme: örnek hat kurulu, yardım kapalı bir başlangıç durumu.
@@ -319,6 +352,7 @@ final class GameEngine {
     func remove(at p: GridPos) { report(state.remove(at: p), sound: .remove); sheet = nil }
     func setFilter(at p: GridPos, _ k: PartKind) { report(state.configure(at: p) { $0.filterTarget = k }) }
     func setRoute(at p: GridPos, _ c: ContainerKind) { report(state.configure(at: p) { $0.routeTarget = c }) }
+    func setRouteEncrypted(at p: GridPos, _ on: Bool) { report(state.configure(at: p) { $0.routeEncrypted = on }) }
     func upgrade(_ k: ModuleKind) { report(state.upgradeModule(k), sound: .upgrade); if state.level(of: k) > 1 { layoutVersion += 1 } }
     func upgradeBelt() { report(state.upgradeBelt(), sound: .upgrade) }
     func upgradeIntake() { report(state.upgradeIntake(), sound: .upgrade) }

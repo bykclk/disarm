@@ -82,6 +82,8 @@ enum Theme {
         case .accounting: "chart.bar.doc.horizontal"
         case .lawFirm: "scale.3d"
         case .designAgency: "paintpalette"
+        case .softwareHouse: "terminal"
+        case .hospital: "cross.case"
         case .bank: "building.columns"
         case .government: "building.2"
         }

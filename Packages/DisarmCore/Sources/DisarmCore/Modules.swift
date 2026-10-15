@@ -97,10 +97,18 @@ public enum ModuleKind: String, Codable, CaseIterable, Sendable {
 public struct ModuleConfig: Codable, Hashable, Sendable {
     public var filterTarget: PartKind
     public var routeTarget: ContainerKind
+    /// Yönlendirici kap türü yerine şifreli dosyaları sağa ayırır.
+    public var routeEncrypted: Bool
 
-    public init(filterTarget: PartKind = .macro, routeTarget: ContainerKind = .zip) {
+    public init(filterTarget: PartKind = .macro, routeTarget: ContainerKind = .zip, routeEncrypted: Bool = false) {
         self.filterTarget = filterTarget
         self.routeTarget = routeTarget
+        self.routeEncrypted = routeEncrypted
+    }
+
+    /// Yönlendiricinin bu dosyayı sağa ayırıp ayırmayacağı.
+    public func diverts(_ file: FileItem) -> Bool {
+        routeEncrypted ? file.encrypted : file.container == routeTarget
     }
 }
 
@@ -118,7 +126,7 @@ public struct Module: Codable, Hashable, Sendable {
     public var summary: String {
         switch kind {
         case .filter: "\(kind.displayName): \(config.filterTarget.displayName)"
-        case .router: "\(kind.displayName): \(config.routeTarget.displayName)"
+        case .router: "\(kind.displayName): \(config.routeEncrypted ? L("Encrypted") : config.routeTarget.displayName)"
         default: kind.displayName
         }
     }
@@ -157,6 +165,8 @@ public enum ModuleProcessor {
     }
 
     static func scan(level: Int, airGapped: Bool, file: inout FileItem) -> [ProcessNote] {
+        // Şifreli dosyanın içi görünmez: imza eşleşmesi olmaz.
+        if file.encrypted { return [.noEffect(L("Encrypted; cannot be inspected"))] }
         // Tarayıcı kabı açmadan bakar: polyglot'un ikinci kimliğini görmez,
         // seviye 2+ bir kat içeri (ZIP içi) bakabilir.
         let visibleDepth = file.polyglot ? 0 : (level >= 2 ? 1 : 0)
@@ -173,6 +183,8 @@ public enum ModuleProcessor {
     }
 
     static func parse(level: Int, file: inout FileItem) -> [ProcessNote] {
+        // Parola olmadan açılmaz; dosya kapalı kalır.
+        if file.encrypted { return [.noEffect(L("Encrypted; cannot be opened"))] }
         file.isOpen = true
         if file.polyglot && level < 3 {
             file.exposedDepth = 0

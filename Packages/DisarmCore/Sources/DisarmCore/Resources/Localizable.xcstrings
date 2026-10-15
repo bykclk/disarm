@@ -231,16 +231,6 @@
         }
       }
     },
-    "Endless flow. How long can you hold out?": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sonsuz akış. Ne kadar dayanabilirsin?"
-          }
-        }
-      }
-    },
     "Excel sheets arrive. Keep the formulas, remove the macros. Some macros are malicious, some aren't; the customer wants none of them.": {
       "localizations": {
         "tr": {
@@ -751,16 +741,6 @@
         }
       }
     },
-    "Threats with no signature have arrived. The scanner can't see them; only the transformer destroys them.": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "İmzası olmayan tehditler geldi. Tarayıcı bunları göremez; yalnızca dönüştürücü yok eder."
-          }
-        }
-      }
-    },
     "Transformer": {
       "localizations": {
         "tr": {
@@ -867,6 +847,156 @@
           "stringUnit": {
             "state": "translated",
             "value": "paketlendi"
+          }
+        }
+      }
+    },
+    "Software House": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yazılım Evi"
+          }
+        }
+      }
+    },
+    "Hospital": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hastane"
+          }
+        }
+      }
+    },
+    "Encrypted": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şifreli"
+          }
+        }
+      }
+    },
+    "Encrypted; cannot be inspected": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şifreli; içi incelenemiyor"
+          }
+        }
+      }
+    },
+    "Encrypted; cannot be opened": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şifreli; açılamıyor"
+          }
+        }
+      }
+    },
+    "Encrypted file delivered; the customer refuses anything that couldn't be inspected": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şifreli dosya teslim edildi; müşteri incelenemeyen hiçbir şeyi kabul etmiyor"
+          }
+        }
+      }
+    },
+    "Their scripts are source code: delete them and they won't pay. Only the malicious ones must go, and those carry known signatures. Macros are still unwelcome.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Betikleri kaynak kod: silersen ödemezler. Yalnızca zararlı olanlar gitmeli, onların da imzası biliniyor. Makrolar yine istenmiyor."
+          }
+        }
+      }
+    },
+    "University Hospital": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üniversite Hastanesi"
+          }
+        }
+      }
+    },
+    "Medical images must stay above 90% quality, yet patient data is tucked into the image metadata and must be stripped. Only a level 3 transformer is gentle enough.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tıbbi görüntüler %90 kalitenin üstünde kalmalı; ama görüntü meta verisine sıkıştırılmış hasta verisi temizlenmeli. Yeterince nazik olan yalnızca seviye 3 dönüştürücü."
+          }
+        }
+      }
+    },
+    "Threats with no signature have arrived, and some archives now nest three layers deep. The scanner can't see them; only a level 3 parser and the transformer get through.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İmzasız tehditler geldi, bazı arşivler artık üç kat iç içe. Tarayıcı onları göremez; ancak seviye 3 ayrıştırıcı ve dönüştürücü başa çıkar."
+          }
+        }
+      }
+    },
+    "Private Banking": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Özel Bankacılık"
+          }
+        }
+      }
+    },
+    "Password-protected archives. Nothing can open or inspect them, and the bank refuses anything unverified. Set a router to divert encrypted files into quarantine; the harmless ones are lost income, the others would be a breach.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parola korumalı arşivler. Hiçbir şey onları açamaz ya da inceleyemez; banka da doğrulanmamış hiçbir şeyi kabul etmez. Yönlendiriciyi şifreli dosyaları karantinaya ayıracak şekilde kur; zararsızlar kayıp gelir, diğerleri ihlal olurdu."
+          }
+        }
+      }
+    },
+    "Heavy flow, deep archives, no signatures. Hold the line until the next client calls.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yoğun akış, derin arşivler, imza yok. Bir sonraki müşteri arayana kadar hattı tut."
+          }
+        }
+      }
+    },
+    "Intelligence Service": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İstihbarat Teşkilatı"
+          }
+        }
+      }
+    },
+    "Encrypted dispatches on an air-gapped network. The scanner is blind, the parser is locked out; route encrypted files to quarantine and disarm the rest. Endless flow. How long can you hold out?": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Air-gapped ağda şifreli yazışmalar. Tarayıcı kör, ayrıştırıcı kilitli; şifrelileri karantinaya yönlendir, kalanı etkisizleştir. Sonsuz akış. Ne kadar dayanabilirsin?"
           }
         }
       }

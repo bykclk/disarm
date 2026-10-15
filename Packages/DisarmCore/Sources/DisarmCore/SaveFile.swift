@@ -261,14 +261,36 @@ extension ContractProgress {
 }
 
 extension ModuleConfig {
-    enum CodingKeys: String, CodingKey { case filterTarget, routeTarget }
+    enum CodingKeys: String, CodingKey { case filterTarget, routeTarget, routeEncrypted }
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         let d = ModuleConfig()
         self.init(
             filterTarget: c.decodeOr(PartKind.self, .filterTarget, d.filterTarget),
-            routeTarget: c.decodeOr(ContainerKind.self, .routeTarget, d.routeTarget)
+            routeTarget: c.decodeOr(ContainerKind.self, .routeTarget, d.routeTarget),
+            routeEncrypted: c.decodeOr(Bool.self, .routeEncrypted, false)
         )
+    }
+}
+
+extension FileItem {
+    enum CodingKeys: String, CodingKey {
+        case id, container, parts, isOpen, exposedDepth, polyglot, imageQuality, originalKinds, tier, encrypted
+    }
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        // Kap ve parçalar olmadan dosya anlamsız; bunlar zorunlu (Lossy üstte düşürür).
+        let container = try c.decode(ContainerKind.self, forKey: .container)
+        let parts = try c.decode([Part].self, forKey: .parts)
+        self.init(container: container, parts: parts,
+                  polyglot: c.decodeOr(Bool.self, .polyglot, false),
+                  tier: c.decodeOr(Int.self, .tier, 0),
+                  encrypted: c.decodeOr(Bool.self, .encrypted, false),
+                  id: c.decodeOr(UUID.self, .id, UUID()))
+        isOpen = c.decodeOr(Bool.self, .isOpen, false)
+        exposedDepth = c.decodeOr(Int.self, .exposedDepth, -1)
+        imageQuality = c.decodeOr(Double.self, .imageQuality, 1.0)
+        originalKinds = c.decodeEnumSet(.originalKinds)
     }
 }
 

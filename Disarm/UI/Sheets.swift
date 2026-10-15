@@ -53,6 +53,14 @@ struct ContractsView: View {
                             Text("at least \("\(Int(active.policy.minImageQuality * 100))%")")
                         }
                     }
+                    if active.policy.rejectsEncrypted {
+                        HStack {
+                            Image(systemName: "lock.fill").foregroundStyle(Color(Theme.warning)).frame(width: 24)
+                            Text("Encrypted files")
+                            Spacer()
+                            Text("refused").foregroundStyle(Color(Theme.danger))
+                        }
+                    }
                     Text("Delivering malicious content is always a breach: \(money(active.payPerFile * 3)) penalty and reputation loss.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
@@ -288,7 +296,12 @@ struct ModuleConfigView: View {
                         }
                     }
                     if m.kind == .router {
-                        Section("Container type diverted right") {
+                        Section("Diverted right") {
+                            Toggle(isOn: Binding(
+                                get: { m.config.routeEncrypted },
+                                set: { engine.setRouteEncrypted(at: pos, $0) })) {
+                                Label("Encrypted files", systemImage: "lock.fill")
+                            }
                             Picker("Container", selection: Binding(
                                 get: { m.config.routeTarget },
                                 set: { engine.setRoute(at: pos, $0) })) {
@@ -297,6 +310,11 @@ struct ModuleConfigView: View {
                                 }
                             }
                             .pickerStyle(.segmented)
+                            .disabled(m.config.routeEncrypted)
+                            Text(m.config.routeEncrypted
+                                 ? "Password-protected files go right (toward quarantine, say); everything else goes straight."
+                                 : "Files of the selected container type go right; everything else goes straight.")
+                                .font(.caption).foregroundStyle(.secondary)
                         }
                     }
                     Section {
@@ -342,7 +360,12 @@ struct FileInspectorView: View {
                                 .overlay(Text(f.container.displayName).font(.system(size: 9, weight: .bold)))
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(f.container.displayName + (f.polyglot ? " (polyglot: also a ZIP)" : "")).font(.headline)
-                                Text(f.isOpen ? "Open · visible layer \(f.exposedDepth)" : "Closed").font(.caption).foregroundStyle(.secondary)
+                                if f.encrypted {
+                                    Label("Encrypted: can't be opened or inspected", systemImage: "lock.fill")
+                                        .font(.caption).foregroundStyle(Color(Theme.warning))
+                                } else {
+                                    Text(f.isOpen ? "Open · visible layer \(f.exposedDepth)" : "Closed").font(.caption).foregroundStyle(.secondary)
+                                }
                                 if f.hasImage {
                                     Text("Image quality \("\(Int(f.imageQuality * 100))%")").font(.caption).foregroundStyle(.secondary)
                                 }
@@ -488,7 +511,8 @@ struct HelpView: View {
                     Text("Drag with the Belt tool to draw a belt path. Tap an empty cell with a module tool to place it (pick the output direction with the Facing button). Tap a module with the Select tool for settings; tap a file on the belt to see what it carries.")
                 }
                 Section("Threat tiers") {
-                    Text("1 Macro → 2 Script → 3 ZIP inside ZIP (parser level 2) → 4 Polyglot and hidden data (parser level 3, transformer) → 5 Unknown: no signature, the scanner can't see it, only the transformer destroys it.")
+                    Text("1 Macro → 2 Script → 3 ZIP inside ZIP (parser level 2) → 4 Polyglot and hidden data (parser level 3, transformer) → 5 Unknown: no signature, the scanner can't see it, only the transformer destroys it; archives nest three deep → 6 Encrypted: nothing can open it. Set a router to divert encrypted files into quarantine.")
+                    Text("Not every customer wants everything stripped: a software house needs its scripts kept, a hospital needs its images intact. Read the policy before you build.")
                 }
             }
             .navigationTitle("How to Play")

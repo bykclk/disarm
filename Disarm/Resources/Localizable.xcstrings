@@ -122,16 +122,6 @@
         }
       }
     },
-    "1 Macro → 2 Script → 3 ZIP inside ZIP (parser level 2) → 4 Polyglot and hidden data (parser level 3, transformer) → 5 Unknown: no signature, the scanner can't see it, only the transformer destroys it.": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "1 Makro → 2 Betik → 3 ZIP içinde ZIP (ayrıştırıcı seviye 2) → 4 Polyglot ve gizli veri (ayrıştırıcı seviye 3, dönüştürücü) → 5 Bilinmeyen: imza yok, tarayıcı göremez, sadece dönüştürücü yok eder."
-          }
-        }
-      }
-    },
     "Accepted": {
       "localizations": {
         "tr": {
@@ -308,16 +298,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kap"
-          }
-        }
-      }
-    },
-    "Container type diverted right": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sağa ayrılacak kap türü"
           }
         }
       }
@@ -1388,6 +1368,96 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kayıt güncelleme sonrası onarıldı: %lld düzeltme"
+          }
+        }
+      }
+    },
+    "Encrypted files": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şifreli dosyalar"
+          }
+        }
+      }
+    },
+    "refused": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "reddedilir"
+          }
+        }
+      }
+    },
+    "Diverted right": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sağa ayrılan"
+          }
+        }
+      }
+    },
+    "Password-protected files go right (toward quarantine, say); everything else goes straight.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parola korumalı dosyalar sağa gider (örneğin karantinaya); diğer her şey düz devam eder."
+          }
+        }
+      }
+    },
+    "Files of the selected container type go right; everything else goes straight.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seçilen kap türündeki dosyalar sağa gider; diğer her şey düz devam eder."
+          }
+        }
+      }
+    },
+    "Encrypted: can't be opened or inspected": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şifreli: açılamaz ve incelenemez"
+          }
+        }
+      }
+    },
+    "LOCK": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KİLİT"
+          }
+        }
+      }
+    },
+    "1 Macro → 2 Script → 3 ZIP inside ZIP (parser level 2) → 4 Polyglot and hidden data (parser level 3, transformer) → 5 Unknown: no signature, the scanner can't see it, only the transformer destroys it; archives nest three deep → 6 Encrypted: nothing can open it. Set a router to divert encrypted files into quarantine.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Makro → 2 Betik → 3 ZIP içinde ZIP (ayrıştırıcı seviye 2) → 4 Polyglot ve gizli veri (ayrıştırıcı seviye 3, dönüştürücü) → 5 Bilinmeyen: imzası yok, tarayıcı göremez, yalnızca dönüştürücü yok eder; arşivler üç kat iç içe → 6 Şifreli: hiçbir şey açamaz. Yönlendiriciyi şifrelileri karantinaya ayıracak şekilde kur."
+          }
+        }
+      }
+    },
+    "Not every customer wants everything stripped: a software house needs its scripts kept, a hospital needs its images intact. Read the policy before you build.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Her müşteri her şeyin sökülmesini istemez: yazılım evi betiklerinin korunmasını, hastane görüntülerinin bozulmamasını ister. Hat kurmadan önce politikayı oku."
           }
         }
       }

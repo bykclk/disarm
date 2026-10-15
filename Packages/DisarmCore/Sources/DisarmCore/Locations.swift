@@ -92,6 +92,10 @@ public enum LocationCatalog {
                      brief: L("Image-heavy files. If quality drops they stop paying. Scripts still have to go."),
                      tier: 2, targetFiles: 40, maxBreaches: 3, payPerFile: 20, completionBonus: 600, reputationReward: 10,
                      containerWeights: [.png: 4, .pdf: 3, .docx: 1], filesPerMinute: 14),
+        ContractSpec(id: "office-4", customer: .softwareHouse, title: L("Software House"),
+                     brief: L("Their scripts are source code: delete them and they won't pay. Only the malicious ones must go, and those carry known signatures. Macros are still unwelcome."),
+                     tier: 2, targetFiles: 40, maxBreaches: 3, payPerFile: 22, completionBonus: 700, reputationReward: 12,
+                     containerWeights: [.docx: 4, .pdf: 3, .zip: 2], filesPerMinute: 14),
     ]
 
     static let companyContracts: [ContractSpec] = [
@@ -107,6 +111,10 @@ public enum LocationCatalog {
                      brief: L("Polyglot files: both PDF and ZIP. Without a level 3 parser the second identity stays invisible."),
                      tier: 4, targetFiles: 40, maxBreaches: 2, payPerFile: 34, completionBonus: 1500, reputationReward: 18,
                      containerWeights: [.pdf: 5, .zip: 3, .docx: 2], filesPerMinute: 20),
+        ContractSpec(id: "company-4", customer: .hospital, title: L("University Hospital"),
+                     brief: L("Medical images must stay above 90% quality, yet patient data is tucked into the image metadata and must be stripped. Only a level 3 transformer is gentle enough."),
+                     tier: 4, targetFiles: 40, maxBreaches: 2, payPerFile: 38, completionBonus: 1800, reputationReward: 20,
+                     containerWeights: [.png: 5, .pdf: 4, .docx: 2], filesPerMinute: 20),
     ]
 
     static let bankContracts: [ContractSpec] = [
@@ -115,9 +123,13 @@ public enum LocationCatalog {
                      tier: 4, targetFiles: 40, maxBreaches: 2, payPerFile: 45, completionBonus: 2500, reputationReward: 20,
                      containerWeights: [.pdf: 4, .xlsx: 3, .docx: 3, .zip: 2], filesPerMinute: 22),
         ContractSpec(id: "bank-2", customer: .bank, title: L("Investment Bank"),
-                     brief: L("Threats with no signature have arrived. The scanner can't see them; only the transformer destroys them."),
+                     brief: L("Threats with no signature have arrived, and some archives now nest three layers deep. The scanner can't see them; only a level 3 parser and the transformer get through."),
                      tier: 5, targetFiles: 50, maxBreaches: 2, payPerFile: 60, completionBonus: 4000, reputationReward: 30,
                      containerWeights: [.pdf: 4, .xlsx: 3, .docx: 3, .zip: 2, .png: 2], filesPerMinute: 24),
+        ContractSpec(id: "bank-3", customer: .bank, title: L("Private Banking"),
+                     brief: L("Password-protected archives. Nothing can open or inspect them, and the bank refuses anything unverified. Set a router to divert encrypted files into quarantine; the harmless ones are lost income, the others would be a breach."),
+                     tier: 6, targetFiles: 60, maxBreaches: 1, payPerFile: 75, completionBonus: 6000, reputationReward: 35,
+                     containerWeights: [.pdf: 4, .xlsx: 3, .docx: 3, .zip: 4, .png: 1], filesPerMinute: 26),
     ]
 
     static let governmentContracts: [ContractSpec] = [
@@ -126,8 +138,12 @@ public enum LocationCatalog {
                      tier: 5, targetFiles: 60, maxBreaches: 1, payPerFile: 80, completionBonus: 8000, reputationReward: 40,
                      containerWeights: [.pdf: 5, .docx: 4, .xlsx: 3, .zip: 3, .png: 2], filesPerMinute: 26),
         ContractSpec(id: "gov-2", customer: .government, title: L("National Archive"),
-                     brief: L("Endless flow. How long can you hold out?"),
+                     brief: L("Heavy flow, deep archives, no signatures. Hold the line until the next client calls."),
                      tier: 5, targetFiles: 100, maxBreaches: 1, payPerFile: 100, completionBonus: 15000, reputationReward: 60,
                      containerWeights: [.pdf: 5, .docx: 4, .xlsx: 3, .zip: 4, .png: 3], filesPerMinute: 30),
+        ContractSpec(id: "gov-3", customer: .government, title: L("Intelligence Service"),
+                     brief: L("Encrypted dispatches on an air-gapped network. The scanner is blind, the parser is locked out; route encrypted files to quarantine and disarm the rest. Endless flow. How long can you hold out?"),
+                     tier: 6, targetFiles: 120, maxBreaches: 1, payPerFile: 120, completionBonus: 25000, reputationReward: 80,
+                     containerWeights: [.pdf: 5, .docx: 4, .xlsx: 3, .zip: 5, .png: 2], filesPerMinute: 32),
     ]
 }

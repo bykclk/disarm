@@ -1,13 +1,15 @@
 import Foundation
 
 public enum CustomerKind: String, Codable, CaseIterable, Sendable {
-    case accounting, lawFirm, designAgency, bank, government
+    case accounting, lawFirm, designAgency, softwareHouse, hospital, bank, government
 
     public var displayName: String {
         switch self {
         case .accounting: L("Accounting")
         case .lawFirm: L("Law Firm")
         case .designAgency: L("Design Agency")
+        case .softwareHouse: L("Software House")
+        case .hospital: L("Hospital")
         case .bank: L("Bank")
         case .government: L("Government Agency")
         }
@@ -29,10 +31,13 @@ public enum PolicyRule: String, Codable, Sendable {
 public struct Policy: Codable, Hashable, Sendable {
     public var rules: [PartKind: PolicyRule]
     public var minImageQuality: Double
+    /// Müşteri şifreli (açılamayan) dosyayı kabul etmez: doğrulanamayan içerik teslim edilemez.
+    public var rejectsEncrypted: Bool
 
-    public init(rules: [PartKind: PolicyRule], minImageQuality: Double) {
+    public init(rules: [PartKind: PolicyRule], minImageQuality: Double, rejectsEncrypted: Bool = false) {
         self.rules = rules
         self.minImageQuality = minImageQuality
+        self.rejectsEncrypted = rejectsEncrypted
     }
 
     public func rule(for kind: PartKind) -> PolicyRule { rules[kind] ?? .dontCare }
@@ -45,10 +50,16 @@ public struct Policy: Codable, Hashable, Sendable {
             Policy(rules: [.text: .mustKeep, .macro: .mustRemove, .script: .mustRemove, .embeddedFile: .dontCare], minImageQuality: 0.4)
         case .designAgency:
             Policy(rules: [.image: .mustKeep, .script: .mustRemove, .macro: .mustRemove], minImageQuality: 0.85)
+        case .softwareHouse:
+            // Betikler kaynak koddur: silinirse müşteri ödemez. Yalnızca zararlı olanlar gitmeli (tarayıcı işi).
+            Policy(rules: [.script: .mustKeep, .text: .mustKeep, .macro: .mustRemove], minImageQuality: 0.0)
+        case .hospital:
+            // Tıbbi görüntü bozulamaz; görüntülere saklanan hasta verisi ve ekler gitmeli.
+            Policy(rules: [.image: .mustKeep, .text: .mustKeep, .hiddenData: .mustRemove, .embeddedFile: .mustRemove, .macro: .mustRemove, .script: .mustRemove], minImageQuality: 0.9)
         case .bank:
-            Policy(rules: [.macro: .mustRemove, .script: .mustRemove, .embeddedFile: .mustRemove, .hiddenData: .mustRemove, .unknown: .mustRemove], minImageQuality: 0.0)
+            Policy(rules: [.macro: .mustRemove, .script: .mustRemove, .embeddedFile: .mustRemove, .hiddenData: .mustRemove, .unknown: .mustRemove], minImageQuality: 0.0, rejectsEncrypted: true)
         case .government:
-            Policy(rules: [.macro: .mustRemove, .script: .mustRemove, .embeddedFile: .mustRemove, .hiddenData: .mustRemove, .unknown: .mustRemove, .text: .mustKeep], minImageQuality: 0.0)
+            Policy(rules: [.macro: .mustRemove, .script: .mustRemove, .embeddedFile: .mustRemove, .hiddenData: .mustRemove, .unknown: .mustRemove, .text: .mustKeep], minImageQuality: 0.0, rejectsEncrypted: true)
         }
     }
 }
@@ -59,7 +70,7 @@ public struct ContractSpec: Codable, Hashable, Sendable, Identifiable {
     public var title: String
     public var brief: String
     public var policy: Policy
-    /// Tehdit seviyesi: 0 temiz, 1 makro, 2 betik, 3 iç içe ZIP, 4 polyglot+gizli veri, 5 bilinmeyen.
+    /// Tehdit seviyesi: 0 temiz, 1 makro, 2 betik, 3 iç içe ZIP, 4 polyglot+gizli veri, 5 bilinmeyen (ve üç kat iç içe), 6 şifreli arşiv.
     public var tier: Int
     public var targetFiles: Int
     public var maxBreaches: Int
@@ -68,6 +79,8 @@ public struct ContractSpec: Codable, Hashable, Sendable, Identifiable {
     public var reputationReward: Int
     public var containerWeights: [ContainerKind: Double]
     public var filesPerMinute: Double
+
+    public static let maxTier = 6
 
     public init(id: String, customer: CustomerKind, title: String, brief: String, tier: Int, targetFiles: Int, maxBreaches: Int, payPerFile: Int, completionBonus: Int, reputationReward: Int, containerWeights: [ContainerKind: Double], filesPerMinute: Double, policy: Policy? = nil) {
         self.id = id
@@ -114,6 +127,7 @@ public struct ContractProgress: Codable, Hashable, Sendable {
 public enum DeliveryIssue: Equatable, Hashable, Sendable {
     case breach([PartKind])
     case deliveredOpen
+    case encryptedRejected
     case mustRemoveLeft(PartKind)
     case mustKeepLost(PartKind)
     case lowImageQuality(actual: Int, minimum: Int)
@@ -125,6 +139,8 @@ public enum DeliveryIssue: Equatable, Hashable, Sendable {
             return L("BREACH: malicious content delivered (\(names))")
         case .deliveredOpen:
             return L("Delivered unpackaged (open); the customer couldn't open it")
+        case .encryptedRejected:
+            return L("Encrypted file delivered; the customer refuses anything that couldn't be inspected")
         case .mustRemoveLeft(let k):
             return L("\(k.displayName) should have been removed but stayed in the file")
         case .mustKeepLost(let k):
@@ -159,6 +175,10 @@ public enum DeliveryEvaluator {
             usability = 0
             issues.append(.deliveredOpen)
         }
+        if file.encrypted && policy.rejectsEncrypted {
+            usability = 0
+            issues.append(.encryptedRejected)
+        }
         for kind in PartKind.allCases {
             switch policy.rule(for: kind) {
             case .mustRemove:
@@ -189,6 +209,10 @@ public enum DeliveryEvaluator {
 
 /// Sözleşme ve tehdit seviyesine göre dosya üretir.
 public enum FileGenerator {
+    /// Seviye 6'da dosyaların şifreli gelme olasılığı; şifrelilerin yarısı zararlı yük taşır.
+    public static let encryptedChance = 0.3
+    public static let encryptedMaliciousChance = 0.5
+
     public static func make(for spec: ContractSpec, rng: inout SplitMix64) -> FileItem {
         let container = pick(spec.containerWeights, rng: &rng)
         var parts: [Part] = []
@@ -215,6 +239,22 @@ public enum FileGenerator {
             if rng.chance(0.4) { parts.append(Part(kind: .image, depth: 1)) }
         }
 
+        // Yazılım evi: zararsız betikler (kaynak kod) sık gelir; filtreyle silmek müşteriyi kızdırır.
+        if spec.customer == .softwareHouse && container != .png && rng.chance(0.6) {
+            parts.append(Part(kind: .script))
+        }
+
+        // Seviye 6: şifreli arşiv. Parola olmadan açılamaz, tarayıcı içini göremez.
+        // Yarısı zararlı yük taşır; diğer yarısı zararsızdır, karantinaya atmak para kaybettirir.
+        if tier >= 6 && container != .png && rng.chance(encryptedChance) {
+            if rng.chance(encryptedMaliciousChance) {
+                parts.append(Part(kind: rng.chance(0.5) ? .script : .macro, malicious: true))
+            }
+            var file = FileItem(container: container, parts: parts, tier: tier)
+            file.encrypted = true
+            return file
+        }
+
         var polyglot = false
         let threatChance = tier == 0 ? 0.0 : 0.35 + 0.05 * Double(tier)
         if rng.chance(threatChance) {
@@ -229,8 +269,11 @@ public enum FileGenerator {
                 parts.append(Part(kind: .script, malicious: true))
             case 3:
                 // İç içe: üst seviyede gömülü dosya, bir kat içeride zararlı yük.
+                // Seviye 5+: bazen üç kat (derinlik 2); ancak seviye 3 ayrıştırıcı görür.
                 if !parts.contains(where: { $0.kind == .embeddedFile }) { parts.append(Part(kind: .embeddedFile)) }
-                parts.append(Part(kind: rng.chance(0.5) ? .macro : .script, depth: 1, malicious: true))
+                let depth = tier >= 5 && rng.chance(0.4) ? 2 : 1
+                if depth == 2 { parts.append(Part(kind: .embeddedFile, depth: 1)) }
+                parts.append(Part(kind: rng.chance(0.5) ? .macro : .script, depth: depth, malicious: true))
             case 4:
                 if container == .pdf || container == .png {
                     polyglot = true
@@ -246,6 +289,10 @@ public enum FileGenerator {
         // Zararsız gömülü dosyalar: bankanın yine de istemediği içerik.
         if tier >= 2 && container != .zip && rng.chance(0.2) {
             parts.append(Part(kind: .embeddedFile))
+        }
+        // Hastane: görüntülerde zararsız ama silinmesi gereken hasta verisi (meta veri).
+        if spec.customer == .hospital && parts.contains(where: { $0.kind == .image }) && rng.chance(0.5) {
+            parts.append(Part(kind: .hiddenData))
         }
         return FileItem(container: container, parts: parts, polyglot: polyglot, tier: tier)
     }

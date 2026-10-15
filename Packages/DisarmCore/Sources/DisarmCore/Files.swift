@@ -65,11 +65,14 @@ public struct FileItem: Codable, Hashable, Sendable, Identifiable {
     /// Hem PDF hem ZIP gibi iki kimlikli dosya. Derin katmanı ancak gelişmiş ayrıştırıcı görür.
     public var polyglot: Bool
     public var imageQuality: Double
-    /// Üretildiği anda içerdiği parça türleri; L("must be kept") kuralı buna göre denetlenir.
+    /// Üretildiği anda içerdiği zararsız parça türleri; "must be kept" kuralı buna göre denetlenir.
+    /// Zararlı parçalar sayılmaz: zararlı betiği silmek "betik kaybı" değildir.
     public var originalKinds: Set<PartKind>
     public var tier: Int
+    /// Parola korumalı: ayrıştırıcı açamaz, tarayıcı içini göremez. Tek çare yönlendirip karantinaya almak.
+    public var encrypted: Bool
 
-    public init(container: ContainerKind, parts: [Part], polyglot: Bool = false, tier: Int = 0, id: UUID = UUID()) {
+    public init(container: ContainerKind, parts: [Part], polyglot: Bool = false, tier: Int = 0, encrypted: Bool = false, id: UUID = UUID()) {
         self.id = id
         self.container = container
         self.parts = parts
@@ -77,8 +80,9 @@ public struct FileItem: Codable, Hashable, Sendable, Identifiable {
         self.exposedDepth = -1
         self.polyglot = polyglot
         self.imageQuality = 1.0
-        self.originalKinds = Set(parts.map(\.kind))
+        self.originalKinds = Set(parts.filter { !$0.malicious }.map(\.kind))
         self.tier = tier
+        self.encrypted = encrypted
     }
 
     public func isExposed(_ part: Part) -> Bool {

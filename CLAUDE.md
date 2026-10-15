@@ -8,7 +8,7 @@
 ## Komutlar
 - `make test` — çekirdek testleri (hızlı, önce bunu çalıştır)
 - `make build` — simülatör derlemesi
-- `make run ARGS="-demo"` — örnek hatla başlat; `-skipHelp`, `-sheet contracts|upgrades|locations|log|module` dev argümanları
+- `make run ARGS="-demo"` — örnek hatla başlat; `-demoBank` (Özel Bankacılık, şifreli dosyalar, yönlendirici→karantina), `-skipHelp`, `-sheet contracts|upgrades|locations|log|module` dev argümanları
 - `make screenshot` — ekran görüntüsü `.screens/` altına
 
 ## Ses ve efektler

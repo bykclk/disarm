@@ -206,7 +206,7 @@ public struct Simulation: Codable, Hashable, Sendable {
     }
 
     private func outputDirection(_ m: Module, for file: FileItem) -> Direction {
-        if m.kind == .router && file.container == m.config.routeTarget {
+        if m.kind == .router && m.config.diverts(file) {
             return m.facing.clockwise
         }
         return m.facing
