@@ -1,0 +1,12 @@
+.DS_Store
+xcuserdata/
+*.xcuserstate
+DerivedData/
+.build/
+.swiftpm/
+Packages/DisarmCore/.build/
+.screens/
+*.ipa
+*.dSYM.zip
+# XcodeGen üretir; kaynağı project.yml
+Disarm.xcodeproj/
