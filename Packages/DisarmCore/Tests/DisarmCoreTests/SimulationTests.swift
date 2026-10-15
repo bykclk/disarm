@@ -127,3 +127,22 @@ import Testing
         #expect(s.placeModule(.transformer, at: GridPos(2, 2), facing: .right) .isSuccess)
     }
 }
+
+@Suite struct ReachabilityTests {
+    @Test func detectsConnectedAndBrokenLines() {
+        var s = GameState(seed: 1)
+        s.money = 10_000
+        let src = s.location.sourcePos
+        #expect(!s.grid.sinkReachable(from: src))
+        for x in 1...5 { s.placeBelt(at: GridPos(x, 1), facing: .right) }
+        for y in 1...7 { s.placeBelt(at: GridPos(6, y), facing: .down) }
+        #expect(s.grid.sinkReachable(from: src))
+        s.remove(at: GridPos(6, 4))
+        #expect(!s.grid.sinkReachable(from: src))
+        // Yönlendiricinin yan çıkışı da sayılır (ofiste satılmaz; doğrudan grid'e yazılır).
+        s.grid[GridPos(6, 4)] = .module(Module(kind: .router, facing: .left))
+        #expect(!s.grid.sinkReachable(from: src)) // ileri (5,4) boş, sağ çıkış yukarı: geri döner
+        s.grid[GridPos(6, 4)] = .module(Module(kind: .router, facing: .right))
+        #expect(s.grid.sinkReachable(from: src)) // ileri harita dışı, sağ çıkış aşağı -> teslimat
+    }
+}

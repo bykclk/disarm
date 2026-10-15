@@ -15,6 +15,7 @@ struct ContentView: View {
             Color(Theme.background).ignoresSafeArea()
             VStack(spacing: 0) {
                 HUDView(engine: engine)
+                GuidanceBanner(engine: engine)
                 SpriteView(scene: scene, preferredFramesPerSecond: 60)
                     .onAppear { scene.engine = engine }
                     .overlay(alignment: .top) { ToastStack(toasts: engine.toasts) }
@@ -224,6 +225,34 @@ struct ToastStack: View {
         case .good: Color(Theme.success)
         case .bad: Color(Theme.danger)
         case .warn: Color(Theme.warning)
+        }
+    }
+}
+
+// MARK: - Yönlendirme
+
+struct GuidanceBanner: View {
+    @Bindable var engine: GameEngine
+
+    var body: some View {
+        if let step = engine.tutorialStep {
+            HStack(alignment: .top, spacing: 8) {
+                Text("\(step.rawValue + 1)/\(GameEngine.TutorialStep.allCases.count)")
+                    .font(.caption.bold()).foregroundStyle(Color(Theme.accent))
+                Text(step.text).font(.caption).foregroundStyle(.white)
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 12).padding(.vertical, 8)
+            .background(Color(Theme.accent).opacity(0.15))
+            .transition(.opacity)
+        } else if !engine.lineConnected {
+            HStack(spacing: 8) {
+                Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(Color(Theme.warning))
+                Text("Hat teslimata bağlı değil: dosyalar birikecek ya da düşecek.").font(.caption).foregroundStyle(.white)
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 12).padding(.vertical, 6)
+            .background(Color(Theme.warning).opacity(0.15))
         }
     }
 }

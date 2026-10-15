@@ -82,15 +82,15 @@ public enum LocationCatalog {
     static let officeContracts: [ContractSpec] = [
         ContractSpec(id: "office-1", customer: .accounting, title: "Mahalle Muhasebecisi",
                      brief: "Excel tabloları gelir. Formüller korunsun, makrolar silinsin. Bazı makrolar zararlı, bazıları değil; ama müşteri hiçbirini istemiyor.",
-                     tier: 1, targetFiles: 15, maxBreaches: 3, payPerFile: 12, completionBonus: 150, reputationReward: 5,
+                     tier: 1, targetFiles: 20, maxBreaches: 3, payPerFile: 12, completionBonus: 200, reputationReward: 5,
                      containerWeights: [.xlsx: 5, .docx: 2, .pdf: 1], filesPerMinute: 10),
         ContractSpec(id: "office-2", customer: .lawFirm, title: "Avukatlık Bürosu",
                      brief: "PDF sözleşmeler. İçlerine gömülü betikler görülmeye başladı. Metin korunsun, aktif içerik gitsin.",
-                     tier: 2, targetFiles: 25, maxBreaches: 3, payPerFile: 16, completionBonus: 300, reputationReward: 8,
+                     tier: 2, targetFiles: 30, maxBreaches: 3, payPerFile: 16, completionBonus: 400, reputationReward: 8,
                      containerWeights: [.pdf: 5, .docx: 3], filesPerMinute: 12),
         ContractSpec(id: "office-3", customer: .designAgency, title: "Reklam Ajansı",
                      brief: "Görsel ağırlıklı dosyalar. Kalite düşerse ödemeyi keserler. Betikler yine de temizlenmeli.",
-                     tier: 2, targetFiles: 30, maxBreaches: 3, payPerFile: 20, completionBonus: 500, reputationReward: 10,
+                     tier: 2, targetFiles: 40, maxBreaches: 3, payPerFile: 20, completionBonus: 600, reputationReward: 10,
                      containerWeights: [.png: 4, .pdf: 3, .docx: 1], filesPerMinute: 14),
     ]
 

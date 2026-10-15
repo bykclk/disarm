@@ -128,15 +128,32 @@ final class GameScene: SKScene {
         let base = SKShapeNode(rectOf: CGSize(width: cs - 2, height: cs - 2), cornerRadius: 4)
         base.fillColor = Theme.belt
         base.strokeColor = .clear
-        n.addChild(base)
+        let outer = SKNode()
+        outer.addChild(base)
+        let crop = SKCropNode()
+        let maskNode = SKShapeNode(rectOf: CGSize(width: cs - 6, height: cs - 6), cornerRadius: 3)
+        maskNode.fillColor = .white
+        crop.maskNode = maskNode
+        crop.addChild(n)
+        outer.addChild(crop)
+        // İki chevron, yarım faz farkıyla yukarı akar: bant hareket ediyor hissi.
+        let span = cs * 0.5
         for i in 0..<2 {
-            let chev = chevron(size: cs * 0.22)
-            chev.position = CGPoint(x: 0, y: CGFloat(i) * cs * 0.3 - cs * 0.15)
+            let chev = chevron(size: cs * 0.2)
+            let phase = CGFloat(i) * 0.5
+            chev.position = CGPoint(x: 0, y: -span / 2 + span * phase)
             chev.alpha = 0.6
+            let flow = SKAction.sequence([
+                .moveBy(x: 0, y: span * (1 - phase), duration: 0.7 * Double(1 - phase)),
+                .moveTo(y: -span / 2, duration: 0),
+                .repeatForever(.sequence([.moveBy(x: 0, y: span, duration: 0.7), .moveTo(y: -span / 2, duration: 0)])),
+            ])
+            chev.run(flow)
             n.addChild(chev)
         }
-        n.zRotation = -CGFloat(d.angle)
-        return n
+
+        outer.zRotation = -CGFloat(d.angle)
+        return outer
     }
 
     private func chevron(size s: CGFloat) -> SKShapeNode {
@@ -294,6 +311,15 @@ final class GameScene: SKScene {
             label.zPosition = 5
             fxLayer.addChild(label)
             label.run(.sequence([.group([.moveBy(x: 0, y: cs * 0.8, duration: 0.8), .fadeOut(withDuration: 0.8)]), .removeFromParent()]))
+            if !o.good {
+                let ring = SKShapeNode(circleOfRadius: cs * 0.5)
+                ring.strokeColor = Theme.danger
+                ring.lineWidth = 3
+                ring.fillColor = Theme.danger.withAlphaComponent(0.25)
+                ring.position = sinkPt
+                fxLayer.addChild(ring)
+                ring.run(.sequence([.group([.scale(to: 2.2, duration: 0.6), .fadeOut(withDuration: 0.6)]), .removeFromParent()]))
+            }
         }
         if shownOutcomes.count > 200 { shownOutcomes.removeAll() }
     }

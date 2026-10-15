@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import UIKit
 import DisarmCore
 
 enum Tool: Equatable {
@@ -111,8 +112,36 @@ final class GameEngine {
 
     // MARK: - Döngü
 
+    enum TutorialStep: Int, CaseIterable {
+        case parser, filter, packager, connect, deliver
+
+        var text: String {
+            switch self {
+            case .parser: "Paletten Ayrıştırıcı'yı seç ve girişin sağındaki boş bir hücreye koy."
+            case .filter: "Şimdi bir Filtre yerleştir. Makro hedefli gelir; muhasebe makro istemiyor."
+            case .packager: "Paketleyici koy: açık dosya teslim edilirse müşteri açamaz."
+            case .connect: "Bant aracıyla parmağını sürükleyip Giriş → modüller → Teslimat yolunu çiz. Modül çıkış oklarına dikkat."
+            case .deliver: "Hat bağlı! İlk dosyanın teslim edilmesini izle. Dosyaya dokunarak içini görebilirsin."
+            }
+        }
+    }
+
+    /// Küçük ofiste, ilk teslimata kadar gösterilen adım. Durumdan türetilir, ayrı kayıt gerekmez.
+    var tutorialStep: TutorialStep? {
+        guard !state.tutorialSeen, state.currentLocation == .smallOffice else { return nil }
+        let g = state.grid
+        if g.positions(of: .parser).isEmpty { return .parser }
+        if g.positions(of: .filter).isEmpty { return .filter }
+        if g.positions(of: .packager).isEmpty { return .packager }
+        if !lineConnected { return .connect }
+        return .deliver
+    }
+
+    var lineConnected: Bool { state.grid.sinkReachable(from: state.location.sourcePos) }
+
     func tick(dt rawDt: Double) {
         guard !paused else { return }
+        if case .file = sheet { return } // dosya incelenirken hat durur
         let dt = min(rawDt, 0.1) * speed
         var events: [GameEvent] = []
         var s = state
@@ -138,7 +167,12 @@ final class GameEngine {
             switch e {
             case .delivered(let id, let o):
                 recentOutcomes.append((id, !o.breach && o.usability >= 0.9, Date()))
+                if !state.tutorialSeen && !o.breach {
+                    state.tutorialSeen = true
+                    toast("İlk teslimat! Artık hat senin.", .good, 3)
+                }
                 if o.breach {
+                    UINotificationFeedbackGenerator().notificationOccurred(.error)
                     toast("İHLAL! \(o.issues.first ?? "") \(money(o.pay))", .bad, 3)
                     addLog(o.issues.first ?? "İhlal", .bad)
                 } else if o.usability < 0.9 {
