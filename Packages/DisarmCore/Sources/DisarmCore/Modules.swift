@@ -5,43 +5,43 @@ public enum ModuleKind: String, Codable, CaseIterable, Sendable {
 
     public var displayName: String {
         switch self {
-        case .source: "Giriş"
-        case .sink: "Teslimat"
-        case .scanner: "İmza Tarayıcı"
-        case .parser: "Ayrıştırıcı"
-        case .filter: "Filtre"
-        case .transformer: "Dönüştürücü"
-        case .packager: "Paketleyici"
-        case .router: "Yönlendirici"
-        case .quarantine: "Karantina"
+        case .source: L("Intake")
+        case .sink: L("Delivery")
+        case .scanner: L("Signature Scanner")
+        case .parser: L("Parser")
+        case .filter: L("Filter")
+        case .transformer: L("Transformer")
+        case .packager: L("Packager")
+        case .router: L("Router")
+        case .quarantine: L("Quarantine")
         }
     }
 
     public var shortName: String {
         switch self {
-        case .source: "GİR"
-        case .sink: "TSL"
-        case .scanner: "TAR"
-        case .parser: "AYR"
-        case .filter: "FLT"
-        case .transformer: "DNŞ"
-        case .packager: "PKT"
-        case .router: "YÖN"
-        case .quarantine: "KRN"
+        case .source: L("IN")
+        case .sink: L("OUT")
+        case .scanner: L("SCN")
+        case .parser: L("PRS")
+        case .filter: L("FLT")
+        case .transformer: L("TRN")
+        case .packager: L("PKG")
+        case .router: L("RTR")
+        case .quarantine: L("QRT")
         }
     }
 
     public var blurb: String {
         switch self {
-        case .source: "Müşteri dosyaları buradan bantta akmaya başlar."
-        case .sink: "Dosyalar buradan müşteriye teslim edilir. Kapalı, temiz ve sözleşmeye uygun dosya para kazandırır."
-        case .scanner: "Ucuz ve hızlı. Dosyayı açmadan bilinen imzalı tehditleri siler. Bilinmeyen tehditleri göremez; imzasız ağlarda işe yaramaz."
-        case .parser: "Dosyayı parçalarına ayırır. Filtre ve dönüştürücü ancak açılmış dosyada çalışır. Seviye arttıkça iç içe katmanları ve polyglot dosyaları da açar."
-        case .filter: "Seçilen parça türünü (makro, betik, gömülü dosya) atar. Zararlı olsun olmasın, hepsi gider."
-        case .transformer: "Görselleri yeniden kodlar; gizli veriyi ve bilinmeyen yükleri yok eder. Düşük seviyede görsel kalitesini düşürür ve formülleri değere çevirir."
-        case .packager: "Açık dosyayı yeniden paketler. Teslimat için şart."
-        case .router: "Seçilen kap türündeki dosyaları sağ tarafa ayırır, diğerleri düz devam eder."
-        case .quarantine: "Dosyayı yok eder. Para yok, ama ihlal de yok."
+        case .source: L("Customer files start flowing onto the belt here.")
+        case .sink: L("Files are delivered to the customer here. A closed, clean file that meets the contract earns money.")
+        case .scanner: L("Cheap and fast. Removes known, signed threats without opening the file. Blind to unknown threats; useless on networks without signature updates.")
+        case .parser: L("Splits the file into its parts. Filter and transformer only work on an opened file. Higher levels open nested layers and polyglot files.")
+        case .filter: L("Drops the selected part type (macro, script, embedded file). Malicious or not, all of them go.")
+        case .transformer: L("Re-encodes images; destroys hidden data and unknown payloads. At low levels it degrades image quality and flattens formulas into values.")
+        case .packager: L("Repackages an opened file. Required for delivery.")
+        case .router: L("Diverts files of the selected container type to the right; everything else goes straight.")
+        case .quarantine: L("Destroys the file. No money, but no breach either.")
         }
     }
 
@@ -150,7 +150,7 @@ public enum ModuleProcessor {
             let wasOpen = file.isOpen
             file.isOpen = false
             file.exposedDepth = -1
-            return wasOpen ? [.closed] : [.noEffect("Dosya zaten kapalıydı")]
+            return wasOpen ? [.closed] : [.noEffect(L("File was already closed"))]
         case .source, .sink, .router, .quarantine:
             return []
         }
@@ -168,7 +168,7 @@ public enum ModuleProcessor {
             removed[p.kind, default: 0] += 1
             return true
         }
-        if removed.isEmpty { return [.noEffect("İmza eşleşmedi")] }
+        if removed.isEmpty { return [.noEffect(L("No signature matched"))] }
         return removed.map { .removed($0.key, count: $0.value) }
     }
 
@@ -183,16 +183,16 @@ public enum ModuleProcessor {
     }
 
     static func filter(_ target: PartKind, file: inout FileItem) -> [ProcessNote] {
-        guard file.isOpen else { return [.noEffect("Dosya kapalı; önce ayrıştır")] }
+        guard file.isOpen else { return [.noEffect(L("File is closed; parse it first"))] }
         let before = file.parts.count
         let depth = file.exposedDepth
         file.parts.removeAll { $0.kind == target && $0.depth <= depth }
         let n = before - file.parts.count
-        return n > 0 ? [.removed(target, count: n)] : [.noEffect("\(target.displayName) bulunamadı")]
+        return n > 0 ? [.removed(target, count: n)] : [.noEffect(L("No \(target.displayName) found"))]
     }
 
     static func transform(level: Int, file: inout FileItem) -> [ProcessNote] {
-        guard file.isOpen else { return [.noEffect("Dosya kapalı; önce ayrıştır")] }
+        guard file.isOpen else { return [.noEffect(L("File is closed; parse it first"))] }
         var notes: [ProcessNote] = []
         let depth = file.exposedDepth
         var removed: [PartKind: Int] = [:]
@@ -214,6 +214,6 @@ public enum ModuleProcessor {
             let n = before - file.parts.count
             if n > 0 { notes.append(.formulasFlattened(n)) }
         }
-        return notes.isEmpty ? [.noEffect("Dönüştürülecek bir şey yok")] : notes
+        return notes.isEmpty ? [.noEffect(L("Nothing to transform"))] : notes
     }
 }

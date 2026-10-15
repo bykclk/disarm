@@ -105,7 +105,7 @@ import Testing
         f.parts.removeAll { $0.kind == .macro }
         let o = DeliveryEvaluator.evaluate(f, policy: .forCustomer(.accounting), payPerFile: 10)
         #expect(o.usability < 0.9)
-        #expect(o.issues.contains { $0.contains("Formül") })
+        #expect(o.issues.contains(.mustKeepLost(.formula)))
     }
 
     @Test func bankRejectsBenignMacro() {

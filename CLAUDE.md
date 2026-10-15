@@ -14,5 +14,6 @@
 ## Kurallar
 - Oyun kuralı değişiklikleri önce `DisarmCore`'a, testiyle birlikte. UI yalnızca durumu gösterir.
 - Swift 6 strict concurrency açık. Motor `@MainActor`; SpriteKit `update` içinden `engine.tick(dt:)` çağrılır.
-- UI metinleri Türkçe.
+- Yerelleştirme: koddaki anahtar İngilizce kaynak metin, Türkçe çevirisi String Catalog'da. Çekirdekte `L("...")` (Resources/Localizable.xcstrings, Bundle.module), uygulamada SwiftUI literal'leri otomatik, `String` bağlamında `String(localized:)` (Disarm/Resources/Localizable.xcstrings). Yeni metin eklerken iki yere de gir; enterpolasyonlu anahtarlarda `%lld` (Int) / `%@` (String). Yüzde işaretini argümanlı anahtara doğrudan yazma, önce String'e çevir.
+- Dil testi: `xcrun simctl launch <udid> com.omerbuyukcelik.disarm -AppleLanguages "(en)"`.
 - `GameState` ve `Simulation` Codable; alan eklerken eski kayıtların bozulmaması için varsayılan değer düşün (şimdilik kayıt uyumsuzsa sıfırdan başlar).

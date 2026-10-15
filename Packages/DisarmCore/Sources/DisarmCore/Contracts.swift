@@ -5,11 +5,11 @@ public enum CustomerKind: String, Codable, CaseIterable, Sendable {
 
     public var displayName: String {
         switch self {
-        case .accounting: "Muhasebe"
-        case .lawFirm: "Hukuk Bürosu"
-        case .designAgency: "Tasarım Ajansı"
-        case .bank: "Banka"
-        case .government: "Kamu Kurumu"
+        case .accounting: L("Accounting")
+        case .lawFirm: L("Law Firm")
+        case .designAgency: L("Design Agency")
+        case .bank: L("Bank")
+        case .government: L("Government Agency")
         }
     }
 }
@@ -19,9 +19,9 @@ public enum PolicyRule: String, Codable, Sendable {
 
     public var displayName: String {
         switch self {
-        case .mustRemove: "silinsin"
-        case .mustKeep: "korunsun"
-        case .dontCare: "fark etmez"
+        case .mustRemove: L("must be removed")
+        case .mustKeep: L("must be kept")
+        case .dontCare: L("doesn't matter")
         }
     }
 }
@@ -111,11 +111,35 @@ public struct ContractProgress: Codable, Hashable, Sendable {
     }
 }
 
+public enum DeliveryIssue: Equatable, Hashable, Sendable {
+    case breach([PartKind])
+    case deliveredOpen
+    case mustRemoveLeft(PartKind)
+    case mustKeepLost(PartKind)
+    case lowImageQuality(actual: Int, minimum: Int)
+
+    public var text: String {
+        switch self {
+        case .breach(let kinds):
+            let names = kinds.map(\.displayName).joined(separator: ", ")
+            return L("BREACH: malicious content delivered (\(names))")
+        case .deliveredOpen:
+            return L("Delivered unpackaged (open); the customer couldn't open it")
+        case .mustRemoveLeft(let k):
+            return L("\(k.displayName) should have been removed but stayed in the file")
+        case .mustKeepLost(let k):
+            return L("\(k.displayName) should have been kept but was lost")
+        case .lowImageQuality(let a, let m):
+            return L("Image quality too low (\("\(a)%"), customer requires at least \("\(m)%"))")
+        }
+    }
+}
+
 public struct DeliveryOutcome: Equatable, Sendable {
     public var pay: Int
     public var breach: Bool
     public var usability: Double
-    public var issues: [String]
+    public var issues: [DeliveryIssue]
     public var reputationDelta: Int
 
     public var accepted: Bool { !breach && usability >= 0.9 }
@@ -124,29 +148,28 @@ public struct DeliveryOutcome: Equatable, Sendable {
 public enum DeliveryEvaluator {
     public static func evaluate(_ file: FileItem, policy: Policy, payPerFile: Int) -> DeliveryOutcome {
         if file.hasMalicious {
-            let names = file.parts.filter(\.malicious).map { $0.kind.displayName }
+            let kinds = file.parts.filter(\.malicious).map(\.kind)
             return DeliveryOutcome(pay: -payPerFile * 3, breach: true, usability: 0,
-                                   issues: ["İHLAL: zararlı içerik teslim edildi (\(names.joined(separator: ", ")))"],
-                                   reputationDelta: -4)
+                                   issues: [.breach(kinds)], reputationDelta: -4)
         }
         var usability = 1.0
-        var issues: [String] = []
+        var issues: [DeliveryIssue] = []
 
         if file.isOpen {
             usability = 0
-            issues.append("Dosya paketlenmeden (açık) teslim edildi; müşteri açamadı")
+            issues.append(.deliveredOpen)
         }
         for kind in PartKind.allCases {
             switch policy.rule(for: kind) {
             case .mustRemove:
                 if file.kinds.contains(kind) {
                     usability -= 0.35
-                    issues.append("\(kind.displayName) silinmeliydi, dosyada kaldı")
+                    issues.append(.mustRemoveLeft(kind))
                 }
             case .mustKeep:
                 if file.originalKinds.contains(kind) && !file.kinds.contains(kind) {
                     usability -= 0.4
-                    issues.append("\(kind.displayName) korunmalıydı, kayboldu")
+                    issues.append(.mustKeepLost(kind))
                 }
             case .dontCare:
                 break
@@ -155,7 +178,7 @@ public enum DeliveryEvaluator {
         if file.hasImage && file.imageQuality < policy.minImageQuality {
             let gap = policy.minImageQuality - file.imageQuality
             usability -= min(0.5, gap * 1.2)
-            issues.append("Görsel kalitesi düşük (%\(Int(file.imageQuality * 100)), istenen en az %\(Int(policy.minImageQuality * 100)))")
+            issues.append(.lowImageQuality(actual: Int(file.imageQuality * 100), minimum: Int(policy.minImageQuality * 100)))
         }
         usability = max(0, min(1, usability))
         let pay = Int((Double(payPerFile) * usability).rounded())

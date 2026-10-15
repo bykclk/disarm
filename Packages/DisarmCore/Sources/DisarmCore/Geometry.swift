@@ -40,10 +40,10 @@ public enum Direction: Int, Codable, CaseIterable, Sendable {
 
     public var displayName: String {
         switch self {
-        case .up: "Yukarı"
-        case .right: "Sağ"
-        case .down: "Aşağı"
-        case .left: "Sol"
+        case .up: L("Up")
+        case .right: L("Right")
+        case .down: L("Down")
+        case .left: L("Left")
         }
     }
 }

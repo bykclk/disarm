@@ -1,0 +1,876 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "%@ should have been kept but was lost": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ korunmalıydı, kayboldu"
+          }
+        }
+      }
+    },
+    "%@ should have been removed but stayed in the file": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ silinmeliydi, dosyada kaldı"
+          }
+        }
+      }
+    },
+    "%lld formulas flattened": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld formül düzleşti"
+          }
+        }
+      }
+    },
+    "A three-person team, one server, one belt. You start with neighborhood customers.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üç kişilik bir ekip, bir sunucu, bir bant. Mahalle müşterileriyle başlıyorsun."
+          }
+        }
+      }
+    },
+    "Accounting": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muhasebe"
+          }
+        }
+      }
+    },
+    "Ad Agency": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reklam Ajansı"
+          }
+        }
+      }
+    },
+    "Air-gapped network. No signature updates; the scanner only recognizes ancient macros. Everything has to be solved by disarming.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Air-gapped ağ. İmza güncellemesi yok, tarayıcı yalnızca yıllanmış makroları tanır. Her şey disarm ile çözülecek."
+          }
+        }
+      }
+    },
+    "Air-gapped network: no signature updates. The scanner is blind; only disarming works.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Air-gapped ağ: imza güncellemesi yok. Tarayıcı kör, sadece disarm işe yarar."
+          }
+        }
+      }
+    },
+    "Attorney's Office": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avukatlık Bürosu"
+          }
+        }
+      }
+    },
+    "BREACH: malicious content delivered (%@)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İHLAL: zararlı içerik teslim edildi (%@)"
+          }
+        }
+      }
+    },
+    "Bank": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banka"
+          }
+        }
+      }
+    },
+    "Bigger volume, more varied files. Router and transformer are now at your disposal.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daha büyük hacim, daha çeşitli dosyalar. Yönlendirici ve dönüştürücü artık emrinde."
+          }
+        }
+      }
+    },
+    "Cheap and fast. Removes known, signed threats without opening the file. Blind to unknown threats; useless on networks without signature updates.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ucuz ve hızlı. Dosyayı açmadan bilinen imzalı tehditleri siler. Bilinmeyen tehditleri göremez; imzasız ağlarda işe yaramaz."
+          }
+        }
+      }
+    },
+    "Company": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şirket"
+          }
+        }
+      }
+    },
+    "Customer files start flowing onto the belt here.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Müşteri dosyaları buradan bantta akmaya başlar."
+          }
+        }
+      }
+    },
+    "Delivered unpackaged (open); the customer couldn't open it": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosya paketlenmeden (açık) teslim edildi; müşteri açamadı"
+          }
+        }
+      }
+    },
+    "Delivery": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teslimat"
+          }
+        }
+      }
+    },
+    "Design Agency": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tasarım Ajansı"
+          }
+        }
+      }
+    },
+    "Destroys the file. No money, but no breach either.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosyayı yok eder. Para yok, ama ihlal de yok."
+          }
+        }
+      }
+    },
+    "Diverts files of the selected container type to the right; everything else goes straight.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seçilen kap türündeki dosyaları sağ tarafa ayırır, diğerleri düz devam eder."
+          }
+        }
+      }
+    },
+    "Down": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aşağı"
+          }
+        }
+      }
+    },
+    "Drops the selected part type (macro, script, embedded file). Malicious or not, all of them go.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seçilen parça türünü (makro, betik, gömülü dosya) atar. Zararlı olsun olmasın, hepsi gider."
+          }
+        }
+      }
+    },
+    "Embedded File": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gömülü Dosya"
+          }
+        }
+      }
+    },
+    "Endless flow. How long can you hold out?": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonsuz akış. Ne kadar dayanabilirsin?"
+          }
+        }
+      }
+    },
+    "Excel sheets arrive. Keep the formulas, remove the macros. Some macros are malicious, some aren't; the customer wants none of them.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excel tabloları gelir. Formüller korunsun, makrolar silinsin. Bazı makrolar zararlı, bazıları değil; ama müşteri hiçbirini istemiyor."
+          }
+        }
+      }
+    },
+    "FLT": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FLT"
+          }
+        }
+      }
+    },
+    "File is closed; parse it first": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosya kapalı; önce ayrıştır"
+          }
+        }
+      }
+    },
+    "File was already closed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosya zaten kapalıydı"
+          }
+        }
+      }
+    },
+    "Files are delivered to the customer here. A closed, clean file that meets the contract earns money.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosyalar buradan müşteriye teslim edilir. Kapalı, temiz ve sözleşmeye uygun dosya para kazandırır."
+          }
+        }
+      }
+    },
+    "Filter": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtre"
+          }
+        }
+      }
+    },
+    "Formula": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Formül"
+          }
+        }
+      }
+    },
+    "Government Agency": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kamu Kurumu"
+          }
+        }
+      }
+    },
+    "Hidden Data": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gizli Veri"
+          }
+        }
+      }
+    },
+    "Holding Accounting": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Holding Muhasebesi"
+          }
+        }
+      }
+    },
+    "IN": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GİR"
+          }
+        }
+      }
+    },
+    "Image": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görsel"
+          }
+        }
+      }
+    },
+    "Image quality must stay above 85%, yet hidden data is being stashed inside the images. You'll need to upgrade the transformer.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görsel kalitesi %85'in altına düşmemeli ama görsellerin içine gizli veri saklanıyor. Dönüştürücüyü yükseltmen gerekecek."
+          }
+        }
+      }
+    },
+    "Image quality too low (%@, customer requires at least %@)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görsel kalitesi düşük (%@, istenen en az %@)"
+          }
+        }
+      }
+    },
+    "Image-heavy files. If quality drops they stop paying. Scripts still have to go.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görsel ağırlıklı dosyalar. Kalite düşerse ödemeyi keserler. Betikler yine de temizlenmeli."
+          }
+        }
+      }
+    },
+    "Intake": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giriş"
+          }
+        }
+      }
+    },
+    "International Law": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uluslararası Hukuk"
+          }
+        }
+      }
+    },
+    "Investment Bank": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yatırım Bankası"
+          }
+        }
+      }
+    },
+    "Law Firm": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hukuk Bürosu"
+          }
+        }
+      }
+    },
+    "Left": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sol"
+          }
+        }
+      }
+    },
+    "Macro": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Makro"
+          }
+        }
+      }
+    },
+    "Ministry Document Flow": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bakanlık Evrak Akışı"
+          }
+        }
+      }
+    },
+    "National Archive": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ulusal Arşiv"
+          }
+        }
+      }
+    },
+    "Neighborhood Accountant": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mahalle Muhasebecisi"
+          }
+        }
+      }
+    },
+    "No %@ found": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ bulunamadı"
+          }
+        }
+      }
+    },
+    "No active content gets through. Threats without signatures show up here.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiçbir aktif içerik geçmeyecek. İmzası olmayan tehditler burada ortaya çıkar."
+          }
+        }
+      }
+    },
+    "No signature matched": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İmza eşleşmedi"
+          }
+        }
+      }
+    },
+    "Nothing to transform": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dönüştürülecek bir şey yok"
+          }
+        }
+      }
+    },
+    "OUT": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TSL"
+          }
+        }
+      }
+    },
+    "PDF contracts. Embedded scripts have started showing up inside them. Keep the text, drop the active content.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PDF sözleşmeler. İçlerine gömülü betikler görülmeye başladı. Metin korunsun, aktif içerik gitsin."
+          }
+        }
+      }
+    },
+    "PKG": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PKT"
+          }
+        }
+      }
+    },
+    "PRS": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AYR"
+          }
+        }
+      }
+    },
+    "Packager": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paketleyici"
+          }
+        }
+      }
+    },
+    "Parser": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayrıştırıcı"
+          }
+        }
+      }
+    },
+    "Polyglot files: both PDF and ZIP. Without a level 3 parser the second identity stays invisible.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Polyglot dosyalar: hem PDF hem ZIP. Ayrıştırıcı seviye 3 olmadan ikinci kimlik görünmez."
+          }
+        }
+      }
+    },
+    "Publishing House": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yayınevi"
+          }
+        }
+      }
+    },
+    "QRT": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KRN"
+          }
+        }
+      }
+    },
+    "Quarantine": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Karantina"
+          }
+        }
+      }
+    },
+    "RTR": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YÖN"
+          }
+        }
+      }
+    },
+    "Re-encodes images; destroys hidden data and unknown payloads. At low levels it degrades image quality and flattens formulas into values.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görselleri yeniden kodlar; gizli veriyi ve bilinmeyen yükleri yok eder. Düşük seviyede görsel kalitesini düşürür ve formülleri değere çevirir."
+          }
+        }
+      }
+    },
+    "Regional Bank": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bölge Bankası"
+          }
+        }
+      }
+    },
+    "Repackages an opened file. Required for delivery.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Açık dosyayı yeniden paketler. Teslimat için şart."
+          }
+        }
+      }
+    },
+    "Right": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sağ"
+          }
+        }
+      }
+    },
+    "Router": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yönlendirici"
+          }
+        }
+      }
+    },
+    "SCN": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TAR"
+          }
+        }
+      }
+    },
+    "Script": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Betik"
+          }
+        }
+      }
+    },
+    "Signature Scanner": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İmza Tarayıcı"
+          }
+        }
+      }
+    },
+    "Small Office": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Küçük Ofis"
+          }
+        }
+      }
+    },
+    "Splits the file into its parts. Filter and transformer only work on an opened file. Higher levels open nested layers and polyglot files.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosyayı parçalarına ayırır. Filtre ve dönüştürücü ancak açılmış dosyada çalışır. Seviye arttıkça iç içe katmanları ve polyglot dosyaları da açar."
+          }
+        }
+      }
+    },
+    "TRN": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DNŞ"
+          }
+        }
+      }
+    },
+    "Text": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Metin"
+          }
+        }
+      }
+    },
+    "Threats with no signature have arrived. The scanner can't see them; only the transformer destroys them.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İmzası olmayan tehditler geldi. Tarayıcı bunları göremez; yalnızca dönüştürücü yok eder."
+          }
+        }
+      }
+    },
+    "Transformer": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dönüştürücü"
+          }
+        }
+      }
+    },
+    "Unknown": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bilinmeyen"
+          }
+        }
+      }
+    },
+    "Up": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yukarı"
+          }
+        }
+      }
+    },
+    "ZIPs inside ZIP archives. The payload hides one layer down; a level 1 parser can't see it.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ZIP arşivleri içinde ZIP'ler. Yük bir kat içeride saklanıyor; seviye 1 ayrıştırıcı göremez."
+          }
+        }
+      }
+    },
+    "Zero active content. Even harmless macros, scripts and embedded files must not be delivered. Looks may suffer; that's fine.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sıfır aktif içerik. Zararsız bile olsa makro, betik, gömülü dosya teslim edilmeyecek. Görünüm bozulsa da olur."
+          }
+        }
+      }
+    },
+    "doesn't matter": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fark etmez"
+          }
+        }
+      }
+    },
+    "image ×%@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "görsel ×%@"
+          }
+        }
+      }
+    },
+    "must be kept": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "korunsun"
+          }
+        }
+      }
+    },
+    "must be removed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "silinsin"
+          }
+        }
+      }
+    },
+    "opened (layer %lld)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "açıldı (katman %lld)"
+          }
+        }
+      }
+    },
+    "packaged": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "paketlendi"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

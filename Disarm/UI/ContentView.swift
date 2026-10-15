@@ -60,12 +60,12 @@ struct HUDView: View {
                         .background(.white.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
                 }
                 Menu {
-                    Button { engine.sheet = .upgrades } label: { Label("Yükseltmeler", systemImage: "arrow.up.circle") }
-                    Button { engine.sheet = .locations } label: { Label("Mekânlar", systemImage: "map") }
-                    Button { engine.sheet = .log } label: { Label("Olay Günlüğü", systemImage: "list.bullet.rectangle") }
-                    Button { engine.sheet = .help } label: { Label("Nasıl Oynanır", systemImage: "questionmark.circle") }
+                    Button { engine.sheet = .upgrades } label: { Label("Upgrades", systemImage: "arrow.up.circle") }
+                    Button { engine.sheet = .locations } label: { Label("Sites", systemImage: "map") }
+                    Button { engine.sheet = .log } label: { Label("Event Log", systemImage: "list.bullet.rectangle") }
+                    Button { engine.sheet = .help } label: { Label("How to Play", systemImage: "questionmark.circle") }
                     Divider()
-                    Button(role: .destructive) { engine.clearLayout() } label: { Label("Hattı Temizle", systemImage: "trash") }
+                    Button(role: .destructive) { engine.clearLayout() } label: { Label("Clear Line", systemImage: "trash") }
                 } label: {
                     Image(systemName: "line.3.horizontal")
                         .frame(width: 34, height: 28)
@@ -88,7 +88,7 @@ struct HUDView: View {
                             .tint(Color(Theme.accent))
                         Text("\(p.delivered)/\(c.targetFiles)")
                             .font(.caption.monospacedDigit())
-                        Text("İhlal \(p.breaches)/\(c.maxBreaches)")
+                        Text("Breach \(p.breaches)/\(c.maxBreaches)")
                             .font(.caption.monospacedDigit())
                             .foregroundStyle(p.breaches > 0 ? Color(Theme.danger) : .secondary)
                     }
@@ -114,16 +114,16 @@ struct PaletteView: View {
         VStack(spacing: 6) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    toolButton(.select, "hand.point.up.left", "Seç", nil)
-                    toolButton(.belt, "arrow.right", "Bant", GameState.beltCost)
-                    toolButton(.erase, "eraser", "Sil", nil)
+                    toolButton(.select, "hand.point.up.left", String(localized: "Select"), nil)
+                    toolButton(.belt, "arrow.right", String(localized: "Belt"), GameState.beltCost)
+                    toolButton(.erase, "eraser", String(localized: "Erase"), nil)
                     Button { engine.brush = engine.brush.clockwise } label: {
                         VStack(spacing: 2) {
                             Image(systemName: "arrow.up")
                                 .rotationEffect(.radians(engine.brush.angle))
                                 .font(.title3)
                                 .frame(height: 24)
-                            Text("Yön").font(.caption2)
+                            Text("Facing").font(.caption2)
                         }
                         .frame(width: 58, height: 56)
                         .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
@@ -148,10 +148,10 @@ struct PaletteView: View {
 
     private var hint: String {
         switch engine.tool {
-        case .select: "Modüle dokun: ayarlar · Dosyaya dokun: içeriği gör · Banta dokun: döndür"
-        case .belt: "Dokun: bant koy · Sürükle: bant çiz · Mevcut banta dokun: döndür"
-        case .erase: "Dokun ya da sürükle: kaldır (modüller %50 iade)"
-        case .place(let k): "\(k.displayName): boş hücreye dokun · yönü \(engine.brush.displayName) · aynı modüle dokun: döndür"
+        case .select: String(localized: "Tap a module: settings · Tap a file: see contents · Tap a belt: rotate")
+        case .belt: String(localized: "Tap: place belt · Drag: draw belts · Tap existing belt: rotate")
+        case .erase: String(localized: "Tap or drag: remove (modules refund 50%)")
+        case .place(let k): String(localized: "\(k.displayName): tap an empty cell · facing \(engine.brush.displayName) · tap same module: rotate")
         }
     }
 
@@ -248,7 +248,7 @@ struct GuidanceBanner: View {
         } else if !engine.lineConnected {
             HStack(spacing: 8) {
                 Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(Color(Theme.warning))
-                Text("Hat teslimata bağlı değil: dosyalar birikecek ya da düşecek.").font(.caption).foregroundStyle(.white)
+                Text("Line isn't connected to delivery: files will pile up or drop.").font(.caption).foregroundStyle(.white)
                 Spacer(minLength: 0)
             }
             .padding(.horizontal, 12).padding(.vertical, 6)

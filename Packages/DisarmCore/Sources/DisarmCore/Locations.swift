@@ -35,8 +35,8 @@ public enum LocationCatalog {
         case .smallOffice:
             LocationSpec(
                 kind: kind,
-                displayName: "Küçük Ofis",
-                description: "Üç kişilik bir ekip, bir sunucu, bir bant. Mahalle müşterileriyle başlıyorsun.",
+                displayName: L("Small Office"),
+                description: L("A three-person team, one server, one belt. You start with neighborhood customers."),
                 width: 7, height: 10,
                 sourcePos: GridPos(0, 1), sourceFacing: .right,
                 sinkPos: GridPos(6, 8),
@@ -46,8 +46,8 @@ public enum LocationCatalog {
         case .company:
             LocationSpec(
                 kind: kind,
-                displayName: "Şirket",
-                description: "Daha büyük hacim, daha çeşitli dosyalar. Yönlendirici ve dönüştürücü artık emrinde.",
+                displayName: L("Company"),
+                description: L("Bigger volume, more varied files. Router and transformer are now at your disposal."),
                 width: 8, height: 12,
                 sourcePos: GridPos(3, 0), sourceFacing: .down,
                 sinkPos: GridPos(4, 11),
@@ -57,8 +57,8 @@ public enum LocationCatalog {
         case .bank:
             LocationSpec(
                 kind: kind,
-                displayName: "Banka",
-                description: "Hiçbir aktif içerik geçmeyecek. İmzası olmayan tehditler burada ortaya çıkar.",
+                displayName: L("Bank"),
+                description: L("No active content gets through. Threats without signatures show up here."),
                 width: 9, height: 13,
                 sourcePos: GridPos(0, 6), sourceFacing: .right,
                 sinkPos: GridPos(8, 6),
@@ -68,8 +68,8 @@ public enum LocationCatalog {
         case .government:
             LocationSpec(
                 kind: kind,
-                displayName: "Kamu Kurumu",
-                description: "Air-gapped ağ: imza güncellemesi yok. Tarayıcı kör, sadece disarm işe yarar.",
+                displayName: L("Government Agency"),
+                description: L("Air-gapped network: no signature updates. The scanner is blind; only disarming works."),
                 width: 10, height: 14,
                 sourcePos: GridPos(0, 0), sourceFacing: .down,
                 sinkPos: GridPos(9, 13),
@@ -80,53 +80,53 @@ public enum LocationCatalog {
     }
 
     static let officeContracts: [ContractSpec] = [
-        ContractSpec(id: "office-1", customer: .accounting, title: "Mahalle Muhasebecisi",
-                     brief: "Excel tabloları gelir. Formüller korunsun, makrolar silinsin. Bazı makrolar zararlı, bazıları değil; ama müşteri hiçbirini istemiyor.",
+        ContractSpec(id: "office-1", customer: .accounting, title: L("Neighborhood Accountant"),
+                     brief: L("Excel sheets arrive. Keep the formulas, remove the macros. Some macros are malicious, some aren't; the customer wants none of them."),
                      tier: 1, targetFiles: 20, maxBreaches: 3, payPerFile: 12, completionBonus: 200, reputationReward: 5,
                      containerWeights: [.xlsx: 5, .docx: 2, .pdf: 1], filesPerMinute: 10),
-        ContractSpec(id: "office-2", customer: .lawFirm, title: "Avukatlık Bürosu",
-                     brief: "PDF sözleşmeler. İçlerine gömülü betikler görülmeye başladı. Metin korunsun, aktif içerik gitsin.",
+        ContractSpec(id: "office-2", customer: .lawFirm, title: L("Attorney's Office"),
+                     brief: L("PDF contracts. Embedded scripts have started showing up inside them. Keep the text, drop the active content."),
                      tier: 2, targetFiles: 30, maxBreaches: 3, payPerFile: 16, completionBonus: 400, reputationReward: 8,
                      containerWeights: [.pdf: 5, .docx: 3], filesPerMinute: 12),
-        ContractSpec(id: "office-3", customer: .designAgency, title: "Reklam Ajansı",
-                     brief: "Görsel ağırlıklı dosyalar. Kalite düşerse ödemeyi keserler. Betikler yine de temizlenmeli.",
+        ContractSpec(id: "office-3", customer: .designAgency, title: L("Ad Agency"),
+                     brief: L("Image-heavy files. If quality drops they stop paying. Scripts still have to go."),
                      tier: 2, targetFiles: 40, maxBreaches: 3, payPerFile: 20, completionBonus: 600, reputationReward: 10,
                      containerWeights: [.png: 4, .pdf: 3, .docx: 1], filesPerMinute: 14),
     ]
 
     static let companyContracts: [ContractSpec] = [
-        ContractSpec(id: "company-1", customer: .accounting, title: "Holding Muhasebesi",
-                     brief: "ZIP arşivleri içinde ZIP'ler. Yük bir kat içeride saklanıyor; seviye 1 ayrıştırıcı göremez.",
+        ContractSpec(id: "company-1", customer: .accounting, title: L("Holding Accounting"),
+                     brief: L("ZIPs inside ZIP archives. The payload hides one layer down; a level 1 parser can't see it."),
                      tier: 3, targetFiles: 30, maxBreaches: 3, payPerFile: 24, completionBonus: 800, reputationReward: 12,
                      containerWeights: [.zip: 4, .xlsx: 4, .docx: 2], filesPerMinute: 16),
-        ContractSpec(id: "company-2", customer: .designAgency, title: "Yayınevi",
-                     brief: "Görsel kalitesi %85'in altına düşmemeli ama görsellerin içine gizli veri saklanıyor. Dönüştürücüyü yükseltmen gerekecek.",
+        ContractSpec(id: "company-2", customer: .designAgency, title: L("Publishing House"),
+                     brief: L("Image quality must stay above 85%, yet hidden data is being stashed inside the images. You'll need to upgrade the transformer."),
                      tier: 4, targetFiles: 35, maxBreaches: 3, payPerFile: 30, completionBonus: 1200, reputationReward: 15,
                      containerWeights: [.png: 5, .pdf: 4, .zip: 1], filesPerMinute: 18),
-        ContractSpec(id: "company-3", customer: .lawFirm, title: "Uluslararası Hukuk",
-                     brief: "Polyglot dosyalar: hem PDF hem ZIP. Ayrıştırıcı seviye 3 olmadan ikinci kimlik görünmez.",
+        ContractSpec(id: "company-3", customer: .lawFirm, title: L("International Law"),
+                     brief: L("Polyglot files: both PDF and ZIP. Without a level 3 parser the second identity stays invisible."),
                      tier: 4, targetFiles: 40, maxBreaches: 2, payPerFile: 34, completionBonus: 1500, reputationReward: 18,
                      containerWeights: [.pdf: 5, .zip: 3, .docx: 2], filesPerMinute: 20),
     ]
 
     static let bankContracts: [ContractSpec] = [
-        ContractSpec(id: "bank-1", customer: .bank, title: "Bölge Bankası",
-                     brief: "Sıfır aktif içerik. Zararsız bile olsa makro, betik, gömülü dosya teslim edilmeyecek. Görünüm bozulsa da olur.",
+        ContractSpec(id: "bank-1", customer: .bank, title: L("Regional Bank"),
+                     brief: L("Zero active content. Even harmless macros, scripts and embedded files must not be delivered. Looks may suffer; that's fine."),
                      tier: 4, targetFiles: 40, maxBreaches: 2, payPerFile: 45, completionBonus: 2500, reputationReward: 20,
                      containerWeights: [.pdf: 4, .xlsx: 3, .docx: 3, .zip: 2], filesPerMinute: 22),
-        ContractSpec(id: "bank-2", customer: .bank, title: "Yatırım Bankası",
-                     brief: "İmzası olmayan tehditler geldi. Tarayıcı bunları göremez; yalnızca dönüştürücü yok eder.",
+        ContractSpec(id: "bank-2", customer: .bank, title: L("Investment Bank"),
+                     brief: L("Threats with no signature have arrived. The scanner can't see them; only the transformer destroys them."),
                      tier: 5, targetFiles: 50, maxBreaches: 2, payPerFile: 60, completionBonus: 4000, reputationReward: 30,
                      containerWeights: [.pdf: 4, .xlsx: 3, .docx: 3, .zip: 2, .png: 2], filesPerMinute: 24),
     ]
 
     static let governmentContracts: [ContractSpec] = [
-        ContractSpec(id: "gov-1", customer: .government, title: "Bakanlık Evrak Akışı",
-                     brief: "Air-gapped ağ. İmza güncellemesi yok, tarayıcı yalnızca yıllanmış makroları tanır. Her şey disarm ile çözülecek.",
+        ContractSpec(id: "gov-1", customer: .government, title: L("Ministry Document Flow"),
+                     brief: L("Air-gapped network. No signature updates; the scanner only recognizes ancient macros. Everything has to be solved by disarming."),
                      tier: 5, targetFiles: 60, maxBreaches: 1, payPerFile: 80, completionBonus: 8000, reputationReward: 40,
                      containerWeights: [.pdf: 5, .docx: 4, .xlsx: 3, .zip: 3, .png: 2], filesPerMinute: 26),
-        ContractSpec(id: "gov-2", customer: .government, title: "Ulusal Arşiv",
-                     brief: "Sonsuz akış. Ne kadar dayanabilirsin?",
+        ContractSpec(id: "gov-2", customer: .government, title: L("National Archive"),
+                     brief: L("Endless flow. How long can you hold out?"),
                      tier: 5, targetFiles: 100, maxBreaches: 1, payPerFile: 100, completionBonus: 15000, reputationReward: 60,
                      containerWeights: [.pdf: 5, .docx: 4, .xlsx: 3, .zip: 4, .png: 3], filesPerMinute: 30),
     ]

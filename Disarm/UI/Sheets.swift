@@ -29,10 +29,10 @@ struct ContractsView: View {
         let active = s.activeContract
         NavigationStack {
             List {
-                Section("Aktif Sözleşme") {
+                Section("Active Contract") {
                     ContractRow(spec: active, progress: s.progress, isActive: true)
                 }
-                Section("Müşteri Politikası") {
+                Section("Customer Policy") {
                     ForEach(PartKind.allCases, id: \.self) { k in
                         let rule = active.policy.rule(for: k)
                         if rule != .dontCare {
@@ -48,29 +48,29 @@ struct ContractsView: View {
                     if active.policy.minImageQuality > 0 {
                         HStack {
                             Image(systemName: "photo").foregroundStyle(Color(Theme.color(.image))).frame(width: 24)
-                            Text("Görsel kalitesi")
+                            Text("Image quality")
                             Spacer()
-                            Text("en az %\(Int(active.policy.minImageQuality * 100))")
+                            Text("at least \("\(Int(active.policy.minImageQuality * 100))%")")
                         }
                     }
-                    Text("Zararlı içerik teslim etmek her koşulda ihlaldir: \(money(active.payPerFile * 3)) ceza ve itibar kaybı.")
+                    Text("Delivering malicious content is always a breach: \(money(active.payPerFile * 3)) penalty and reputation loss.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
-                Section("\(s.location.displayName) sözleşmeleri") {
+                Section("\(s.location.displayName) contracts") {
                     ForEach(Array(s.location.contracts.enumerated()), id: \.offset) { i, c in
                         HStack {
                             Image(systemName: i < s.progress.index ? "checkmark.circle.fill" : (i == s.progress.index ? "play.circle.fill" : "lock.circle"))
                                 .foregroundStyle(i < s.progress.index ? Color(Theme.success) : (i == s.progress.index ? Color(Theme.accent) : .secondary))
                             VStack(alignment: .leading) {
                                 Text(c.title).font(.subheadline.weight(.semibold))
-                                Text("\(c.customer.displayName) · seviye \(c.tier) · \(money(c.payPerFile))/dosya")
+                                Text("\(c.customer.displayName) · tier \(c.tier) · \(money(c.payPerFile))/file")
                                     .font(.caption).foregroundStyle(.secondary)
                             }
                         }
                     }
                 }
             }
-            .navigationTitle("Sözleşmeler")
+            .navigationTitle("Contracts")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
@@ -90,27 +90,29 @@ struct ContractRow: View {
                     Text(spec.customer.displayName).font(.caption).foregroundStyle(.secondary)
                 }
                 Spacer()
-                Text("Seviye \(spec.tier)").font(.caption.weight(.bold))
+                Text("Tier \(spec.tier)").font(.caption.weight(.bold))
                     .padding(.horizontal, 8).padding(.vertical, 4)
                     .background(Color(Theme.warning).opacity(0.25), in: Capsule())
             }
             Text(spec.brief).font(.subheadline)
             HStack {
-                Label("\(money(spec.payPerFile))/dosya", systemImage: "banknote")
+                Label("\(money(spec.payPerFile))/file", systemImage: "banknote")
                 Label("Bonus \(money(spec.completionBonus))", systemImage: "gift")
                 Label("+\(spec.reputationReward)", systemImage: "star")
             }
             .font(.caption).foregroundStyle(.secondary)
             if isActive {
                 HStack {
-                    Text("Teslim \(progress.delivered)/\(spec.targetFiles)")
-                    Text("· Kabul \(progress.accepted)")
-                    Text("· Şikayet \(progress.complaints)")
-                    Text("· İhlal \(progress.breaches)/\(spec.maxBreaches)").foregroundStyle(progress.breaches > 0 ? Color(Theme.danger) : .primary)
+                    Text("Delivered \(progress.delivered)/\(spec.targetFiles)")
+                    Text("· Accepted \(progress.accepted)")
+                    Text("· Complaints \(progress.complaints)")
+                    Text("· Breaches \(progress.breaches)/\(spec.maxBreaches)").foregroundStyle(progress.breaches > 0 ? Color(Theme.danger) : .primary)
                 }
-                .font(.caption.monospacedDigit())
+                .font(.caption2.monospacedDigit())
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
                 if progress.completions > 0 {
-                    Text("Bu sözleşme \(progress.completions) kez tamamlandı").font(.caption2).foregroundStyle(.secondary)
+                    Text("This contract has been completed \(progress.completions) times").font(.caption2).foregroundStyle(.secondary)
                 }
             }
         }
@@ -128,15 +130,15 @@ struct UpgradesView: View {
         NavigationStack {
             List {
                 Section {
-                    HStack { Text("Bakiye"); Spacer(); Text(money(s.money)).bold().foregroundStyle(Color(Theme.success)) }
+                    HStack { Text("Balance"); Spacer(); Text(money(s.money)).bold().foregroundStyle(Color(Theme.success)) }
                 }
-                Section("Altyapı") {
-                    upgradeRow(title: "Bant hızı", subtitle: String(format: "%.2f hücre/sn", s.beltSpeed),
+                Section("Infrastructure") {
+                    upgradeRow(title: String(localized: "Belt speed"), subtitle: String(format: String(localized: "%.2f cells/s"), s.beltSpeed),
                                level: s.beltLevel, max: GameState.maxBeltLevel, cost: s.beltUpgradeCost()) { engine.upgradeBelt() }
-                    upgradeRow(title: "Dosya akışı", subtitle: "Giriş hızı ×" + String(format: "%.1f", s.intakeMultiplier),
+                    upgradeRow(title: String(localized: "File intake"), subtitle: String(localized: "Intake rate ×") + String(format: "%.1f", s.intakeMultiplier),
                                level: s.intakeLevel, max: GameState.maxIntakeLevel, cost: s.intakeUpgradeCost()) { engine.upgradeIntake() }
                 }
-                Section("Modüller") {
+                Section("Modules") {
                     ForEach(ModuleKind.allCases.filter { $0.isPlaceable && $0.maxLevel > 1 }, id: \.self) { k in
                         let lvl = s.level(of: k)
                         upgradeRow(title: k.displayName, subtitle: levelBlurb(k, lvl),
@@ -145,21 +147,21 @@ struct UpgradesView: View {
                     }
                 }
                 Section {
-                    Text("Yükseltmeler tüm mekânlardaki aynı tür modüllere uygulanır. Her seviye işlem hızını %50 artırır.")
+                    Text("Upgrades apply to every module of that type at all sites. Each level speeds processing up by 50%.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle("Yükseltmeler")
+            .navigationTitle("Upgrades")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
 
     func levelBlurb(_ k: ModuleKind, _ lvl: Int) -> String {
         switch k {
-        case .parser: ["", "Üst katmanı açar", "ZIP içinde ZIP'i açar", "Polyglot dosyaları çözer"][min(lvl, 3)]
-        case .transformer: ["", "Görsel −%40, formüller düzleşir", "Görsel −%20, formüller korunur", "Görsel −%5, formüller korunur"][min(lvl, 3)]
-        case .scanner: ["", "Üst katman imzaları", "ZIP içine de bakar", "Daha hızlı"][min(lvl, 3)]
-        default: "İşlem süresi \(String(format: "%.2f", k.processTime(level: lvl))) sn"
+        case .parser: ["", String(localized: "Opens the top layer"), String(localized: "Opens ZIP inside ZIP"), String(localized: "Resolves polyglot files")][min(lvl, 3)]
+        case .transformer: ["", String(localized: "Image −40%, formulas flattened"), String(localized: "Image −20%, formulas kept"), String(localized: "Image −5%, formulas kept")][min(lvl, 3)]
+        case .scanner: ["", String(localized: "Top-layer signatures"), String(localized: "Also looks inside ZIPs"), String(localized: "Faster")][min(lvl, 3)]
+        default: String(localized: "Processing time \(String(format: "%.2f", k.processTime(level: lvl))) s")
         }
     }
 
@@ -169,7 +171,7 @@ struct UpgradesView: View {
         HStack {
             Image(systemName: symbol).foregroundStyle(color).frame(width: 28)
             VStack(alignment: .leading) {
-                Text("\(title)  ·  Seviye \(level)/\(max)").font(.subheadline.weight(.semibold))
+                Text("\(title)  ·  Level \(level)/\(max)").font(.subheadline.weight(.semibold))
                 Text(subtitle).font(.caption).foregroundStyle(.secondary)
             }
             Spacer()
@@ -206,13 +208,13 @@ struct LocationsView: View {
                             Image(systemName: Theme.symbol(l)).font(.title2).foregroundStyle(unlocked ? Color(Theme.accent) : .secondary)
                             VStack(alignment: .leading) {
                                 Text(spec.displayName).font(.headline)
-                                Text("\(spec.width)×\(spec.height) hücre" + (spec.airGapped ? " · air-gapped" : "")).font(.caption).foregroundStyle(.secondary)
+                                Text("\(spec.width)×\(spec.height) cells" + (spec.airGapped ? " · air-gapped" : "")).font(.caption).foregroundStyle(.secondary)
                             }
                             Spacer()
                             if current {
-                                Text("BURADASIN").font(.caption2.bold()).foregroundStyle(Color(Theme.success))
+                                Text("YOU ARE HERE").font(.caption2.bold()).foregroundStyle(Color(Theme.success))
                             } else if unlocked {
-                                Button("Git") { engine.switchLocation(l) }.buttonStyle(.borderedProminent).controlSize(.small)
+                                Button("Go") { engine.switchLocation(l) }.buttonStyle(.borderedProminent).controlSize(.small)
                             } else {
                                 Button {
                                     engine.unlock(l)
@@ -236,11 +238,11 @@ struct LocationsView: View {
                     .padding(.vertical, 4)
                 }
                 Section {
-                    Text("Mekân değiştirince bant üzerindeki dosyalar düşer; hat ve sözleşme ilerlemesi her mekân için ayrı saklanır.")
+                    Text("Switching sites drops the files on the belt; layout and contract progress are stored per site.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle("Mekânlar")
+            .navigationTitle("Sites")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
@@ -262,19 +264,19 @@ struct ModuleConfigView: View {
                             Image(systemName: Theme.symbol(m.kind)).font(.largeTitle).foregroundStyle(Color(Theme.color(m.kind)))
                             VStack(alignment: .leading) {
                                 Text(m.kind.displayName).font(.headline)
-                                Text("Seviye \(level) · \(String(format: "%.2f", m.kind.processTime(level: level))) sn/dosya · çıkış: \(m.facing.displayName)")
+                                Text("Level \(level) · \(String(format: "%.2f", m.kind.processTime(level: level))) s/file · output: \(m.facing.displayName)")
                                     .font(.caption).foregroundStyle(.secondary)
                             }
                         }
                         Text(m.kind.blurb).font(.subheadline)
                         if m.kind == .scanner && engine.state.location.airGapped {
-                            Label("Bu ağda imzalar güncellenmiyor; tarayıcı yalnızca eski makroları tanır.", systemImage: "exclamationmark.triangle")
+                            Label("Signatures don't update on this network; the scanner only recognizes old macros.", systemImage: "exclamationmark.triangle")
                                 .font(.caption).foregroundStyle(Color(Theme.danger))
                         }
                     }
                     if m.kind == .filter {
-                        Section("Hedef parça") {
-                            Picker("Hedef", selection: Binding(
+                        Section("Target part") {
+                            Picker("Target", selection: Binding(
                                 get: { m.config.filterTarget },
                                 set: { engine.setFilter(at: pos, $0) })) {
                                 ForEach(PartKind.filterable, id: \.self) { k in
@@ -286,8 +288,8 @@ struct ModuleConfigView: View {
                         }
                     }
                     if m.kind == .router {
-                        Section("Sağa ayrılacak kap türü") {
-                            Picker("Kap", selection: Binding(
+                        Section("Container type diverted right") {
+                            Picker("Container", selection: Binding(
                                 get: { m.config.routeTarget },
                                 set: { engine.setRoute(at: pos, $0) })) {
                                 ForEach(ContainerKind.allCases, id: \.self) { c in
@@ -299,24 +301,24 @@ struct ModuleConfigView: View {
                     }
                     Section {
                         if m.kind.isPlaceable {
-                            Button { engine.rotate(at: pos) } label: { Label("Döndür (saat yönü)", systemImage: "rotate.right") }
+                            Button { engine.rotate(at: pos) } label: { Label("Rotate (clockwise)", systemImage: "rotate.right") }
                             if level < m.kind.maxLevel {
                                 Button { engine.upgrade(m.kind) } label: {
-                                    Label("Yükselt → Seviye \(level + 1)  (\(money(m.kind.upgradeCost(toLevel: level + 1))))", systemImage: "arrow.up.circle")
+                                    Label("Upgrade → Level \(level + 1)  (\(money(m.kind.upgradeCost(toLevel: level + 1))))", systemImage: "arrow.up.circle")
                                 }
                             }
                             Button(role: .destructive) { engine.remove(at: pos) } label: {
-                                Label("Kaldır (\(money(m.kind.baseCost / 2)) iade)", systemImage: "trash")
+                                Label("Remove (\(money(m.kind.baseCost / 2)) refund)", systemImage: "trash")
                             }
                         } else {
-                            Text("Bu modül mekâna sabittir.").font(.caption).foregroundStyle(.secondary)
+                            Text("This module is fixed to the site.").font(.caption).foregroundStyle(.secondary)
                         }
                     }
                 }
-                .navigationTitle("Modül")
+                .navigationTitle("Module")
                 .navigationBarTitleDisplayMode(.inline)
             } else {
-                ContentUnavailableView("Modül kaldırıldı", systemImage: "xmark.square")
+                ContentUnavailableView("Module removed", systemImage: "xmark.square")
             }
         }
     }
@@ -339,19 +341,19 @@ struct FileInspectorView: View {
                             RoundedRectangle(cornerRadius: 6).fill(Color(Theme.color(f.container))).frame(width: 36, height: 44)
                                 .overlay(Text(f.container.displayName).font(.system(size: 9, weight: .bold)))
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(f.container.displayName + (f.polyglot ? " (polyglot: ayrıca ZIP)" : "")).font(.headline)
-                                Text(f.isOpen ? "Açık · görünür katman \(f.exposedDepth)" : "Kapalı").font(.caption).foregroundStyle(.secondary)
+                                Text(f.container.displayName + (f.polyglot ? " (polyglot: also a ZIP)" : "")).font(.headline)
+                                Text(f.isOpen ? "Open · visible layer \(f.exposedDepth)" : "Closed").font(.caption).foregroundStyle(.secondary)
                                 if f.hasImage {
-                                    Text("Görsel kalitesi %\(Int(f.imageQuality * 100))").font(.caption).foregroundStyle(.secondary)
+                                    Text("Image quality \("\(Int(f.imageQuality * 100))%")").font(.caption).foregroundStyle(.secondary)
                                 }
                                 if let note = item.lastNote, !note.isEmpty {
-                                    Text("Son işlem: \(note)").font(.caption).foregroundStyle(Color(Theme.accent))
+                                    Text("Last step: \(note)").font(.caption).foregroundStyle(Color(Theme.accent))
                                 }
                             }
                         }
                     }
-                    Section("Parçalar") {
-                        if f.parts.isEmpty { Text("Boş kap").foregroundStyle(.secondary) }
+                    Section("Parts") {
+                        if f.parts.isEmpty { Text("Empty container").foregroundStyle(.secondary) }
                         ForEach(f.parts) { p in
                             let exposed = f.isExposed(p)
                             let hiddenNested = p.depth > 0 && !exposed
@@ -359,13 +361,13 @@ struct FileInspectorView: View {
                                 Image(systemName: hiddenNested ? "questionmark.circle" : Theme.symbol(p.kind))
                                     .foregroundStyle(hiddenNested ? .secondary : Color(Theme.color(p.kind))).frame(width: 24)
                                 VStack(alignment: .leading) {
-                                    Text(hiddenNested ? "Gizli içerik (katman \(p.depth))" : p.kind.displayName)
+                                    Text(hiddenNested ? "Hidden content (layer \(p.depth))" : p.kind.displayName)
                                     Text(partStatus(p, exposed: exposed, hiddenNested: hiddenNested, policy: policy))
                                         .font(.caption).foregroundStyle(.secondary)
                                 }
                                 Spacer()
                                 if p.malicious && !hiddenNested {
-                                    Text(p.signatureKnown ? "ZARARLI" : "ZARARLI · imzasız")
+                                    Text(p.signatureKnown ? "MALICIOUS" : "MALICIOUS · no signature")
                                         .font(.caption2.bold()).foregroundStyle(Color(Theme.danger))
                                 }
                             }
@@ -373,28 +375,28 @@ struct FileInspectorView: View {
                     }
                     Section {
                         let o = DeliveryEvaluator.evaluate(f, policy: policy, payPerFile: engine.state.activeContract.payPerFile)
-                        Text(o.breach ? "Şu an teslim edilse: İHLAL (\(money(o.pay)))" : "Şu an teslim edilse: \(money(o.pay)) · kullanılabilirlik %\(Int(o.usability * 100))")
+                        Text(o.breach ? "If delivered now: BREACH (\(money(o.pay)))" : "If delivered now: \(money(o.pay)) · usability \("\(Int(o.usability * 100))%")")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(o.breach ? Color(Theme.danger) : (o.accepted ? Color(Theme.success) : Color(Theme.warning)))
-                        ForEach(o.issues, id: \.self) { Text($0).font(.caption) }
+                        ForEach(o.issues, id: \.self) { Text($0.text).font(.caption) }
                     }
                 }
-                .navigationTitle("Dosya")
+                .navigationTitle("File")
                 .navigationBarTitleDisplayMode(.inline)
             } else {
-                ContentUnavailableView("Dosya hattan ayrıldı", systemImage: "doc.questionmark")
+                ContentUnavailableView("File left the line", systemImage: "doc.questionmark")
             }
         }
     }
 
     func partStatus(_ p: Part, exposed: Bool, hiddenNested: Bool, policy: Policy) -> String {
         var bits: [String] = []
-        if p.depth > 0 { bits.append("katman \(p.depth)") }
-        if hiddenNested { bits.append("ayrıştırıcı bu katmanı açmadı") }
-        else if exposed { bits.append("açık, filtrelenebilir") }
-        else { bits.append("kapalı kapta") }
+        if p.depth > 0 { bits.append(String(localized: "layer \(p.depth)")) }
+        if hiddenNested { bits.append(String(localized: "parser didn't open this layer")) }
+        else if exposed { bits.append(String(localized: "open, filterable")) }
+        else { bits.append(String(localized: "inside closed container")) }
         let rule = policy.rule(for: p.kind)
-        if rule != .dontCare { bits.append("müşteri: \(rule.displayName)") }
+        if rule != .dontCare { bits.append(String(localized: "customer: \(rule.displayName)")) }
         return bits.joined(separator: " · ")
     }
 }
@@ -406,17 +408,17 @@ struct LogView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("İstatistik") {
+                Section("Statistics") {
                     let st = engine.state.stats
-                    LabeledContent("Teslim", value: "\(st.totalDelivered)")
-                    LabeledContent("Kabul", value: "\(st.totalAccepted)")
-                    LabeledContent("İhlal", value: "\(st.totalBreaches)")
-                    LabeledContent("Karantina", value: "\(st.totalQuarantined)")
-                    LabeledContent("Toplam kazanç", value: money(st.totalEarned))
-                    LabeledContent("Kazanç hızı", value: String(format: "%.1f ₺/dk", engine.state.incomeRatePerSec * 60))
+                    LabeledContent("Delivered", value: "\(st.totalDelivered)")
+                    LabeledContent("Accepted", value: "\(st.totalAccepted)")
+                    LabeledContent("Breach", value: "\(st.totalBreaches)")
+                    LabeledContent("Quarantined", value: "\(st.totalQuarantined)")
+                    LabeledContent("Total earned", value: money(st.totalEarned))
+                    LabeledContent("Income rate", value: String(format: "%.1f ₺/dk", engine.state.incomeRatePerSec * 60))
                 }
-                Section("Son olaylar") {
-                    if engine.log.isEmpty { Text("Henüz olay yok").foregroundStyle(.secondary) }
+                Section("Recent events") {
+                    if engine.log.isEmpty { Text("No events yet").foregroundStyle(.secondary) }
                     ForEach(engine.log) { e in
                         HStack(alignment: .top) {
                             Text(e.time, style: .time).font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
@@ -426,10 +428,10 @@ struct LogView: View {
                     }
                 }
                 Section {
-                    Button(role: .destructive) { engine.resetGame() } label: { Label("Oyunu sıfırla", systemImage: "arrow.counterclockwise") }
+                    Button(role: .destructive) { engine.resetGame() } label: { Label("Reset game", systemImage: "arrow.counterclockwise") }
                 }
             }
-            .navigationTitle("Günlük")
+            .navigationTitle("Log")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
@@ -444,10 +446,10 @@ struct OfflineView: View {
     var body: some View {
         VStack(spacing: 14) {
             Image(systemName: "moon.zzz.fill").font(.largeTitle).foregroundStyle(Color(Theme.accent))
-            Text("Sen yokken hat çalıştı").font(.headline)
-            Text("\(Int(seconds / 60)) dakika boyunca pipeline dosya işledi.").font(.subheadline).foregroundStyle(.secondary)
+            Text("The line kept running while you were away").font(.headline)
+            Text("The pipeline processed files for \(Int(seconds / 60)) minutes.").font(.subheadline).foregroundStyle(.secondary)
             Text("+\(money(earned))").font(.system(.largeTitle, design: .rounded).bold()).foregroundStyle(Color(Theme.success))
-            Button("Devam") { dismiss() }.buttonStyle(.borderedProminent)
+            Button("Continue") { dismiss() }.buttonStyle(.borderedProminent)
         }
         .padding()
     }
@@ -462,16 +464,16 @@ struct HelpView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Amaç") {
-                    Text("Müşterilerin dosyaları girişten akar. Sen modülleri ve bantları dizerek dosyaları temizler, paketler ve teslimata ulaştırırsın. Temiz ve sözleşmeye uygun dosya para kazandırır; zararlı içerik teslim etmek ihlaldir.")
+                Section("Goal") {
+                    Text("Customer files flow in from the intake. You arrange modules and belts to clean, package and deliver them. A clean file that meets the contract earns money; delivering malicious content is a breach.")
                 }
-                Section("Gerilim: güvenlik ↔ kullanılabilirlik") {
-                    Text("Her şeyi agresif temizlersen dosya bozulur, müşteri ödemez. Gevşek bırakırsan zararlı kaçar. Muhasebe formül ister, banka hiçbir aktif içerik istemez, tasarım ajansı görsel kalitesi ister.")
+                Section("Tension: security ↔ usability") {
+                    Text("Clean too aggressively and the file breaks, the customer won't pay. Go easy and malware slips through. Accounting wants formulas, the bank wants zero active content, the design agency wants image quality.")
                 }
-                Section("Temel hat") {
-                    Text("Giriş → Ayrıştırıcı → Filtre(Makro) → Paketleyici → Teslimat. Filtre ve dönüştürücü yalnızca açılmış dosyada çalışır; açık dosya teslim edilirse müşteri açamaz.")
+                Section("Basic line") {
+                    Text("Intake → Parser → Filter(Macro) → Packager → Delivery. Filter and transformer only work on opened files; deliver an open file and the customer can't open it.")
                 }
-                Section("Modüller") {
+                Section("Modules") {
                     ForEach(ModuleKind.allCases.filter(\.isPlaceable), id: \.self) { k in
                         HStack(alignment: .top, spacing: 10) {
                             Image(systemName: Theme.symbol(k)).foregroundStyle(Color(Theme.color(k))).frame(width: 24)
@@ -482,17 +484,17 @@ struct HelpView: View {
                         }
                     }
                 }
-                Section("Kontroller") {
-                    Text("Bant aracıyla parmağını sürükle: bant yolu çizilir. Modül aracıyla boş hücreye dokun: yerleşir (yön butonuyla çıkış yönünü seç). Seç aracıyla modüle dokun: ayarlar; bant üzerindeki dosyaya dokun: ne taşıdığını gör.")
+                Section("Controls") {
+                    Text("Drag with the Belt tool to draw a belt path. Tap an empty cell with a module tool to place it (pick the output direction with the Facing button). Tap a module with the Select tool for settings; tap a file on the belt to see what it carries.")
                 }
-                Section("Tehdit seviyeleri") {
-                    Text("1 Makro → 2 Betik → 3 ZIP içinde ZIP (ayrıştırıcı seviye 2) → 4 Polyglot ve gizli veri (ayrıştırıcı seviye 3, dönüştürücü) → 5 Bilinmeyen: imza yok, tarayıcı göremez, sadece dönüştürücü yok eder.")
+                Section("Threat tiers") {
+                    Text("1 Macro → 2 Script → 3 ZIP inside ZIP (parser level 2) → 4 Polyglot and hidden data (parser level 3, transformer) → 5 Unknown: no signature, the scanner can't see it, only the transformer destroys it.")
                 }
             }
-            .navigationTitle("Nasıl Oynanır")
+            .navigationTitle("How to Play")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                Button("Başla") { engine.state.tutorialSeen = true; dismiss() }
+                Button("Start") { engine.state.tutorialSeen = true; dismiss() }
             }
         }
     }

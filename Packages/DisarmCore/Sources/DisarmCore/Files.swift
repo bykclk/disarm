@@ -13,14 +13,14 @@ public enum PartKind: String, Codable, CaseIterable, Sendable {
 
     public var displayName: String {
         switch self {
-        case .text: "Metin"
-        case .image: "Görsel"
-        case .formula: "Formül"
-        case .macro: "Makro"
-        case .script: "Betik"
-        case .embeddedFile: "Gömülü Dosya"
-        case .hiddenData: "Gizli Veri"
-        case .unknown: "Bilinmeyen"
+        case .text: L("Text")
+        case .image: L("Image")
+        case .formula: L("Formula")
+        case .macro: L("Macro")
+        case .script: L("Script")
+        case .embeddedFile: L("Embedded File")
+        case .hiddenData: L("Hidden Data")
+        case .unknown: L("Unknown")
         }
     }
 
@@ -65,7 +65,7 @@ public struct FileItem: Codable, Hashable, Sendable, Identifiable {
     /// Hem PDF hem ZIP gibi iki kimlikli dosya. Derin katmanı ancak gelişmiş ayrıştırıcı görür.
     public var polyglot: Bool
     public var imageQuality: Double
-    /// Üretildiği anda içerdiği parça türleri; "korunsun" kuralı buna göre denetlenir.
+    /// Üretildiği anda içerdiği parça türleri; L("must be kept") kuralı buna göre denetlenir.
     public var originalKinds: Set<PartKind>
     public var tier: Int
 

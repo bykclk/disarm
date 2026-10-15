@@ -117,11 +117,11 @@ final class GameEngine {
 
         var text: String {
             switch self {
-            case .parser: "Paletten Ayrıştırıcı'yı seç ve girişin sağındaki boş bir hücreye koy."
-            case .filter: "Şimdi bir Filtre yerleştir. Makro hedefli gelir; muhasebe makro istemiyor."
-            case .packager: "Paketleyici koy: açık dosya teslim edilirse müşteri açamaz."
-            case .connect: "Bant aracıyla parmağını sürükleyip Giriş → modüller → Teslimat yolunu çiz. Modül çıkış oklarına dikkat."
-            case .deliver: "Hat bağlı! İlk dosyanın teslim edilmesini izle. Dosyaya dokunarak içini görebilirsin."
+            case .parser: String(localized: "Pick the Parser from the palette and place it in an empty cell to the right of the intake.")
+            case .filter: String(localized: "Now place a Filter. It targets macros by default; accounting doesn't want any.")
+            case .packager: String(localized: "Place a Packager: if an open file is delivered, the customer can't open it.")
+            case .connect: String(localized: "With the Belt tool, drag your finger to draw Intake → modules → Delivery. Mind the module output arrows.")
+            case .deliver: String(localized: "Line connected! Watch the first file get delivered. Tap a file to see what's inside.")
             }
         }
     }
@@ -169,21 +169,21 @@ final class GameEngine {
                 recentOutcomes.append((id, !o.breach && o.usability >= 0.9, Date()))
                 if !state.tutorialSeen && !o.breach {
                     state.tutorialSeen = true
-                    toast("İlk teslimat! Artık hat senin.", .good, 3)
+                    toast(String(localized: "First delivery! The line is yours now."), .good, 3)
                 }
                 if o.breach {
                     UINotificationFeedbackGenerator().notificationOccurred(.error)
-                    toast("İHLAL! \(o.issues.first ?? "") \(money(o.pay))", .bad, 3)
-                    addLog(o.issues.first ?? "İhlal", .bad)
+                    toast(String(localized: "BREACH! \(o.issues.first?.text ?? "") \(money(o.pay))"), .bad, 3)
+                    addLog(o.issues.first?.text ?? String(localized: "Breach"), .bad)
                 } else if o.usability < 0.9 {
-                    addLog("Şikayet: " + (o.issues.first ?? "düşük kalite") + " (+\(money(o.pay)))", .warn)
+                    addLog("Complaint: \(o.issues.first?.text ?? String(localized: "low quality")) (+\(money(o.pay)))", .warn)
                 }
             case .contractCompleted(let c):
-                toast("Sözleşme tamamlandı: \(c.title) +\(money(c.completionBonus))", .good, 4)
-                addLog("Sözleşme tamamlandı: \(c.title). Bonus \(money(c.completionBonus)), itibar +\(c.reputationReward)", .good)
+                toast(String(localized: "Contract complete: \(c.title) +\(money(c.completionBonus))"), .good, 4)
+                addLog(String(localized: "Contract complete: \(c.title). Bonus \(money(c.completionBonus)), reputation +\(c.reputationReward)"), .good)
             case .contractFailed(let c):
-                toast("Sözleşme iptal: \(c.title). Çok fazla ihlal.", .bad, 4)
-                addLog("Sözleşme iptal edildi: \(c.title). İtibar -5", .bad)
+                toast(String(localized: "Contract cancelled: \(c.title). Too many breaches."), .bad, 4)
+                addLog(String(localized: "Contract cancelled: \(c.title). Reputation -5"), .bad)
             case .dropped:
                 break
             case .spawned, .processed, .quarantined:
@@ -261,15 +261,15 @@ final class GameEngine {
         case .failure(let e):
             if quiet { return }
             switch e {
-            case .insufficientFunds(let n): toast("Yetersiz bakiye: \(money(n)) gerekli", .warn)
-            case .cellOccupied: toast("Hücre dolu", .warn)
+            case .insufficientFunds(let n): toast(String(localized: "Insufficient funds: \(money(n)) needed"), .warn)
+            case .cellOccupied: toast(String(localized: "Cell is occupied"), .warn)
             case .outOfBounds: break
             case .notPlaceable: break
-            case .notAvailableHere: toast("Bu modül bu mekânda yok", .warn)
-            case .protected: toast("Giriş ve teslimat sabittir", .warn)
-            case .maxLevel: toast("Zaten en yüksek seviye", .info)
-            case .locked: toast("Kilitli", .warn)
-            case .reputationTooLow(let n): toast("İtibar yetersiz: \(n) gerekli", .warn)
+            case .notAvailableHere: toast(String(localized: "This module isn't available at this site"), .warn)
+            case .protected: toast(String(localized: "Intake and delivery are fixed"), .warn)
+            case .maxLevel: toast(String(localized: "Already at max level"), .info)
+            case .locked: toast(String(localized: "Kilitli"), .warn)
+            case .reputationTooLow(let n): toast(String(localized: "Reputation too low: \(n) needed"), .warn)
             }
         }
     }
@@ -288,7 +288,7 @@ final class GameEngine {
         let r = state.unlockLocation(l)
         report(r)
         if r.isSuccess {
-            toast("\(l.spec.displayName) açıldı!", .good, 3)
+            toast(String(localized: "\(l.spec.displayName) unlocked!"), .good, 3)
             switchLocation(l)
         }
     }
@@ -311,7 +311,7 @@ final class GameEngine {
         }
         sim.clear()
         layoutVersion += 1
-        toast("Hat temizlendi, bedeller iade edildi", .info)
+        toast(String(localized: "Line cleared, costs refunded"), .info)
     }
 
     func resetGame() {

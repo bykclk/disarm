@@ -1,0 +1,1367 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    " (polyglot: also a ZIP)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " (polyglot: ayrıca ZIP)"
+          }
+        }
+      }
+    },
+    " · air-gap": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " · air-gap"
+          }
+        }
+      }
+    },
+    " · air-gapped": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " · air-gapped"
+          }
+        }
+      }
+    },
+    "$": {
+      "comment": "In-game currency symbol",
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "₺"
+          }
+        }
+      }
+    },
+    "%.2f cells/s": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%.2f hücre/sn"
+          }
+        }
+      }
+    },
+    "%@  ·  Level %lld/%lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@  ·  Seviye %lld/%lld"
+          }
+        }
+      }
+    },
+    "%@ contracts": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ sözleşmeleri"
+          }
+        }
+      }
+    },
+    "%@ unlocked!": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ açıldı!"
+          }
+        }
+      }
+    },
+    "%@ · tier %lld · %@/file": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · seviye %lld · %@/dosya"
+          }
+        }
+      }
+    },
+    "%@/file": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/dosya"
+          }
+        }
+      }
+    },
+    "%@: tap an empty cell · facing %@ · tap same module: rotate": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: boş hücreye dokun · yönü %@ · aynı modüle dokun: döndür"
+          }
+        }
+      }
+    },
+    "%lld×%lld cells": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld×%lld hücre"
+          }
+        }
+      }
+    },
+    "1 Macro → 2 Script → 3 ZIP inside ZIP (parser level 2) → 4 Polyglot and hidden data (parser level 3, transformer) → 5 Unknown: no signature, the scanner can't see it, only the transformer destroys it.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Makro → 2 Betik → 3 ZIP içinde ZIP (ayrıştırıcı seviye 2) → 4 Polyglot ve gizli veri (ayrıştırıcı seviye 3, dönüştürücü) → 5 Bilinmeyen: imza yok, tarayıcı göremez, sadece dönüştürücü yok eder."
+          }
+        }
+      }
+    },
+    "Accepted": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kabul"
+          }
+        }
+      }
+    },
+    "Active Contract": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktif Sözleşme"
+          }
+        }
+      }
+    },
+    "Already at max level": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zaten en yüksek seviye"
+          }
+        }
+      }
+    },
+    "Also looks inside ZIPs": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ZIP içine de bakar"
+          }
+        }
+      }
+    },
+    "BREACH! %@ %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İHLAL! %@ %@"
+          }
+        }
+      }
+    },
+    "Balance": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bakiye"
+          }
+        }
+      }
+    },
+    "Basic line": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temel hat"
+          }
+        }
+      }
+    },
+    "Belt": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bant"
+          }
+        }
+      }
+    },
+    "Belt speed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bant hızı"
+          }
+        }
+      }
+    },
+    "Bonus %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bonus %@"
+          }
+        }
+      }
+    },
+    "Breach": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İhlal"
+          }
+        }
+      }
+    },
+    "Breach %lld/%lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İhlal %lld/%lld"
+          }
+        }
+      }
+    },
+    "Cell is occupied": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hücre dolu"
+          }
+        }
+      }
+    },
+    "Clean too aggressively and the file breaks, the customer won't pay. Go easy and malware slips through. Accounting wants formulas, the bank wants zero active content, the design agency wants image quality.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Her şeyi agresif temizlersen dosya bozulur, müşteri ödemez. Gevşek bırakırsan zararlı kaçar. Muhasebe formül ister, banka hiçbir aktif içerik istemez, tasarım ajansı görsel kalitesi ister."
+          }
+        }
+      }
+    },
+    "Clear Line": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hattı Temizle"
+          }
+        }
+      }
+    },
+    "Closed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapalı"
+          }
+        }
+      }
+    },
+    "Complaint: %@ (+%@)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şikayet: %@ (+%@)"
+          }
+        }
+      }
+    },
+    "Container": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kap"
+          }
+        }
+      }
+    },
+    "Container type diverted right": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sağa ayrılacak kap türü"
+          }
+        }
+      }
+    },
+    "Continue": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Devam"
+          }
+        }
+      }
+    },
+    "Contract cancelled: %@. Reputation -5": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sözleşme iptal edildi: %@. İtibar -5"
+          }
+        }
+      }
+    },
+    "Contract cancelled: %@. Too many breaches.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sözleşme iptal: %@. Çok fazla ihlal."
+          }
+        }
+      }
+    },
+    "Contract complete: %@ +%@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sözleşme tamamlandı: %@ +%@"
+          }
+        }
+      }
+    },
+    "Contract complete: %@. Bonus %@, reputation +%lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sözleşme tamamlandı: %@. Bonus %@, itibar +%lld"
+          }
+        }
+      }
+    },
+    "Contracts": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sözleşmeler"
+          }
+        }
+      }
+    },
+    "Controls": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kontroller"
+          }
+        }
+      }
+    },
+    "Customer Policy": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Müşteri Politikası"
+          }
+        }
+      }
+    },
+    "Customer files flow in from the intake. You arrange modules and belts to clean, package and deliver them. A clean file that meets the contract earns money; delivering malicious content is a breach.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Müşterilerin dosyaları girişten akar. Sen modülleri ve bantları dizerek dosyaları temizler, paketler ve teslimata ulaştırırsın. Temiz ve sözleşmeye uygun dosya para kazandırır; zararlı içerik teslim etmek ihlaldir."
+          }
+        }
+      }
+    },
+    "Delivered": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teslim"
+          }
+        }
+      }
+    },
+    "Delivered %lld/%lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teslim %lld/%lld"
+          }
+        }
+      }
+    },
+    "Delivering malicious content is always a breach: %@ penalty and reputation loss.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zararlı içerik teslim etmek her koşulda ihlaldir: %@ ceza ve itibar kaybı."
+          }
+        }
+      }
+    },
+    "Drag with the Belt tool to draw a belt path. Tap an empty cell with a module tool to place it (pick the output direction with the Facing button). Tap a module with the Select tool for settings; tap a file on the belt to see what it carries.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bant aracıyla parmağını sürükle: bant yolu çizilir. Modül aracıyla boş hücreye dokun: yerleşir (yön butonuyla çıkış yönünü seç). Seç aracıyla modüle dokun: ayarlar; bant üzerindeki dosyaya dokun: ne taşıdığını gör."
+          }
+        }
+      }
+    },
+    "Empty container": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Boş kap"
+          }
+        }
+      }
+    },
+    "Erase": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sil"
+          }
+        }
+      }
+    },
+    "Event Log": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Olay Günlüğü"
+          }
+        }
+      }
+    },
+    "Facing": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yön"
+          }
+        }
+      }
+    },
+    "Faster": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daha hızlı"
+          }
+        }
+      }
+    },
+    "File": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosya"
+          }
+        }
+      }
+    },
+    "File intake": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosya akışı"
+          }
+        }
+      }
+    },
+    "File left the line": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosya hattan ayrıldı"
+          }
+        }
+      }
+    },
+    "First delivery! The line is yours now.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İlk teslimat! Artık hat senin."
+          }
+        }
+      }
+    },
+    "Go": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Git"
+          }
+        }
+      }
+    },
+    "Goal": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Amaç"
+          }
+        }
+      }
+    },
+    "Hidden content (layer %lld)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gizli içerik (katman %lld)"
+          }
+        }
+      }
+    },
+    "How to Play": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nasıl Oynanır"
+          }
+        }
+      }
+    },
+    "If delivered now: %@ · usability %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şu an teslim edilse: %@ · kullanılabilirlik %@"
+          }
+        }
+      }
+    },
+    "If delivered now: BREACH (%@)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şu an teslim edilse: İHLAL (%@)"
+          }
+        }
+      }
+    },
+    "Image quality": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görsel kalitesi"
+          }
+        }
+      }
+    },
+    "Image quality %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görsel kalitesi %@"
+          }
+        }
+      }
+    },
+    "Image −20%, formulas kept": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görsel −%20, formüller korunur"
+          }
+        }
+      }
+    },
+    "Image −40%, formulas flattened": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görsel −%40, formüller düzleşir"
+          }
+        }
+      }
+    },
+    "Image −5%, formulas kept": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görsel −%5, formüller korunur"
+          }
+        }
+      }
+    },
+    "Income rate": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kazanç hızı"
+          }
+        }
+      }
+    },
+    "Infrastructure": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Altyapı"
+          }
+        }
+      }
+    },
+    "Insufficient funds: %@ needed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yetersiz bakiye: %@ gerekli"
+          }
+        }
+      }
+    },
+    "Intake and delivery are fixed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giriş ve teslimat sabittir"
+          }
+        }
+      }
+    },
+    "Intake rate ×": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giriş hızı ×"
+          }
+        }
+      }
+    },
+    "Intake → Parser → Filter(Macro) → Packager → Delivery. Filter and transformer only work on opened files; deliver an open file and the customer can't open it.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giriş → Ayrıştırıcı → Filtre(Makro) → Paketleyici → Teslimat. Filtre ve dönüştürücü yalnızca açılmış dosyada çalışır; açık dosya teslim edilirse müşteri açamaz."
+          }
+        }
+      }
+    },
+    "Last step: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son işlem: %@"
+          }
+        }
+      }
+    },
+    "Level %lld · %@ s/file · output: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seviye %lld · %@ sn/dosya · çıkış: %@"
+          }
+        }
+      }
+    },
+    "Line cleared, costs refunded": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hat temizlendi, bedeller iade edildi"
+          }
+        }
+      }
+    },
+    "Line connected! Watch the first file get delivered. Tap a file to see what's inside.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hat bağlı! İlk dosyanın teslim edilmesini izle. Dosyaya dokunarak içini görebilirsin."
+          }
+        }
+      }
+    },
+    "Line isn't connected to delivery: files will pile up or drop.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hat teslimata bağlı değil: dosyalar birikecek ya da düşecek."
+          }
+        }
+      }
+    },
+    "Log": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Günlük"
+          }
+        }
+      }
+    },
+    "MALICIOUS": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ZARARLI"
+          }
+        }
+      }
+    },
+    "MALICIOUS · no signature": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ZARARLI · imzasız"
+          }
+        }
+      }
+    },
+    "MAX": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MAX"
+          }
+        }
+      }
+    },
+    "Module": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modül"
+          }
+        }
+      }
+    },
+    "Module removed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modül kaldırıldı"
+          }
+        }
+      }
+    },
+    "Modules": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modüller"
+          }
+        }
+      }
+    },
+    "No events yet": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Henüz olay yok"
+          }
+        }
+      }
+    },
+    "Now place a Filter. It targets macros by default; accounting doesn't want any.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şimdi bir Filtre yerleştir. Makro hedefli gelir; muhasebe makro istemiyor."
+          }
+        }
+      }
+    },
+    "Open · visible layer %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Açık · görünür katman %lld"
+          }
+        }
+      }
+    },
+    "Opens ZIP inside ZIP": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ZIP içinde ZIP'i açar"
+          }
+        }
+      }
+    },
+    "Opens the top layer": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üst katmanı açar"
+          }
+        }
+      }
+    },
+    "Parts": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parçalar"
+          }
+        }
+      }
+    },
+    "Pick the Parser from the palette and place it in an empty cell to the right of the intake.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paletten Ayrıştırıcı'yı seç ve girişin sağındaki boş bir hücreye koy."
+          }
+        }
+      }
+    },
+    "Place a Packager: if an open file is delivered, the customer can't open it.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paketleyici koy: açık dosya teslim edilirse müşteri açamaz."
+          }
+        }
+      }
+    },
+    "Processing time %@ s": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İşlem süresi %@ sn"
+          }
+        }
+      }
+    },
+    "Quarantined": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Karantina"
+          }
+        }
+      }
+    },
+    "Recent events": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son olaylar"
+          }
+        }
+      }
+    },
+    "Remove (%@ refund)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kaldır (%@ iade)"
+          }
+        }
+      }
+    },
+    "Reputation too low: %lld needed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İtibar yetersiz: %lld gerekli"
+          }
+        }
+      }
+    },
+    "Reset game": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oyunu sıfırla"
+          }
+        }
+      }
+    },
+    "Resolves polyglot files": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Polyglot dosyaları çözer"
+          }
+        }
+      }
+    },
+    "Rotate (clockwise)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Döndür (saat yönü)"
+          }
+        }
+      }
+    },
+    "Select": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seç"
+          }
+        }
+      }
+    },
+    "Signatures don't update on this network; the scanner only recognizes old macros.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu ağda imzalar güncellenmiyor; tarayıcı yalnızca eski makroları tanır."
+          }
+        }
+      }
+    },
+    "Sites": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mekânlar"
+          }
+        }
+      }
+    },
+    "Start": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Başla"
+          }
+        }
+      }
+    },
+    "Statistics": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İstatistik"
+          }
+        }
+      }
+    },
+    "Switching sites drops the files on the belt; layout and contract progress are stored per site.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mekân değiştirince bant üzerindeki dosyalar düşer; hat ve sözleşme ilerlemesi her mekân için ayrı saklanır."
+          }
+        }
+      }
+    },
+    "Tap a module: settings · Tap a file: see contents · Tap a belt: rotate": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modüle dokun: ayarlar · Dosyaya dokun: içeriği gör · Banta dokun: döndür"
+          }
+        }
+      }
+    },
+    "Tap or drag: remove (modules refund 50%)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dokun ya da sürükle: kaldır (modüller %50 iade)"
+          }
+        }
+      }
+    },
+    "Tap: place belt · Drag: draw belts · Tap existing belt: rotate": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dokun: bant koy · Sürükle: bant çiz · Mevcut banta dokun: döndür"
+          }
+        }
+      }
+    },
+    "Target": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hedef"
+          }
+        }
+      }
+    },
+    "Target part": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hedef parça"
+          }
+        }
+      }
+    },
+    "Tension: security ↔ usability": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerilim: güvenlik ↔ kullanılabilirlik"
+          }
+        }
+      }
+    },
+    "The line kept running while you were away": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sen yokken hat çalıştı"
+          }
+        }
+      }
+    },
+    "The pipeline processed files for %lld minutes.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pipeline %lld dakika boyunca dosya işledi."
+          }
+        }
+      }
+    },
+    "This contract has been completed %lld times": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu sözleşme %lld kez tamamlandı"
+          }
+        }
+      }
+    },
+    "This module is fixed to the site.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu modül mekâna sabittir."
+          }
+        }
+      }
+    },
+    "This module isn't available at this site": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu modül bu mekânda yok"
+          }
+        }
+      }
+    },
+    "Threat tiers": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tehdit seviyeleri"
+          }
+        }
+      }
+    },
+    "Tier %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seviye %lld"
+          }
+        }
+      }
+    },
+    "Top-layer signatures": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üst katman imzaları"
+          }
+        }
+      }
+    },
+    "Total earned": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toplam kazanç"
+          }
+        }
+      }
+    },
+    "Upgrade → Level %lld  (%@)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yükselt → Seviye %lld  (%@)"
+          }
+        }
+      }
+    },
+    "Upgrades": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yükseltmeler"
+          }
+        }
+      }
+    },
+    "Upgrades apply to every module of that type at all sites. Each level speeds processing up by 50%.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yükseltmeler tüm mekânlardaki aynı tür modüllere uygulanır. Her seviye işlem hızını %50 artırır."
+          }
+        }
+      }
+    },
+    "With the Belt tool, drag your finger to draw Intake → modules → Delivery. Mind the module output arrows.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bant aracıyla parmağını sürükleyip Giriş → modüller → Teslimat yolunu çiz. Modül çıkış oklarına dikkat."
+          }
+        }
+      }
+    },
+    "YOU ARE HERE": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BURADASIN"
+          }
+        }
+      }
+    },
+    "at least %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "en az %@"
+          }
+        }
+      }
+    },
+    "customer: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "müşteri: %@"
+          }
+        }
+      }
+    },
+    "inside closed container": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kapalı kapta"
+          }
+        }
+      }
+    },
+    "layer %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "katman %lld"
+          }
+        }
+      }
+    },
+    "low quality": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "düşük kalite"
+          }
+        }
+      }
+    },
+    "open, filterable": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "açık, filtrelenebilir"
+          }
+        }
+      }
+    },
+    "parser didn't open this layer": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ayrıştırıcı bu katmanı açmadı"
+          }
+        }
+      }
+    },
+    "· Accepted %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· Kabul %lld"
+          }
+        }
+      }
+    },
+    "· Breaches %lld/%lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· İhlal %lld/%lld"
+          }
+        }
+      }
+    },
+    "· Complaints %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· Şikayet %lld"
+          }
+        }
+      }
+    },
+    "★ %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "★ %lld"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

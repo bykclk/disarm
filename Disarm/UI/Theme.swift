@@ -101,9 +101,11 @@ extension Color {
     init(_ ui: UIColor) { self.init(uiColor: ui) }
 }
 
+/// Oyun içi para: simge dile göre (₺ / $), binlik ayırıcı yerel ayara göre.
 func money(_ v: Int) -> String {
     let f = NumberFormatter()
     f.numberStyle = .decimal
-    f.groupingSeparator = "."
-    return "₺" + (f.string(from: NSNumber(value: v)) ?? "\(v)")
+    f.locale = .current
+    let symbol = String(localized: "$", comment: "In-game currency symbol")
+    return symbol + (f.string(from: NSNumber(value: v)) ?? "\(v)")
 }

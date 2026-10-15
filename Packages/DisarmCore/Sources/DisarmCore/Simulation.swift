@@ -195,11 +195,11 @@ public struct Simulation: Codable, Hashable, Sendable {
         notes.first.map { n in
             switch n {
             case .removed(let k, let c): "-\(c) \(k.displayName)"
-            case .opened(let d): "açıldı (katman \(d))"
+            case .opened(let d): L("opened (layer \(d))")
             case .polyglotUnhandled: "polyglot!"
-            case .closed: "paketlendi"
-            case .imageDegraded(let f): "görsel ×\(String(format: "%.2f", f))"
-            case .formulasFlattened(let n): "\(n) formül düzleşti"
+            case .closed: L("packaged")
+            case .imageDegraded(let f): L("image ×\(String(format: "%.2f", f))")
+            case .formulasFlattened(let n): L("\(n) formulas flattened")
             case .noEffect(let s): s
             }
         }
