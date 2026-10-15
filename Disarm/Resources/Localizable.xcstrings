@@ -1381,6 +1381,16 @@
           }
         }
       }
+    },
+    "Save file repaired after update: %lld fixes": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kayıt güncelleme sonrası onarıldı: %lld düzeltme"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

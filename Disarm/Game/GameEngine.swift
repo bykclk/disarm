@@ -80,6 +80,10 @@ final class GameEngine {
             state = s
             sim = saved.sim
             if let report { sheet = .offline(seconds: report.seconds, earned: report.earned) }
+            let visible = saved.repairs.filter { if case .migrated = $0 { false } else { true } }
+            if !visible.isEmpty {
+                addLog(String(localized: "Save file repaired after update: \(visible.count) fixes"), .warn)
+            }
         } else {
             let fresh = GameState()
             state = fresh
@@ -371,24 +375,26 @@ final class GameEngine {
 }
 
 struct SaveStore {
-    struct Payload: Codable {
-        var state: GameState
-        var sim: Simulation
-    }
-
-    private var url: URL {
+    private var dir: URL {
         let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir.appendingPathComponent("disarm-save.json")
+        return dir
     }
+    private var url: URL { dir.appendingPathComponent("disarm-save.json") }
+    /// Kurtarılamayan kayıt silinmez, buraya taşınır.
+    private var corruptURL: URL { dir.appendingPathComponent("disarm-save.corrupt.json") }
 
-    func load() -> Payload? {
+    /// Eski ve eksik kayıtları onararak yükler; `state` çözülemiyorsa nil döner ve dosyayı kenara koyar.
+    func load() -> LoadedSave? {
         guard let data = try? Data(contentsOf: url) else { return nil }
-        return try? JSONDecoder().decode(Payload.self, from: data)
+        if let loaded = SaveCodec.decode(data) { return loaded }
+        try? FileManager.default.removeItem(at: corruptURL)
+        try? FileManager.default.moveItem(at: url, to: corruptURL)
+        return nil
     }
 
     func save(state: GameState, sim: Simulation) {
-        guard let data = try? JSONEncoder().encode(Payload(state: state, sim: sim)) else { return }
+        guard let data = try? SaveCodec.encode(state: state, sim: sim) else { return }
         try? data.write(to: url, options: .atomic)
     }
 }
