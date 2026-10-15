@@ -832,6 +832,16 @@
         }
       }
     },
+    "Music": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Müzik"
+          }
+        }
+      }
+    },
     "No events yet": {
       "localizations": {
         "tr": {
@@ -1018,6 +1028,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mekânlar"
+          }
+        }
+      }
+    },
+    "Sound effects": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ses efektleri"
           }
         }
       }

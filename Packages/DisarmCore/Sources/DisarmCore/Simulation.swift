@@ -16,7 +16,7 @@ public struct MovingItem: Codable, Hashable, Sendable, Identifiable {
 
 public enum GameEvent: Equatable, Sendable {
     case spawned(UUID)
-    case processed(UUID, ModuleKind, [ProcessNote])
+    case processed(UUID, GridPos, ModuleKind, [ProcessNote])
     case delivered(UUID, DeliveryOutcome)
     case quarantined(UUID)
     case contractCompleted(ContractSpec)
@@ -165,7 +165,7 @@ public struct Simulation: Codable, Hashable, Sendable {
         // İşlem bir kez uygulanır; sonra çıkış bekler.
         if item.lastNote == nil {
             let notes = ModuleProcessor.apply(m, level: state.level(of: m.kind), airGapped: spec.airGapped, to: &item.file)
-            if !notes.isEmpty { events.append(.processed(item.id, m.kind, notes)) }
+            if !notes.isEmpty { events.append(.processed(item.id, item.pos, m.kind, notes)) }
             item.lastNote = Self.describe(notes) ?? ""
         }
 
@@ -191,7 +191,7 @@ public struct Simulation: Codable, Hashable, Sendable {
         items[i] = item
     }
 
-    static func describe(_ notes: [ProcessNote]) -> String? {
+    public static func describe(_ notes: [ProcessNote]) -> String? {
         notes.first.map { n in
             switch n {
             case .removed(let k, let c): "-\(c) \(k.displayName)"

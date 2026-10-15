@@ -11,7 +11,12 @@ struct DisarmApp: App {
                 .preferredColorScheme(.dark)
         }
         .onChange(of: phase) { _, new in
-            if new == .background || new == .inactive { engine.save() }
+            if new == .background || new == .inactive {
+                engine.save()
+                engine.audio.pauseMusic()
+            } else if new == .active {
+                engine.audio.startMusic()
+            }
         }
     }
 }

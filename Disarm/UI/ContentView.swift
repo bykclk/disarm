@@ -44,6 +44,8 @@ struct HUDView: View {
                 Label(money(s.money), systemImage: "banknote")
                     .font(.system(.headline, design: .rounded).weight(.bold))
                     .foregroundStyle(Color(Theme.success))
+                    .contentTransition(.numericText(value: Double(s.money)))
+                    .animation(.snappy(duration: 0.35), value: s.money)
                 Label("\(s.reputation)", systemImage: "star.fill")
                     .font(.system(.subheadline, design: .rounded).weight(.semibold))
                     .foregroundStyle(Color(Theme.warning))
@@ -64,6 +66,13 @@ struct HUDView: View {
                     Button { engine.sheet = .locations } label: { Label("Sites", systemImage: "map") }
                     Button { engine.sheet = .log } label: { Label("Event Log", systemImage: "list.bullet.rectangle") }
                     Button { engine.sheet = .help } label: { Label("How to Play", systemImage: "questionmark.circle") }
+                    Divider()
+                    Toggle(isOn: Binding(get: { engine.audio.sfxEnabled }, set: { engine.audio.sfxEnabled = $0 })) {
+                        Label("Sound effects", systemImage: "speaker.wave.2")
+                    }
+                    Toggle(isOn: Binding(get: { engine.audio.musicEnabled }, set: { engine.audio.musicEnabled = $0 })) {
+                        Label("Music", systemImage: "music.note")
+                    }
                     Divider()
                     Button(role: .destructive) { engine.clearLayout() } label: { Label("Clear Line", systemImage: "trash") }
                 } label: {

@@ -36,6 +36,15 @@ struct Toast: Identifiable, Equatable {
     var until: Date
 }
 
+/// Sahnenin tükettiği görsel efekt istekleri.
+enum FxEvent {
+    case processed(GridPos, text: String, removed: Bool)
+    case delivered(pay: Int, good: Bool)
+    case breach
+    case contractCompleted
+    case contractFailed
+}
+
 struct LogEntry: Identifiable {
     let id = UUID()
     var time: Date
@@ -57,6 +66,9 @@ final class GameEngine {
     var log: [LogEntry] = []
     var sheet: SheetKind?
     var recentOutcomes: [(id: UUID, good: Bool, at: Date)] = []
+    /// Sahne her karede boşaltır.
+    var fx: [FxEvent] = []
+    let audio = AudioManager.shared
 
     private var saveTimer: Double = 0
     private let store = SaveStore()
@@ -166,27 +178,48 @@ final class GameEngine {
         for e in events {
             switch e {
             case .delivered(let id, let o):
-                recentOutcomes.append((id, !o.breach && o.usability >= 0.9, Date()))
+                let good = !o.breach && o.usability >= 0.9
+                recentOutcomes.append((id, good, Date()))
+                fx.append(.delivered(pay: o.pay, good: good))
                 if !state.tutorialSeen && !o.breach {
                     state.tutorialSeen = true
                     toast(String(localized: "First delivery! The line is yours now."), .good, 3)
                 }
                 if o.breach {
                     UINotificationFeedbackGenerator().notificationOccurred(.error)
+                    audio.play(.breach)
+                    fx.append(.breach)
                     toast(String(localized: "BREACH! \(o.issues.first?.text ?? "") \(money(o.pay))"), .bad, 3)
                     addLog(o.issues.first?.text ?? String(localized: "Breach"), .bad)
                 } else if o.usability < 0.9 {
+                    audio.play(.complaint, volume: 0.7)
                     addLog("Complaint: \(o.issues.first?.text ?? String(localized: "low quality")) (+\(money(o.pay)))", .warn)
+                } else {
+                    audio.play(.deliver, volume: 0.6)
                 }
             case .contractCompleted(let c):
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                audio.play(.contract)
+                fx.append(.contractCompleted)
                 toast(String(localized: "Contract complete: \(c.title) +\(money(c.completionBonus))"), .good, 4)
                 addLog(String(localized: "Contract complete: \(c.title). Bonus \(money(c.completionBonus)), reputation +\(c.reputationReward)"), .good)
             case .contractFailed(let c):
+                audio.play(.error)
+                fx.append(.contractFailed)
                 toast(String(localized: "Contract cancelled: \(c.title). Too many breaches."), .bad, 4)
                 addLog(String(localized: "Contract cancelled: \(c.title). Reputation -5"), .bad)
-            case .dropped:
-                break
-            case .spawned, .processed, .quarantined:
+            case .processed(_, let pos, _, let notes):
+                for n in notes {
+                    switch n {
+                    case .removed(let k, let c):
+                        fx.append(.processed(pos, text: "−\(c > 1 ? "\(c)× " : "")\(k.displayName)", removed: true))
+                    case .opened, .closed, .imageDegraded, .formulasFlattened, .polyglotUnhandled:
+                        if let t = Simulation.describe([n]) { fx.append(.processed(pos, text: t, removed: false)) }
+                    case .noEffect:
+                        break
+                    }
+                }
+            case .dropped, .spawned, .quarantined:
                 break
             }
         }
@@ -211,21 +244,21 @@ final class GameEngine {
             if let m = state.grid[p]?.module {
                 if m.kind.isPlaceable || m.kind == .source || m.kind == .sink { sheet = .module(p) }
             } else if state.grid[p]?.beltDirection != nil {
-                report(state.rotate(at: p))
+                report(state.rotate(at: p), sound: .rotate)
             }
         case .belt:
             if state.grid[p]?.beltDirection != nil {
-                report(state.rotate(at: p))
+                report(state.rotate(at: p), sound: .rotate)
             } else {
-                report(state.placeBelt(at: p, facing: brush))
+                report(state.placeBelt(at: p, facing: brush), sound: .place)
             }
         case .erase:
-            report(state.remove(at: p))
+            report(state.remove(at: p), sound: .remove)
         case .place(let kind):
             if let m = state.grid[p]?.module, m.kind == kind {
-                report(state.rotate(at: p))
+                report(state.rotate(at: p), sound: .rotate)
             } else {
-                report(state.placeModule(kind, at: p, facing: brush))
+                report(state.placeModule(kind, at: p, facing: brush), sound: .place)
             }
         }
     }
@@ -237,29 +270,31 @@ final class GameEngine {
         if state.grid[a]?.beltDirection != nil {
             state.placeBelt(at: a, facing: dir)
         } else if state.grid[a] == nil {
-            report(state.placeBelt(at: a, facing: dir), quiet: true)
+            report(state.placeBelt(at: a, facing: dir), quiet: true, sound: .tap)
         }
         if state.grid[b]?.module == nil {
-            report(state.placeBelt(at: b, facing: dir), quiet: true)
+            report(state.placeBelt(at: b, facing: dir), quiet: true, sound: .tap)
         }
         layoutVersion += 1
     }
 
     func dragErase(_ p: GridPos) {
         guard tool == .erase, state.grid[p]?.beltDirection != nil else { return }
-        report(state.remove(at: p), quiet: true)
+        report(state.remove(at: p), quiet: true, sound: .tap)
     }
 
     func itemTapped(_ id: UUID) {
         sheet = .file(id)
     }
 
-    private func report(_ r: Result<Void, GameState.ActionError>, quiet: Bool = false) {
+    private func report(_ r: Result<Void, GameState.ActionError>, quiet: Bool = false, sound: AudioManager.Sfx? = nil) {
         switch r {
         case .success:
             layoutVersion += 1
+            if let sound { audio.play(sound) }
         case .failure(let e):
             if quiet { return }
+            audio.play(.error, volume: 0.5)
             switch e {
             case .insufficientFunds(let n): toast(String(localized: "Insufficient funds: \(money(n)) needed"), .warn)
             case .cellOccupied: toast(String(localized: "Cell is occupied"), .warn)
@@ -276,18 +311,19 @@ final class GameEngine {
 
     // MARK: - Eylemler
 
-    func rotate(at p: GridPos) { report(state.rotate(at: p)) }
-    func remove(at p: GridPos) { report(state.remove(at: p)); sheet = nil }
+    func rotate(at p: GridPos) { report(state.rotate(at: p), sound: .rotate) }
+    func remove(at p: GridPos) { report(state.remove(at: p), sound: .remove); sheet = nil }
     func setFilter(at p: GridPos, _ k: PartKind) { report(state.configure(at: p) { $0.filterTarget = k }) }
     func setRoute(at p: GridPos, _ c: ContainerKind) { report(state.configure(at: p) { $0.routeTarget = c }) }
-    func upgrade(_ k: ModuleKind) { report(state.upgradeModule(k)); if state.level(of: k) > 1 { layoutVersion += 1 } }
-    func upgradeBelt() { report(state.upgradeBelt()) }
-    func upgradeIntake() { report(state.upgradeIntake()) }
+    func upgrade(_ k: ModuleKind) { report(state.upgradeModule(k), sound: .upgrade); if state.level(of: k) > 1 { layoutVersion += 1 } }
+    func upgradeBelt() { report(state.upgradeBelt(), sound: .upgrade) }
+    func upgradeIntake() { report(state.upgradeIntake(), sound: .upgrade) }
 
     func unlock(_ l: LocationKind) {
         let r = state.unlockLocation(l)
         report(r)
         if r.isSuccess {
+            audio.play(.unlock)
             toast(String(localized: "\(l.spec.displayName) unlocked!"), .good, 3)
             switchLocation(l)
         }

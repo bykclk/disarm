@@ -9,6 +9,11 @@ CDR (Content Disarm & Reconstruction) temalı, iOS için fabrika/tycoon oyunu. M
 - **Tehdit merdiveni**: makro → betik → ZIP içinde ZIP → polyglot/gizli veri → imzasız bilinmeyen.
 - **Tycoon**: para, itibar, modül seviyeleri, bant hızı, giriş hızı, dört mekân (Küçük Ofis 7×10 → Şirket 8×12 → Banka 9×13 → Kamu 10×14). Offline kazanç son kazanç hızına göre, 4 saatle sınırlı.
 
+## Oyun hissi
+- Prosedürel ses: efektler ve 23 saniyelik ambient döngü bir Swift betiğiyle sentezlenir, dışarıdan ses dosyası yok. Sessiz anahtarına uyar, kullanıcının müziğiyle karışır. Menüden kapatılabilir.
+- Efektler: çalışan modül parlar, yerleştirme pop-in, çıkarılan parça etiketi uçar, teslimatta para etiketi ve parçacık, ihlalde sarsıntı ve kırmızı flaş, sözleşme bitiminde konfeti.
+- Diller: Türkçe ve İngilizce (String Catalog).
+
 ## Geliştirme
 Gereksinimler: Xcode 27, [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 

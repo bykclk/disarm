@@ -11,6 +11,10 @@
 - `make run ARGS="-demo"` — örnek hatla başlat; `-skipHelp`, `-sheet contracts|upgrades|locations|log|module` dev argümanları
 - `make screenshot` — ekran görüntüsü `.screens/` altına
 
+## Ses ve efektler
+- Sesler `scripts/make-sounds.swift` ile sentezlenir → `Disarm/Resources/Sounds/*.wav` (git'te). Yeni efekt: betiğe `sfx(...)` ekle, `AudioManager.Sfx` enum'una aynı adı ekle, betiği çalıştır.
+- Görsel efektler: motor `fx: [FxEvent]` kuyruğuna yazar, `GameScene.drainFx()` her karede tüketir. Yeni efekt için önce `FxEvent` case'i.
+
 ## Kurallar
 - Oyun kuralı değişiklikleri önce `DisarmCore`'a, testiyle birlikte. UI yalnızca durumu gösterir.
 - Swift 6 strict concurrency açık. Motor `@MainActor`; SpriteKit `update` içinden `engine.tick(dt:)` çağrılır.

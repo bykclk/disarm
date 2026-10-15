@@ -13,12 +13,18 @@ final class GameScene: SKScene {
     private var renderedLayoutVersion = -1
     private var lastTime: TimeInterval?
 
+    private let root = SKNode()
     private let boardLayer = SKNode()
     private let cellLayer = SKNode()
     private let itemLayer = SKNode()
     private let fxLayer = SKNode()
+    private let overlayLayer = SKNode()
     private var itemNodes: [UUID: ItemNode] = [:]
-    private var shownOutcomes: Set<UUID> = []
+    private var moduleNodes: [GridPos: SKNode] = [:]
+    private var busyModules: Set<GridPos> = []
+    private var knownCells: Set<GridPos> = []
+    private var firstBuild = true
+    private var particleTexture: SKTexture?
     private static var textureCache: [String: SKTexture] = [:]
 
     private var touchStartCell: GridPos?
@@ -33,11 +39,19 @@ final class GameScene: SKScene {
         cellLayer.zPosition = 10
         itemLayer.zPosition = 20
         fxLayer.zPosition = 30
-        addChild(boardLayer)
-        addChild(cellLayer)
-        addChild(itemLayer)
-        addChild(fxLayer)
+        overlayLayer.zPosition = 100
+        addChild(root)
+        root.addChild(boardLayer)
+        root.addChild(cellLayer)
+        root.addChild(itemLayer)
+        root.addChild(fxLayer)
+        addChild(overlayLayer)
+        let dot = SKShapeNode(circleOfRadius: 6)
+        dot.fillColor = .white
+        dot.strokeColor = .clear
+        particleTexture = view.texture(from: dot)
         relayout()
+        AudioManager.shared.startMusic()
     }
 
     override func didChangeSize(_ oldSize: CGSize) {
@@ -92,7 +106,7 @@ final class GameScene: SKScene {
             renderedLayoutVersion = engine.layoutVersion
         }
         syncItems()
-        syncOutcomes()
+        drainFx()
     }
 
     // MARK: - Hücreler
@@ -101,8 +115,10 @@ final class GameScene: SKScene {
         guard let engine else { return }
         boardLayer.removeAllChildren()
         cellLayer.removeAllChildren()
+        moduleNodes.removeAll()
         let g = engine.state.grid
         let spec = engine.state.location
+        var nowCells: Set<GridPos> = []
 
         for p in g.allPositions {
             let bg = SKShapeNode(rectOf: CGSize(width: cs - 1, height: cs - 1), cornerRadius: 3)
@@ -120,7 +136,15 @@ final class GameScene: SKScene {
             }
             node.position = point(for: p)
             cellLayer.addChild(node)
+            nowCells.insert(p)
+            if case .module = cell { moduleNodes[p] = node }
+            if !firstBuild && !knownCells.contains(p) {
+                node.setScale(0.4)
+                node.run(.sequence([.scale(to: 1.12, duration: 0.12), .scale(to: 1.0, duration: 0.08)]))
+            }
         }
+        knownCells = nowCells
+        firstBuild = false
     }
 
     private func makeBelt(_ d: Direction) -> SKNode {
@@ -176,6 +200,7 @@ final class GameScene: SKScene {
         body.fillColor = color.withAlphaComponent(0.28)
         body.strokeColor = color
         body.lineWidth = 2
+        body.name = "body"
         n.addChild(body)
 
         if let tex = Self.texture(symbol: Theme.symbol(m.kind), size: cs * 0.5) {
@@ -184,6 +209,7 @@ final class GameScene: SKScene {
             icon.position = CGPoint(x: 0, y: cs * 0.08)
             icon.color = color
             icon.colorBlendFactor = 1
+            icon.name = "icon"
             n.addChild(icon)
         }
         let label = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
@@ -266,8 +292,10 @@ final class GameScene: SKScene {
     private func syncItems() {
         guard let engine else { return }
         var seen: Set<UUID> = []
+        var busy: Set<GridPos> = []
         for item in engine.sim.items {
             seen.insert(item.id)
+            if item.inModule { busy.insert(item.pos) }
             let node: ItemNode
             if let existing = itemNodes[item.id] {
                 node = existing
@@ -296,32 +324,139 @@ final class GameScene: SKScene {
             node.removeFromParent()
             itemNodes[id] = nil
         }
+        // Çalışan modül: parlama ve ikon nabzı.
+        for p in busy.subtracting(busyModules) {
+            guard let n = moduleNodes[p] else { continue }
+            (n.childNode(withName: "body") as? SKShapeNode)?.glowWidth = cs * 0.07
+            n.childNode(withName: "icon")?.run(.repeatForever(.sequence([.scale(to: 1.15, duration: 0.25), .scale(to: 1.0, duration: 0.25)])), withKey: "pulse")
+        }
+        for p in busyModules.subtracting(busy) {
+            guard let n = moduleNodes[p] else { continue }
+            (n.childNode(withName: "body") as? SKShapeNode)?.glowWidth = 0
+            n.childNode(withName: "icon")?.removeAction(forKey: "pulse")
+            n.childNode(withName: "icon")?.setScale(1)
+        }
+        busyModules = busy
     }
 
-    private func syncOutcomes() {
-        guard let engine else { return }
+    private func drainFx() {
+        guard let engine, !engine.fx.isEmpty else { return }
+        let events = engine.fx
+        engine.fx.removeAll()
         let sinkPt = point(for: engine.state.location.sinkPos)
-        for o in engine.recentOutcomes where !shownOutcomes.contains(o.id) {
-            shownOutcomes.insert(o.id)
-            let label = SKLabelNode(fontNamed: "AvenirNext-Bold")
-            label.fontSize = cs * 0.3
-            label.text = o.good ? "✓" : "✕"
-            label.fontColor = o.good ? Theme.success : Theme.danger
-            label.position = CGPoint(x: sinkPt.x, y: sinkPt.y + cs * 0.4)
-            label.zPosition = 5
-            fxLayer.addChild(label)
-            label.run(.sequence([.group([.moveBy(x: 0, y: cs * 0.8, duration: 0.8), .fadeOut(withDuration: 0.8)]), .removeFromParent()]))
-            if !o.good {
+        for e in events {
+            switch e {
+            case .processed(let pos, let text, let removed):
+                floatLabel(text, at: point(for: pos), color: removed ? Theme.danger : Theme.accent, size: cs * 0.2, rise: cs * 0.6, duration: 0.9)
+            case .delivered(let pay, let good):
+                let text = pay >= 0 ? "+\(money(pay))" : money(pay)
+                floatLabel(text, at: CGPoint(x: sinkPt.x, y: sinkPt.y + cs * 0.45), color: good ? Theme.success : (pay < 0 ? Theme.danger : Theme.warning), size: cs * 0.3, rise: cs * 1.1, duration: 1.0)
+                if good { burst(at: sinkPt, color: Theme.success, count: 14, speed: cs * 2.2) }
+            case .breach:
+                burst(at: sinkPt, color: Theme.danger, count: 24, speed: cs * 3.5)
                 let ring = SKShapeNode(circleOfRadius: cs * 0.5)
                 ring.strokeColor = Theme.danger
                 ring.lineWidth = 3
                 ring.fillColor = Theme.danger.withAlphaComponent(0.25)
                 ring.position = sinkPt
                 fxLayer.addChild(ring)
-                ring.run(.sequence([.group([.scale(to: 2.2, duration: 0.6), .fadeOut(withDuration: 0.6)]), .removeFromParent()]))
+                ring.run(.sequence([.group([.scale(to: 2.4, duration: 0.6), .fadeOut(withDuration: 0.6)]), .removeFromParent()]))
+                shake(amplitude: cs * 0.18)
+                flash(Theme.danger.withAlphaComponent(0.22))
+            case .contractCompleted:
+                confetti()
+                flash(Theme.success.withAlphaComponent(0.12))
+            case .contractFailed:
+                shake(amplitude: cs * 0.3)
+                flash(Theme.danger.withAlphaComponent(0.3))
             }
         }
-        if shownOutcomes.count > 200 { shownOutcomes.removeAll() }
+    }
+
+    private func floatLabel(_ text: String, at p: CGPoint, color: UIColor, size: CGFloat, rise: CGFloat, duration: Double) {
+        let label = SKLabelNode(fontNamed: "AvenirNext-Bold")
+        label.text = text
+        label.fontSize = size
+        label.fontColor = color
+        label.position = p
+        label.zPosition = 5
+        label.setScale(0.6)
+        fxLayer.addChild(label)
+        label.run(.sequence([
+            .group([.scale(to: 1, duration: 0.12), .moveBy(x: 0, y: rise, duration: duration),
+                    .sequence([.wait(forDuration: duration * 0.5), .fadeOut(withDuration: duration * 0.5)])]),
+            .removeFromParent(),
+        ]))
+    }
+
+    private func burst(at p: CGPoint, color: UIColor, count: Int, speed: CGFloat) {
+        guard let particleTexture else { return }
+        let e = SKEmitterNode()
+        e.particleTexture = particleTexture
+        e.position = p
+        e.zPosition = 4
+        e.numParticlesToEmit = count
+        e.particleBirthRate = 400
+        e.particleLifetime = 0.6
+        e.particleLifetimeRange = 0.3
+        e.particleSpeed = speed
+        e.particleSpeedRange = speed * 0.5
+        e.emissionAngleRange = .pi * 2
+        e.particleScale = cs * 0.012
+        e.particleScaleSpeed = -cs * 0.012
+        e.particleAlphaSpeed = -1.2
+        e.particleColor = color
+        e.particleColorBlendFactor = 1
+        e.yAcceleration = -speed * 1.2
+        fxLayer.addChild(e)
+        e.run(.sequence([.wait(forDuration: 1.2), .removeFromParent()]))
+    }
+
+    private func confetti() {
+        guard let particleTexture else { return }
+        let e = SKEmitterNode()
+        e.particleTexture = particleTexture
+        e.position = CGPoint(x: size.width / 2, y: size.height + 10)
+        e.particlePositionRange = CGVector(dx: size.width, dy: 0)
+        e.zPosition = 6
+        e.numParticlesToEmit = 120
+        e.particleBirthRate = 150
+        e.particleLifetime = 2.2
+        e.particleSpeed = 60
+        e.particleSpeedRange = 40
+        e.emissionAngle = -.pi / 2
+        e.emissionAngleRange = 0.6
+        e.yAcceleration = -160
+        e.particleScale = cs * 0.014
+        e.particleScaleRange = cs * 0.006
+        e.particleRotationSpeed = 4
+        e.particleRotationRange = .pi
+        e.particleAlphaSpeed = -0.4
+        e.particleColorSequence = SKKeyframeSequence(keyframeValues: [Theme.success, Theme.accent, Theme.warning, UIColor.white], times: [0, 0.33, 0.66, 1])
+        e.particleColorBlendFactor = 1
+        fxLayer.addChild(e)
+        e.run(.sequence([.wait(forDuration: 3.5), .removeFromParent()]))
+    }
+
+    private func shake(amplitude: CGFloat) {
+        root.removeAction(forKey: "shake")
+        var actions: [SKAction] = []
+        var a = amplitude
+        for _ in 0..<6 {
+            let dx = CGFloat.random(in: -a...a), dy = CGFloat.random(in: -a...a)
+            actions.append(.moveBy(x: dx, y: dy, duration: 0.03))
+            actions.append(.moveBy(x: -dx, y: -dy, duration: 0.03))
+            a *= 0.7
+        }
+        actions.append(.move(to: .zero, duration: 0))
+        root.run(.sequence(actions), withKey: "shake")
+    }
+
+    private func flash(_ color: UIColor) {
+        let f = SKSpriteNode(color: color, size: size)
+        f.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        overlayLayer.addChild(f)
+        f.run(.sequence([.fadeOut(withDuration: 0.35), .removeFromParent()]))
     }
 
     private func itemHit(_ pt: CGPoint) -> UUID? {
