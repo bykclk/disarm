@@ -1,7 +1,7 @@
 import Foundation
 
 public enum CustomerKind: String, Codable, CaseIterable, Sendable {
-    case accounting, lawFirm, designAgency, softwareHouse, hospital, bank, government
+    case accounting, lawFirm, designAgency, softwareHouse, hospital, bank, government, forensicsLab
 
     public var displayName: String {
         switch self {
@@ -12,6 +12,7 @@ public enum CustomerKind: String, Codable, CaseIterable, Sendable {
         case .hospital: L("Hospital")
         case .bank: L("Bank")
         case .government: L("Government Agency")
+        case .forensicsLab: L("Forensics Lab")
         }
     }
 }
@@ -60,6 +61,9 @@ public struct Policy: Codable, Hashable, Sendable {
             Policy(rules: [.macro: .mustRemove, .script: .mustRemove, .embeddedFile: .mustRemove, .hiddenData: .mustRemove, .unknown: .mustRemove], minImageQuality: 0.0, rejectsEncrypted: true)
         case .government:
             Policy(rules: [.macro: .mustRemove, .script: .mustRemove, .embeddedFile: .mustRemove, .hiddenData: .mustRemove, .unknown: .mustRemove, .text: .mustKeep], minImageQuality: 0.0, rejectsEncrypted: true)
+        case .forensicsLab:
+            // Delil bozulamaz: dönüştürücünün her geçişi (en iyi %95) kaliteyi düşürür; yalnızca kum havuzu işe yarar.
+            Policy(rules: [.image: .mustKeep, .formula: .mustKeep, .text: .mustKeep, .macro: .mustRemove, .script: .mustRemove, .unknown: .mustRemove], minImageQuality: 0.97)
         }
     }
 }
@@ -196,8 +200,9 @@ public enum DeliveryEvaluator {
             }
         }
         if file.hasImage && file.imageQuality < policy.minImageQuality {
+            // Şartın altı her zaman şikayettir (en az %15); açık büyüdükçe ceza artar.
             let gap = policy.minImageQuality - file.imageQuality
-            usability -= min(0.5, gap * 1.2)
+            usability -= max(0.15, min(0.5, gap * 1.2))
             issues.append(.lowImageQuality(actual: Int(file.imageQuality * 100), minimum: Int(policy.minImageQuality * 100)))
         }
         usability = max(0, min(1, usability))

@@ -170,6 +170,7 @@ struct UpgradesView: View {
         case .parser: ["", String(localized: "Opens the top layer"), String(localized: "Opens ZIP inside ZIP"), String(localized: "Resolves polyglot files")][min(lvl, 3)]
         case .transformer: ["", String(localized: "Image −40%, formulas flattened"), String(localized: "Image −20%, formulas kept"), String(localized: "Image −5%, formulas kept")][min(lvl, 3)]
         case .scanner: ["", String(localized: "Top-layer signatures"), String(localized: "Also looks inside ZIPs"), String(localized: "Faster")][min(lvl, 3)]
+        case .sandbox: ["", String(localized: "Detonates top-layer payloads"), String(localized: "Also one layer down"), String(localized: "Three layers deep")][min(lvl, 3)]
         default: String(localized: "Processing time \(String(format: "%.2f", k.processTime(level: lvl))) s")
         }
     }
@@ -501,7 +502,7 @@ struct CampaignView: View {
                             .font(.title2.bold())
                         Text(s.campaignCompleted
                              ? "Every contract in every site has been delivered. Keep running the line, or start over stronger."
-                             : "Deliver every contract in all four sites to finish the campaign.")
+                             : "Deliver every contract in every site to finish the campaign.")
                             .font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
                         ProgressView(value: Double(done), total: Double(total)).tint(Color(Theme.accent))
                         Text("\(done)/\(total) contracts").font(.caption.monospacedDigit()).foregroundStyle(.secondary)

@@ -1140,6 +1140,156 @@
           }
         }
       }
+    },
+    "Sandbox": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kum Havuzu"
+          }
+        }
+      }
+    },
+    "SBX": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KUM"
+          }
+        }
+      }
+    },
+    "Detonates the file in isolation and removes whatever misbehaves: no signatures needed, no quality loss, works on closed files. Slow and expensive; blind to encrypted files and a polyglot's second identity. Higher levels see deeper layers.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosyayı yalıtımda patlatır ve kötü davranan her şeyi siler: imza gerekmez, kalite kaybı yok, kapalı dosyada çalışır. Yavaş ve pahalı; şifreli dosyalara ve polyglot'un ikinci kimliğine kördür. Üst seviyeler daha derin katmanları görür."
+          }
+        }
+      }
+    },
+    "Encrypted; cannot be detonated": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şifreli; patlatılamıyor"
+          }
+        }
+      }
+    },
+    "Nothing misbehaved": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kötü davranan bir şey yok"
+          }
+        }
+      }
+    },
+    "Forensics Lab": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adli Bilişim Laboratuvarı"
+          }
+        }
+      }
+    },
+    "Data Center": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veri Merkezi"
+          }
+        }
+      }
+    },
+    "Racks, redundant belts, the fastest flow in the game. The Sandbox detonates files in isolation: no signatures, no quality loss, but slow and pricey.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raflar, yedekli bantlar, oyunun en hızlı akışı. Kum Havuzu dosyaları yalıtımda patlatır: imza yok, kalite kaybı yok ama yavaş ve pahalı."
+          }
+        }
+      }
+    },
+    "Streaming Studio": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yayın Stüdyosu"
+          }
+        }
+      }
+    },
+    "Frame-perfect images and unsigned threats at thirty files a minute. A level 3 transformer keeps 95%; the Sandbox keeps 100% but takes its time. Build wide.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kusursuz görseller ve imzasız tehditler, dakikada otuz dosya. Seviye 3 dönüştürücü %95 korur; Kum Havuzu %100 korur ama zaman alır. Geniş kur."
+          }
+        }
+      }
+    },
+    "Evidence must stay untouched: images above 97%, formulas intact. The transformer is out of the question; only the Sandbox detonates unsigned payloads without altering the file. Harmless macros still need the filter.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delil bozulamaz: görseller %97 üstünde, formüller sağlam. Dönüştürücü söz konusu bile değil; imzasız yükleri dosyayı değiştirmeden yalnızca Kum Havuzu patlatır. Zararsız makrolar için filtre yine gerekli."
+          }
+        }
+      }
+    },
+    "Hyperscale Exchange": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiper Ölçekli Borsa"
+          }
+        }
+      }
+    },
+    "The whole stack at once: encrypted archives, unsigned payloads, three-deep nesting, forty files a minute. The campaign ends here; the flow doesn't.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hepsi bir arada: şifreli arşivler, imzasız yükler, üç kat iç içe, dakikada kırk dosya. Kampanya burada biter; akış bitmez."
+          }
+        }
+      }
+    },
+    "Top floor. The Sandbox detonates a file in isolation and removes whatever misbehaves: no signatures, no quality loss, closed files welcome. It is slow and blind to encryption and polyglots. At this flow rate, build parallel lines.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En üst kat. Kum Havuzu dosyayı yalıtımda patlatır ve kötü davranan her şeyi siler: imza yok, kalite kaybı yok, kapalı dosya da olur. Yavaştır; şifreli dosyalara ve polyglot'a kördür. Bu akış hızında paralel hatlar kur."
+          }
+        }
+      }
+    },
+    "Evidence must stay untouched, so no transformer here. Put a Sandbox first for unsigned payloads, then Parser, Filter(Macro) and Packager for the harmless macros.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delil bozulamaz, yani burada dönüştürücü yok. İmzasız yükler için en öne Kum Havuzu, zararsız makrolar için ardına Ayrıştırıcı, Filtre(Makro) ve Paketleyici koy."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

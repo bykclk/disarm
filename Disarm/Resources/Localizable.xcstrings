@@ -1542,16 +1542,6 @@
         }
       }
     },
-    "Deliver every contract in all four sites to finish the campaign.": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kampanyayı bitirmek için dört mekândaki tüm sözleşmeleri teslim et."
-          }
-        }
-      }
-    },
     "%lld/%lld contracts": {
       "localizations": {
         "tr": {
@@ -1718,6 +1708,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Anladım"
+          }
+        }
+      }
+    },
+    "Deliver every contract in every site to finish the campaign.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kampanyayı bitirmek için her mekândaki tüm sözleşmeleri teslim et."
+          }
+        }
+      }
+    },
+    "Detonates top-layer payloads": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üst katman yüklerini patlatır"
+          }
+        }
+      }
+    },
+    "Also one layer down": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bir kat içeriyi de görür"
+          }
+        }
+      }
+    },
+    "Three layers deep": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üç kat derine iner"
           }
         }
       }

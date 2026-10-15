@@ -103,6 +103,11 @@ final class GameEngine {
             sim = Simulation(seed: 12)
             sheet = nil
         }
+        if args.contains("-demoDC") {
+            state = Self.demoDataCenterState()
+            sim = Simulation(seed: 14)
+            sheet = nil
+        }
         if args.contains("-demoEnd") {
             // Kampanyası bitmiş bir banka hattı: prestij akışını denemek için.
             var s = Self.demoBankState()
@@ -162,6 +167,30 @@ final class GameEngine {
         s.placeModule(.transformer, at: GridPos(6, 6), facing: .right)
         s.placeModule(.packager, at: GridPos(7, 6), facing: .right)
         s.money = 20_000
+        return s
+    }
+
+    /// Geliştirme: Veri Merkezi, Adli Bilişim sözleşmesi için kum havuzu hattı.
+    static func demoDataCenterState() -> GameState {
+        var s = GameState(seed: 14)
+        s.money = 500_000
+        s.reputation = 400
+        s.tutorialSeen = true
+        for kind in LocationKind.allCases { _ = s.unlockLocation(kind) }
+        _ = s.switchLocation(.dataCenter)
+        s.progress.index = 1
+        s.moduleLevels[.sandbox] = 3
+        s.moduleLevels[.parser] = 3
+        s.beltLevel = 3
+        s.placeModule(.sandbox, at: GridPos(5, 1), facing: .down)
+        s.placeModule(.parser, at: GridPos(5, 2), facing: .down)
+        s.placeModule(.filter, at: GridPos(5, 3), facing: .down)
+        s.configure(at: GridPos(5, 3)) { $0.filterTarget = .macro }
+        s.placeModule(.filter, at: GridPos(5, 4), facing: .down)
+        s.configure(at: GridPos(5, 4)) { $0.filterTarget = .script }
+        s.placeModule(.packager, at: GridPos(5, 5), facing: .down)
+        for y in 6...13 { s.placeBelt(at: GridPos(5, y), facing: .down) }
+        s.money = 30_000
         return s
     }
 

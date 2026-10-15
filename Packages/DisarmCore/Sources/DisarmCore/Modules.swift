@@ -1,7 +1,7 @@
 import Foundation
 
 public enum ModuleKind: String, Codable, CaseIterable, Sendable {
-    case source, sink, scanner, parser, filter, transformer, packager, router, quarantine
+    case source, sink, scanner, parser, filter, transformer, packager, router, quarantine, sandbox
 
     public var displayName: String {
         switch self {
@@ -14,6 +14,7 @@ public enum ModuleKind: String, Codable, CaseIterable, Sendable {
         case .packager: L("Packager")
         case .router: L("Router")
         case .quarantine: L("Quarantine")
+        case .sandbox: L("Sandbox")
         }
     }
 
@@ -28,6 +29,7 @@ public enum ModuleKind: String, Codable, CaseIterable, Sendable {
         case .packager: L("PKG")
         case .router: L("RTR")
         case .quarantine: L("QRT")
+        case .sandbox: L("SBX")
         }
     }
 
@@ -42,6 +44,7 @@ public enum ModuleKind: String, Codable, CaseIterable, Sendable {
         case .packager: L("Repackages an opened file. Required for delivery.")
         case .router: L("Diverts files of the selected container type to the right; everything else goes straight.")
         case .quarantine: L("Destroys the file. No money, but no breach either.")
+        case .sandbox: L("Detonates the file in isolation and removes whatever misbehaves: no signatures needed, no quality loss, works on closed files. Slow and expensive; blind to encrypted files and a polyglot's second identity. Higher levels see deeper layers.")
         }
     }
 
@@ -57,6 +60,7 @@ public enum ModuleKind: String, Codable, CaseIterable, Sendable {
         case .packager: 100
         case .router: 150
         case .quarantine: 40
+        case .sandbox: 400
         }
     }
 
@@ -72,13 +76,14 @@ public enum ModuleKind: String, Codable, CaseIterable, Sendable {
         case .packager: 1.2
         case .router: 0.3
         case .quarantine: 0.2
+        case .sandbox: 3.0
         }
     }
 
     public var maxLevel: Int {
         switch self {
         case .source, .sink, .quarantine, .router: 1
-        case .parser, .transformer: 3
+        case .parser, .transformer, .sandbox: 3
         case .scanner, .filter, .packager: 3
         }
     }
@@ -154,6 +159,8 @@ public enum ModuleProcessor {
             return filter(module.config.filterTarget, file: &file)
         case .transformer:
             return transform(level: level, file: &file)
+        case .sandbox:
+            return detonate(level: level, file: &file)
         case .packager:
             let wasOpen = file.isOpen
             file.isOpen = false
@@ -201,6 +208,22 @@ public enum ModuleProcessor {
         file.parts.removeAll { $0.kind == target && $0.depth <= depth }
         let n = before - file.parts.count
         return n > 0 ? [.removed(target, count: n)] : [.noEffect(L("No \(target.displayName) found"))]
+    }
+
+    /// Kum havuzu: dosyayı yalıtımda çalıştırır, davranışı zararlı olan her parçayı imza gerekmeden yok eder.
+    /// Dosyayı açmaz, zararsız içeriğe ve görsel kalitesine dokunmaz. Şifreli dosya çalışmaz; polyglot'un
+    /// ikinci kimliği görünmez. Görülen derinlik seviyeyle artar (seviye 1: üst katman).
+    static func detonate(level: Int, file: inout FileItem) -> [ProcessNote] {
+        if file.encrypted { return [.noEffect(L("Encrypted; cannot be detonated"))] }
+        let visibleDepth = file.polyglot ? 0 : level - 1
+        var removed: [PartKind: Int] = [:]
+        file.parts.removeAll { p in
+            guard p.malicious, p.depth <= visibleDepth else { return false }
+            removed[p.kind, default: 0] += 1
+            return true
+        }
+        if removed.isEmpty { return [.noEffect(L("Nothing misbehaved"))] }
+        return removed.map { .removed($0.key, count: $0.value) }
     }
 
     static func transform(level: Int, file: inout FileItem) -> [ProcessNote] {

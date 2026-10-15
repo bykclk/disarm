@@ -44,7 +44,7 @@ import Testing
         var s = GameState(seed: 1)
         #expect(!s.campaignFinished)
         #expect(s.completedContractCount == 0)
-        #expect(GameState.totalContractCount == 14)
+        #expect(GameState.totalContractCount == 17)
 
         s = nearlyFinished()
         #expect(!s.campaignFinished)

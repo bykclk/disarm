@@ -24,6 +24,7 @@ enum Theme {
         case .packager: UIColor(red: 0.25, green: 0.75, blue: 0.75, alpha: 1)
         case .router: UIColor(red: 0.95, green: 0.55, blue: 0.25, alpha: 1)
         case .quarantine: UIColor(red: 0.50, green: 0.30, blue: 0.30, alpha: 1)
+        case .sandbox: UIColor(red: 0.95, green: 0.45, blue: 0.20, alpha: 1)
         }
     }
 
@@ -38,6 +39,7 @@ enum Theme {
         case .packager: "shippingbox.fill"
         case .router: "arrow.triangle.branch"
         case .quarantine: "trash.fill"
+        case .sandbox: "flame.fill"
         }
     }
 
@@ -86,6 +88,7 @@ enum Theme {
         case .hospital: "cross.case"
         case .bank: "building.columns"
         case .government: "building.2"
+        case .forensicsLab: "magnifyingglass"
         }
     }
 
@@ -95,6 +98,7 @@ enum Theme {
         case .company: "building"
         case .bank: "building.columns"
         case .government: "building.2.crop.circle"
+        case .dataCenter: "server.rack"
         }
     }
 }

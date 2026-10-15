@@ -1,7 +1,7 @@
 import Foundation
 
 public enum LocationKind: String, Codable, CaseIterable, Sendable {
-    case smallOffice, company, bank, government
+    case smallOffice, company, bank, government, dataCenter
 
     public var spec: LocationSpec { LocationCatalog.spec(for: self) }
 }
@@ -63,7 +63,7 @@ public enum LocationCatalog {
                 sourcePos: GridPos(0, 6), sourceFacing: .right,
                 sinkPos: GridPos(8, 6),
                 unlockCost: 9000, unlockReputation: 60, airGapped: false,
-                availableModules: ModuleKind.allCases.filter(\.isPlaceable),
+                availableModules: ModuleKind.allCases.filter { $0.isPlaceable && $0 != .sandbox },
                 contracts: bankContracts)
         case .government:
             LocationSpec(
@@ -74,8 +74,19 @@ public enum LocationCatalog {
                 sourcePos: GridPos(0, 0), sourceFacing: .down,
                 sinkPos: GridPos(9, 13),
                 unlockCost: 25000, unlockReputation: 120, airGapped: true,
-                availableModules: ModuleKind.allCases.filter(\.isPlaceable),
+                availableModules: ModuleKind.allCases.filter { $0.isPlaceable && $0 != .sandbox },
                 contracts: governmentContracts)
+        case .dataCenter:
+            LocationSpec(
+                kind: kind,
+                displayName: L("Data Center"),
+                description: L("Racks, redundant belts, the fastest flow in the game. The Sandbox detonates files in isolation: no signatures, no quality loss, but slow and pricey."),
+                width: 11, height: 15,
+                sourcePos: GridPos(5, 0), sourceFacing: .down,
+                sinkPos: GridPos(5, 14),
+                unlockCost: 60000, unlockReputation: 220, airGapped: false,
+                availableModules: ModuleKind.allCases.filter(\.isPlaceable),
+                contracts: dataCenterContracts)
         }
     }
 
@@ -145,5 +156,20 @@ public enum LocationCatalog {
                      brief: L("Encrypted dispatches on an air-gapped network. The scanner is blind, the parser is locked out; route encrypted files to quarantine and disarm the rest. Endless flow. How long can you hold out?"),
                      tier: 6, targetFiles: 120, maxBreaches: 1, payPerFile: 120, completionBonus: 25000, reputationReward: 80,
                      containerWeights: [.pdf: 5, .docx: 4, .xlsx: 3, .zip: 5, .png: 2], filesPerMinute: 32),
+    ]
+
+    static let dataCenterContracts: [ContractSpec] = [
+        ContractSpec(id: "dc-1", customer: .designAgency, title: L("Streaming Studio"),
+                     brief: L("Frame-perfect images and unsigned threats at thirty files a minute. A level 3 transformer keeps 95%; the Sandbox keeps 100% but takes its time. Build wide."),
+                     tier: 5, targetFiles: 60, maxBreaches: 2, payPerFile: 90, completionBonus: 10000, reputationReward: 45,
+                     containerWeights: [.png: 5, .pdf: 3, .zip: 2, .docx: 1], filesPerMinute: 30),
+        ContractSpec(id: "dc-2", customer: .forensicsLab, title: L("Forensics Lab"),
+                     brief: L("Evidence must stay untouched: images above 97%, formulas intact. The transformer is out of the question; only the Sandbox detonates unsigned payloads without altering the file. Harmless macros still need the filter."),
+                     tier: 5, targetFiles: 70, maxBreaches: 1, payPerFile: 110, completionBonus: 15000, reputationReward: 55,
+                     containerWeights: [.pdf: 4, .docx: 3, .xlsx: 3, .png: 3, .zip: 2], filesPerMinute: 32),
+        ContractSpec(id: "dc-3", customer: .bank, title: L("Hyperscale Exchange"),
+                     brief: L("The whole stack at once: encrypted archives, unsigned payloads, three-deep nesting, forty files a minute. The campaign ends here; the flow doesn't."),
+                     tier: 6, targetFiles: 150, maxBreaches: 1, payPerFile: 140, completionBonus: 40000, reputationReward: 100,
+                     containerWeights: [.pdf: 4, .docx: 3, .xlsx: 3, .zip: 5, .png: 2], filesPerMinute: 40),
     ]
 }

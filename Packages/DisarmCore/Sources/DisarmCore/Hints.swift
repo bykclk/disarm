@@ -7,6 +7,7 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
     case company, nestedZip, hiddenData, polyglot, hospital
     case bank, unknownThreat, encrypted
     case airGapped
+    case dataCenter, forensics
     case campaignDone
 
     public enum Action: Sendable, Equatable {
@@ -41,6 +42,10 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
             L("Encrypted archives can't be opened or scanned. Tap a Router, switch it to Encrypted files and point its side output at a Quarantine. Harmless ones are lost income; the rest would be breaches.")
         case .airGapped:
             L("Air-gapped network: no signature updates. The scanner only recognizes ancient macros; disarm everything with Parser, Filters and Transformer.")
+        case .dataCenter:
+            L("Top floor. The Sandbox detonates a file in isolation and removes whatever misbehaves: no signatures, no quality loss, closed files welcome. It is slow and blind to encryption and polyglots. At this flow rate, build parallel lines.")
+        case .forensics:
+            L("Evidence must stay untouched, so no transformer here. Put a Sandbox first for unsigned payloads, then Parser, Filter(Macro) and Packager for the harmless macros.")
         case .campaignDone:
             L("Every contract delivered. The Campaign page now offers a new campaign with permanent bonuses.")
         }
@@ -62,6 +67,8 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
         case .unknownThreat: "questionmark.diamond"
         case .encrypted: "lock.fill"
         case .airGapped: "antenna.radiowaves.left.and.right.slash"
+        case .dataCenter: "flame"
+        case .forensics: "magnifyingglass"
         case .campaignDone: "trophy.fill"
         }
     }
@@ -96,6 +103,8 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
         case .unknownThreat: return loc == .bank && index == 1
         case .encrypted: return loc == .bank && index == 2
         case .airGapped: return loc == .government
+        case .dataCenter: return loc == .dataCenter
+        case .forensics: return loc == .dataCenter && index == 1 && s.grid.positions(of: .sandbox).isEmpty
         }
     }
 

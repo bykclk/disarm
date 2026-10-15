@@ -132,6 +132,7 @@ import Testing
         #expect(LocationKind.company.spec.contracts.count == 4)
         #expect(LocationKind.bank.spec.contracts.count == 3)
         #expect(LocationKind.government.spec.contracts.count == 3)
+        #expect(LocationKind.dataCenter.spec.contracts.count == 3)
         // Şifreli dosyalar yalnızca şifreliyi reddeden müşterilerde gelir; aksi halde basamak anlamsız.
         for kind in LocationKind.allCases {
             for c in kind.spec.contracts where c.tier >= 6 { #expect(c.policy.rejectsEncrypted) }
