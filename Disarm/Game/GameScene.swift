@@ -366,6 +366,11 @@ final class GameScene: SKScene {
             case .contractCompleted:
                 confetti()
                 flash(Theme.success.withAlphaComponent(0.12))
+            case .campaignCompleted:
+                confetti()
+                run(.sequence([.wait(forDuration: 0.5), .run { [weak self] in self?.confetti() },
+                               .wait(forDuration: 0.5), .run { [weak self] in self?.confetti() }]))
+                flash(Theme.warning.withAlphaComponent(0.2))
             case .contractFailed:
                 shake(amplitude: cs * 0.3)
                 flash(Theme.danger.withAlphaComponent(0.3))

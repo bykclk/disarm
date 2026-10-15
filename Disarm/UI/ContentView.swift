@@ -49,6 +49,16 @@ struct HUDView: View {
                 Label("\(s.reputation)", systemImage: "star.fill")
                     .font(.system(.subheadline, design: .rounded).weight(.semibold))
                     .foregroundStyle(Color(Theme.warning))
+                if s.prestige > 0 {
+                    Button { engine.sheet = .campaign } label: {
+                        Label("\(s.prestige)", systemImage: "sparkles")
+                            .font(.system(.caption, design: .rounded).weight(.bold))
+                            .padding(.horizontal, 6).padding(.vertical, 3)
+                            .background(Color(Theme.warning).opacity(0.2), in: Capsule())
+                            .foregroundStyle(Color(Theme.warning))
+                    }
+                    .accessibilityLabel("Prestige \(s.prestige)")
+                }
                 Spacer()
                 Button { engine.speed = engine.speed == 1 ? 2 : 1 } label: {
                     Text(engine.speed == 1 ? "1×" : "2×")
@@ -64,6 +74,7 @@ struct HUDView: View {
                 Menu {
                     Button { engine.sheet = .upgrades } label: { Label("Upgrades", systemImage: "arrow.up.circle") }
                     Button { engine.sheet = .locations } label: { Label("Sites", systemImage: "map") }
+                    Button { engine.sheet = .campaign } label: { Label("Campaign", systemImage: "flag.checkered") }
                     Button { engine.sheet = .log } label: { Label("Event Log", systemImage: "list.bullet.rectangle") }
                     Button { engine.sheet = .help } label: { Label("How to Play", systemImage: "questionmark.circle") }
                     Divider()

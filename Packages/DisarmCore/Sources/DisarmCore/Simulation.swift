@@ -21,6 +21,8 @@ public enum GameEvent: Equatable, Sendable {
     case quarantined(UUID)
     case contractCompleted(ContractSpec)
     case contractFailed(ContractSpec)
+    /// Dört mekândaki tüm sözleşmeler ilk kez bitti.
+    case campaignCompleted
     case dropped(UUID)
 }
 
@@ -82,7 +84,7 @@ public struct Simulation: Codable, Hashable, Sendable {
 
     private mutating func spawn(dt: Double, grid: Grid, state: inout GameState, events: inout [GameEvent]) {
         let contract = state.activeContract
-        spawnAccumulator = min(3, spawnAccumulator + dt * contract.filesPerMinute / 60.0 * state.intakeMultiplier)
+        spawnAccumulator = min(3, spawnAccumulator + dt * contract.filesPerMinute / 60.0 * state.intakeMultiplier * state.prestigeFlowMultiplier)
         guard spawnAccumulator >= 1 else { return }
         let src = state.location.sourcePos
         guard case .module(let m) = grid[src], m.kind == .source else { return }
@@ -235,7 +237,8 @@ public struct Simulation: Codable, Hashable, Sendable {
 
     private mutating func deliver(_ file: FileItem, state: inout GameState, events: inout [GameEvent]) {
         let contract = state.activeContract
-        let outcome = DeliveryEvaluator.evaluate(file, policy: contract.policy, payPerFile: contract.payPerFile)
+        let payPerFile = Int((Double(contract.payPerFile) * state.prestigePayMultiplier).rounded())
+        let outcome = DeliveryEvaluator.evaluate(file, policy: contract.policy, payPerFile: payPerFile)
         state.money += outcome.pay
         state.reputation = max(0, state.reputation + outcome.reputationDelta)
         state.stats.totalDelivered += 1
@@ -258,12 +261,23 @@ public struct Simulation: Codable, Hashable, Sendable {
             state.reputation = max(0, state.reputation - 5)
             events.append(.contractFailed(contract))
         } else if progress.delivered >= contract.targetFiles {
-            state.money += contract.completionBonus
+            state.money += Int((Double(contract.completionBonus) * state.prestigePayMultiplier).rounded())
             state.reputation += contract.reputationReward
+            state.stats.contractsCompleted += 1
             progress.completions += 1
             progress.resetCounters()
             if progress.index < state.location.contracts.count - 1 { progress.index += 1 }
             events.append(.contractCompleted(contract))
+            state.progress = progress
+            if !state.campaignCompleted && state.campaignFinished {
+                state.campaignCompleted = true
+                state.stats.campaignsCompleted += 1
+                if state.stats.bestCampaignSeconds == 0 || elapsed < state.stats.bestCampaignSeconds {
+                    state.stats.bestCampaignSeconds = elapsed
+                }
+                events.append(.campaignCompleted)
+            }
+            return
         }
         state.progress = progress
     }

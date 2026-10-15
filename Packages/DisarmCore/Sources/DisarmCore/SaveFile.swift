@@ -233,6 +233,7 @@ extension ModuleKind: CodingKeyRepresentable {}
 extension Stats {
     enum CodingKeys: String, CodingKey {
         case totalDelivered, totalAccepted, totalBreaches, totalEarned, totalQuarantined
+        case contractsCompleted, campaignsCompleted, bestCampaignSeconds
     }
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -242,6 +243,9 @@ extension Stats {
         totalBreaches = c.decodeOr(Int.self, .totalBreaches, 0)
         totalEarned = c.decodeOr(Int.self, .totalEarned, 0)
         totalQuarantined = c.decodeOr(Int.self, .totalQuarantined, 0)
+        contractsCompleted = c.decodeOr(Int.self, .contractsCompleted, 0)
+        campaignsCompleted = c.decodeOr(Int.self, .campaignsCompleted, 0)
+        bestCampaignSeconds = c.decodeOr(Double.self, .bestCampaignSeconds, 0)
     }
 }
 
@@ -329,6 +333,7 @@ extension GameState {
     enum CodingKeys: String, CodingKey {
         case money, reputation, currentLocation, unlockedLocations, layouts, contracts
         case moduleLevels, beltLevel, intakeLevel, stats, lastSaved, incomeRatePerSec, rngSeed, tutorialSeen
+        case prestige, campaignCompleted
     }
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -347,6 +352,8 @@ extension GameState {
         lastSaved = c.decodeOr(Date.self, .lastSaved, Date())
         incomeRatePerSec = c.decodeOr(Double.self, .incomeRatePerSec, 0)
         tutorialSeen = c.decodeOr(Bool.self, .tutorialSeen, false)
+        prestige = max(0, c.decodeOr(Int.self, .prestige, 0))
+        campaignCompleted = c.decodeOr(Bool.self, .campaignCompleted, false)
         // Yerleşim/sözleşme eksikleri SaveMigrator.repair ile tamamlanır.
     }
 }

@@ -9,7 +9,7 @@ enum Tool: Equatable {
 }
 
 enum SheetKind: Identifiable, Equatable {
-    case contracts, upgrades, locations, help, log
+    case contracts, upgrades, locations, help, log, campaign
     case module(GridPos)
     case file(UUID)
     case offline(seconds: Double, earned: Int)
@@ -21,6 +21,7 @@ enum SheetKind: Identifiable, Equatable {
         case .locations: "locations"
         case .help: "help"
         case .log: "log"
+        case .campaign: "campaign"
         case .module(let p): "module-\(p.x)-\(p.y)"
         case .file(let id): "file-\(id)"
         case .offline: "offline"
@@ -43,6 +44,7 @@ enum FxEvent {
     case breach
     case contractCompleted
     case contractFailed
+    case campaignCompleted
 }
 
 struct LogEntry: Identifiable {
@@ -101,6 +103,25 @@ final class GameEngine {
             sim = Simulation(seed: 12)
             sheet = nil
         }
+        if args.contains("-demoEnd") {
+            // Kampanyası bitmiş bir banka hattı: prestij akışını denemek için.
+            var s = Self.demoBankState()
+            for kind in LocationKind.allCases {
+                let n = kind.spec.contracts.count
+                var p = ContractProgress(index: n - 1)
+                p.completions = n
+                s.contracts[kind] = p
+                if s.layouts[kind] == nil { s.layouts[kind] = kind.spec.emptyGrid() }
+                s.unlockedLocations.insert(kind)
+            }
+            s.campaignCompleted = true
+            s.stats.totalDelivered = 1840; s.stats.totalAccepted = 1702; s.stats.totalBreaches = 9
+            s.stats.totalQuarantined = 63; s.stats.totalEarned = 96_420
+            s.stats.contractsCompleted = 14; s.stats.campaignsCompleted = 1; s.stats.bestCampaignSeconds = 5_212
+            state = s
+            sim = Simulation(seed: 13)
+            sheet = .campaign
+        }
         if args.contains("-skipHelp") { sheet = nil }
         if let i = args.firstIndex(of: "-sheet"), i + 1 < args.count {
             switch args[i + 1] {
@@ -108,6 +129,7 @@ final class GameEngine {
             case "upgrades": sheet = .upgrades
             case "locations": sheet = .locations
             case "log": sheet = .log
+            case "campaign": sheet = .campaign
             case "module": sheet = .module(GridPos(4, 2))
             default: break
             }
@@ -245,6 +267,12 @@ final class GameEngine {
                 fx.append(.contractFailed)
                 toast(String(localized: "Contract cancelled: \(c.title). Too many breaches."), .bad, 4)
                 addLog(String(localized: "Contract cancelled: \(c.title). Reputation -5"), .bad)
+            case .campaignCompleted:
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                audio.play(.unlock)
+                fx.append(.campaignCompleted)
+                addLog(String(localized: "Campaign complete: every contract in every site delivered. A new campaign is available."), .good)
+                sheet = .campaign
             case .processed(_, let pos, _, let notes):
                 for n in notes {
                     switch n {
@@ -394,6 +422,22 @@ final class GameEngine {
         log.removeAll()
         tool = .select
         layoutVersion += 1
+        save()
+    }
+
+    /// Prestij: kampanya bitmişse ilerlemeyi sıfırlar, kalıcı bonusla yeniden başlar.
+    func startNewCampaign() {
+        guard state.campaignCompleted else { return }
+        state.startNewCampaign()
+        sim = Simulation(seed: state.rngSeed)
+        tool = .select
+        sheet = nil
+        layoutVersion += 1
+        audio.play(.unlock)
+        fx.append(.contractCompleted)
+        let pay = Int(GameState.prestigePayBonus * 100 * Double(state.prestige))
+        toast(String(localized: "Campaign \(state.prestige + 1) begins: pay +\("\(pay)%"), faster flow."), .good, 4)
+        addLog(String(localized: "New campaign started at prestige \(state.prestige)."), .good)
         save()
     }
 

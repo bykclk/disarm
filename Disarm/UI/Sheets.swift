@@ -12,6 +12,7 @@ struct SheetRouter: View {
         case .locations: LocationsView(engine: engine).presentationDetents([.medium, .large])
         case .help: HelpView(engine: engine).presentationDetents([.large])
         case .log: LogView(engine: engine).presentationDetents([.medium, .large])
+        case .campaign: CampaignView(engine: engine).presentationDetents([.large])
         case .module(let p): ModuleConfigView(engine: engine, pos: p).presentationDetents([.medium])
         case .file(let id): FileInspectorView(engine: engine, id: id).presentationDetents([.medium])
         case .offline(let secs, let earned): OfflineView(seconds: secs, earned: earned).presentationDetents([.height(260)])
@@ -475,6 +476,101 @@ struct OfflineView: View {
             Button("Continue") { dismiss() }.buttonStyle(.borderedProminent)
         }
         .padding()
+    }
+}
+
+// MARK: - Kampanya
+
+struct CampaignView: View {
+    @Bindable var engine: GameEngine
+    @Environment(\.dismiss) var dismiss
+    @State private var confirming = false
+
+    var body: some View {
+        let s = engine.state
+        let total = GameState.totalContractCount
+        let done = s.completedContractCount
+        NavigationStack {
+            List {
+                Section {
+                    VStack(spacing: 10) {
+                        Image(systemName: s.campaignCompleted ? "trophy.fill" : "flag.checkered")
+                            .font(.system(size: 44))
+                            .foregroundStyle(s.campaignCompleted ? Color(Theme.warning) : Color(Theme.accent))
+                        Text(s.campaignCompleted ? "Campaign complete!" : "Campaign \(s.prestige + 1)")
+                            .font(.title2.bold())
+                        Text(s.campaignCompleted
+                             ? "Every contract in every site has been delivered. Keep running the line, or start over stronger."
+                             : "Deliver every contract in all four sites to finish the campaign.")
+                            .font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                        ProgressView(value: Double(done), total: Double(total)).tint(Color(Theme.accent))
+                        Text("\(done)/\(total) contracts").font(.caption.monospacedDigit()).foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
+                }
+                Section("Sites") {
+                    ForEach(LocationKind.allCases, id: \.self) { l in
+                        let n = l.spec.contracts.count
+                        let c = s.completedContracts(in: l)
+                        HStack {
+                            Image(systemName: Theme.symbol(l)).frame(width: 24)
+                                .foregroundStyle(s.unlockedLocations.contains(l) ? Color(Theme.accent) : .secondary)
+                            Text(l.spec.displayName)
+                            Spacer()
+                            Text("\(c)/\(n)").font(.caption.monospacedDigit()).foregroundStyle(.secondary)
+                            Image(systemName: c >= n ? "checkmark.circle.fill" : "circle")
+                                .foregroundStyle(c >= n ? Color(Theme.success) : .secondary)
+                        }
+                    }
+                }
+                Section("Lifetime") {
+                    statRow("Files delivered", "\(s.stats.totalDelivered)")
+                    statRow("Accepted", "\(s.stats.totalAccepted)")
+                    statRow("Breaches", "\(s.stats.totalBreaches)")
+                    statRow("Quarantined", "\(s.stats.totalQuarantined)")
+                    statRow("Earned", money(s.stats.totalEarned))
+                    statRow("Contracts completed", "\(s.stats.contractsCompleted)")
+                    statRow("Campaigns completed", "\(s.stats.campaignsCompleted)")
+                    if s.stats.bestCampaignSeconds > 0 {
+                        statRow("Fastest campaign", duration(s.stats.bestCampaignSeconds))
+                    }
+                    statRow("Prestige", "\(s.prestige)")
+                }
+                Section("New campaign") {
+                    let nextPay = Int(GameState.prestigePayBonus * 100 * Double(s.prestige + 1))
+                    let nextFlow = Int(GameState.prestigeFlowBonus * 100 * Double(s.prestige + 1))
+                    Text("Start from the small office with nothing but your experience. Every campaign you finish adds a permanent bonus: pay +\("\(nextPay)%"), file flow +\("\(nextFlow)%"), and \(money(GameState.prestigeStartingBonus * (s.prestige + 1))) seed money. Lifetime stats are kept.")
+                        .font(.caption).foregroundStyle(.secondary)
+                    if confirming {
+                        Button(role: .destructive) { engine.startNewCampaign() } label: {
+                            Label("Yes, reset progress and start campaign \(s.prestige + 2)", systemImage: "arrow.counterclockwise")
+                        }
+                        Button("Not now") { confirming = false }
+                    } else {
+                        Button { confirming = true } label: {
+                            Label("Start a new campaign (prestige \(s.prestige + 1))", systemImage: "sparkles")
+                        }
+                        .disabled(!s.campaignCompleted)
+                    }
+                    if !s.campaignCompleted {
+                        Text("Unlocks once every contract has been completed.").font(.caption2).foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .navigationTitle("Campaign")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { Button("Keep playing") { dismiss() } }
+        }
+    }
+
+    func statRow(_ title: LocalizedStringKey, _ value: String) -> some View {
+        HStack { Text(title); Spacer(); Text(value).font(.body.monospacedDigit()).foregroundStyle(.secondary) }
+    }
+
+    func duration(_ seconds: Double) -> String {
+        let s = Int(seconds)
+        return s >= 3600 ? String(format: "%d:%02d:%02d", s / 3600, s % 3600 / 60, s % 60) : String(format: "%d:%02d", s / 60, s % 60)
     }
 }
 

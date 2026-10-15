@@ -8,6 +8,7 @@ CDR (Content Disarm & Reconstruction) temalı, iOS için fabrika/tycoon oyunu. M
 - **Sözleşmeler**: Muhasebe (formül korunsun, makro silinsin), Hukuk (metin korunsun), Tasarım Ajansı (görsel kalitesi ≥ %85), Yazılım Evi (betikler kaynak kod: korunsun, yalnızca zararlılar gitsin → tarayıcı), Hastane (görsel ≥ %90 ama gizli hasta verisi silinsin → seviye 3 dönüştürücü), Banka (sıfır aktif içerik, şifreli dosya reddedilir), Kamu (air-gapped: tarayıcı kör). Dört mekânda 14 sözleşme.
 - **Tehdit merdiveni**: makro → betik → ZIP içinde ZIP → polyglot/gizli veri → imzasız bilinmeyen ve üç kat iç içe arşiv → şifreli arşiv (hiçbir modül açamaz; yönlendirici "şifrelileri ayır" moduyla karantinaya gönderilir, zararsız şifreliler de gittiği için gelir kaybı).
 - **Tycoon**: para, itibar, modül seviyeleri, bant hızı, giriş hızı, dört mekân (Küçük Ofis 7×10 → Şirket 8×12 → Banka 9×13 → Kamu 10×14). Offline kazanç son kazanç hızına göre, 4 saatle sınırlı.
+- **Kampanya ve prestij**: dört mekândaki 14 sözleşme bir kez bitince kampanya tamamlanır (özet ekranı, en hızlı süre). Oyun sonsuz sürer; istenirse prestij ile sıfırdan başlanır: her prestij seviyesi ödemeyi %15, dosya akışını %10 artırır ve başlangıç parası ekler. Toplam istatistikler korunur.
 
 ## Oyun hissi
 - Prosedürel ses: efektler ve 23 saniyelik ambient döngü bir Swift betiğiyle sentezlenir, dışarıdan ses dosyası yok. Sessiz anahtarına uyar, kullanıcının müziğiyle karışır. Menüden kapatılabilir.

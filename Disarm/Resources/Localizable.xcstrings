@@ -127,7 +127,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kabul"
+            "value": "Kabul edilen"
           }
         }
       }
@@ -1458,6 +1458,256 @@
           "stringUnit": {
             "state": "translated",
             "value": "Her müşteri her şeyin sökülmesini istemez: yazılım evi betiklerinin korunmasını, hastane görüntülerinin bozulmamasını ister. Hat kurmadan önce politikayı oku."
+          }
+        }
+      }
+    },
+    "Campaign complete: every contract in every site delivered. A new campaign is available.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kampanya tamamlandı: her mekândaki her sözleşme teslim edildi. Yeni kampanya açıldı."
+          }
+        }
+      }
+    },
+    "Campaign %lld begins: pay +%@, faster flow.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kampanya %lld başlıyor: ödeme +%@, daha hızlı akış."
+          }
+        }
+      }
+    },
+    "New campaign started at prestige %lld.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prestij %lld ile yeni kampanya başladı."
+          }
+        }
+      }
+    },
+    "Campaign": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kampanya"
+          }
+        }
+      }
+    },
+    "Prestige %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prestij %lld"
+          }
+        }
+      }
+    },
+    "Campaign complete!": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kampanya tamamlandı!"
+          }
+        }
+      }
+    },
+    "Campaign %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kampanya %lld"
+          }
+        }
+      }
+    },
+    "Every contract in every site has been delivered. Keep running the line, or start over stronger.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Her mekândaki her sözleşme teslim edildi. Hattı çalıştırmaya devam et ya da daha güçlü baştan başla."
+          }
+        }
+      }
+    },
+    "Deliver every contract in all four sites to finish the campaign.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kampanyayı bitirmek için dört mekândaki tüm sözleşmeleri teslim et."
+          }
+        }
+      }
+    },
+    "%lld/%lld contracts": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/%lld sözleşme"
+          }
+        }
+      }
+    },
+    "Lifetime": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toplam"
+          }
+        }
+      }
+    },
+    "Files delivered": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teslim edilen dosya"
+          }
+        }
+      }
+    },
+    "Breaches": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İhlal"
+          }
+        }
+      }
+    },
+    "Earned": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kazanç"
+          }
+        }
+      }
+    },
+    "Contracts completed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tamamlanan sözleşme"
+          }
+        }
+      }
+    },
+    "Campaigns completed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tamamlanan kampanya"
+          }
+        }
+      }
+    },
+    "Fastest campaign": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En hızlı kampanya"
+          }
+        }
+      }
+    },
+    "Prestige": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prestij"
+          }
+        }
+      }
+    },
+    "New campaign": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yeni kampanya"
+          }
+        }
+      }
+    },
+    "Start from the small office with nothing but your experience. Every campaign you finish adds a permanent bonus: pay +%@, file flow +%@, and %@ seed money. Lifetime stats are kept.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Küçük ofisten, yalnızca deneyiminle baştan başla. Bitirdiğin her kampanya kalıcı bonus ekler: ödeme +%@, dosya akışı +%@ ve %@ başlangıç parası. Toplam istatistikler korunur."
+          }
+        }
+      }
+    },
+    "Yes, reset progress and start campaign %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evet, ilerlemeyi sıfırla ve kampanya %lld'yi başlat"
+          }
+        }
+      }
+    },
+    "Not now": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şimdi değil"
+          }
+        }
+      }
+    },
+    "Start a new campaign (prestige %lld)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yeni kampanya başlat (prestij %lld)"
+          }
+        }
+      }
+    },
+    "Unlocks once every contract has been completed.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tüm sözleşmeler tamamlanınca açılır."
+          }
+        }
+      }
+    },
+    "Keep playing": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oynamaya devam"
           }
         }
       }

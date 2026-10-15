@@ -6,6 +6,10 @@ public struct Stats: Codable, Hashable, Sendable {
     public var totalBreaches = 0
     public var totalEarned = 0
     public var totalQuarantined = 0
+    public var contractsCompleted = 0
+    public var campaignsCompleted = 0
+    /// En hızlı kampanya süresi (simülasyon saniyesi); 0 = henüz yok.
+    public var bestCampaignSeconds: Double = 0
     public init() {}
 }
 
@@ -30,6 +34,10 @@ public struct GameState: Codable, Hashable, Sendable {
     public var incomeRatePerSec: Double
     public var rngSeed: UInt64
     public var tutorialSeen: Bool
+    /// Tamamlanan kampanya sayısı; her seviye ödemeyi ve akışı artırır.
+    public var prestige: Int
+    /// Bu kampanyada tüm sözleşmeler bir kez bitti mi? (Sonsuz oyun sürer, prestij açılır.)
+    public var campaignCompleted: Bool
 
     public init(seed: UInt64 = UInt64(Date().timeIntervalSince1970)) {
         money = Self.startingMoney
@@ -46,6 +54,46 @@ public struct GameState: Codable, Hashable, Sendable {
         incomeRatePerSec = 0
         rngSeed = seed
         tutorialSeen = false
+        prestige = 0
+        campaignCompleted = false
+    }
+
+    // MARK: - Kampanya ve prestij
+
+    public static let prestigePayBonus = 0.15
+    public static let prestigeFlowBonus = 0.10
+    public static let prestigeStartingBonus = 300
+
+    public static var totalContractCount: Int { LocationKind.allCases.reduce(0) { $0 + $1.spec.contracts.count } }
+
+    /// Mekândaki her sözleşme en az bir kez tamamlandı mı?
+    public func isFinished(_ kind: LocationKind) -> Bool {
+        completedContracts(in: kind) >= kind.spec.contracts.count
+    }
+
+    /// Mekânda en az bir kez tamamlanmış sözleşme sayısı.
+    public func completedContracts(in kind: LocationKind) -> Int {
+        guard let p = contracts[kind] else { return 0 }
+        return min(p.completions, kind.spec.contracts.count)
+    }
+
+    public var completedContractCount: Int { LocationKind.allCases.reduce(0) { $0 + completedContracts(in: $1) } }
+
+    public var campaignFinished: Bool { LocationKind.allCases.allSatisfy(isFinished) }
+
+    public var prestigePayMultiplier: Double { 1.0 + Self.prestigePayBonus * Double(prestige) }
+    public var prestigeFlowMultiplier: Double { 1.0 + Self.prestigeFlowBonus * Double(prestige) }
+
+    /// Yeni kampanya: ilerleme sıfırlanır, istatistikler ve öğretici kalır, prestij bir artar.
+    public mutating func startNewCampaign() {
+        let keptStats = stats
+        let seenTutorial = tutorialSeen
+        let nextPrestige = prestige + 1
+        self = GameState(seed: rngSeed &+ 1)
+        stats = keptStats
+        tutorialSeen = seenTutorial
+        prestige = nextPrestige
+        money += Self.prestigeStartingBonus * nextPrestige
     }
 
     public var location: LocationSpec { currentLocation.spec }
