@@ -19,6 +19,7 @@ import Testing
     @Test func scannerOnlyLineCountsMacroComplaints() {
         // Muhasebe: zararsız makrolar kalır → "makro kaldı" şikayeti.
         var s = GameState(seed: 3)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 10_000
         s.tutorialSeen = true
         s.placeModule(.scanner, at: GridPos(1, 1), facing: .right)
@@ -50,6 +51,7 @@ import Testing
     @Test func beltOnlyLineCountsBreachKinds() {
         // Hiç modül yok: zararlı makrolar kapalı dosyada teslim edilir → ihlal, neden makro.
         var s = GameState(seed: 5)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 10_000
         s.tutorialSeen = true
         for x in 1...5 { s.placeBelt(at: GridPos(x, 1), facing: .right) }
@@ -78,6 +80,7 @@ import Testing
 
     @Test func reasonsSurviveSaveAndDefaultWhenMissing() throws {
         var s = GameState(seed: 4)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.progress.complaintReasons = [.left(.macro): 2, .lowImageQuality: 1, .lost(.formula): 4]
         s.progress.breachReasons = [.macro: 1, .unknown: 2]
         let data = try SaveCodec.encode(state: s, sim: Simulation(seed: 4))

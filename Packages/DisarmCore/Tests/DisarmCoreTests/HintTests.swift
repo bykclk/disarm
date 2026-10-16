@@ -8,6 +8,7 @@ import Testing
         s.tutorialSeen = true
         s.money = money
         s.reputation = 1000
+        s.xp = 100_000 // seviye kilitleri ipucu testlerinin konusu değil
         if loc != .smallOffice {
             s.money = 100_000
             _ = s.unlockLocation(loc)

@@ -24,6 +24,9 @@ public enum GameEvent: Equatable, Sendable {
     case contractFailed(ContractSpec)
     /// Mekândaki tüm sözleşmeler ilk kez bitti; sıradaki mekâna geçme zamanı.
     case locationFinished(LocationKind)
+    /// Operatör seviyesi atladı (yeni seviye).
+    case levelUp(Int)
+    case achievementUnlocked(Achievement)
     /// Tüm mekânlardaki tüm sözleşmeler ilk kez bitti.
     case campaignCompleted
     case dropped(UUID)
@@ -187,6 +190,7 @@ public struct Simulation: Codable, Hashable, Sendable {
             state.stats.totalQuarantined += 1
             events.append(.quarantined(item.id))
             delivered.append(i)
+            Self.applyProgression(xp: 0, state: &state, events: &events)
             return
         default:
             break
@@ -273,9 +277,11 @@ public struct Simulation: Codable, Hashable, Sendable {
         state.stats.totalEarned += max(0, outcome.pay)
         var progress = state.progress
         progress.delivered += 1
+        var xpGain = 0
         if outcome.breach {
             progress.breaches += 1
             state.stats.totalBreaches += 1
+            state.stats.acceptedStreak = 0
             for issue in outcome.issues {
                 if case .breach(let kinds) = issue {
                     for k in Set(kinds) { progress.breachReasons[k, default: 0] += 1 }
@@ -284,8 +290,12 @@ public struct Simulation: Codable, Hashable, Sendable {
         } else if outcome.accepted {
             progress.accepted += 1
             state.stats.totalAccepted += 1
+            state.stats.acceptedStreak += 1
+            state.stats.bestAcceptedStreak = max(state.stats.bestAcceptedStreak, state.stats.acceptedStreak)
+            xpGain += Progression.xp(forAcceptedDeliveryTier: contract.tier)
         } else {
             progress.complaints += 1
+            state.stats.acceptedStreak = 0
             for reason in outcome.issues.compactMap(\.reason) {
                 progress.complaintReasons[reason, default: 0] += 1
             }
@@ -300,6 +310,8 @@ public struct Simulation: Codable, Hashable, Sendable {
             state.money += Int((Double(contract.completionBonus) * state.prestigePayMultiplier).rounded())
             state.reputation += contract.reputationReward
             state.stats.contractsCompleted += 1
+            if progress.complaints == 0 && progress.breaches == 0 { state.stats.cleanContracts += 1 }
+            xpGain += Progression.xp(forContractReputation: contract.reputationReward)
             progress.completions += 1
             progress.resetCounters()
             if progress.index < state.location.contracts.count - 1 { progress.index += 1 }
@@ -316,9 +328,19 @@ public struct Simulation: Codable, Hashable, Sendable {
                 }
                 events.append(.campaignCompleted)
             }
+            Self.applyProgression(xp: xpGain, state: &state, events: &events)
             return
         }
         state.progress = progress
+        Self.applyProgression(xp: xpGain, state: &state, events: &events)
+    }
+
+    /// XP ekler, seviye atlamayı ve yeni başarımları olay olarak bildirir (başarımların XP'si de seviye atlatabilir).
+    static func applyProgression(xp: Int, state: inout GameState, events: inout [GameEvent]) {
+        let before = state.level
+        state.xp += xp
+        for a in state.claimAchievements() { events.append(.achievementUnlocked(a)) }
+        if state.level > before { events.append(.levelUp(state.level)) }
     }
 }
 

@@ -181,6 +181,7 @@ struct UpgradesView: View {
                         let lvl = s.level(of: k)
                         upgradeRow(title: k.displayName, subtitle: levelBlurb(k, lvl),
                                    level: lvl, max: k.maxLevel, cost: k.upgradeCost(toLevel: lvl + 1),
+                                   requiredLevel: Progression.requiredLevel(forUpgradeTo: lvl + 1),
                                    color: Color(Theme.color(k)), symbol: Theme.symbol(k)) { engine.upgrade(k) }
                     }
                 }
@@ -205,7 +206,7 @@ struct UpgradesView: View {
     }
 
     @ViewBuilder
-    func upgradeRow(title: String, subtitle: String, level: Int, max: Int, cost: Int,
+    func upgradeRow(title: String, subtitle: String, level: Int, max: Int, cost: Int, requiredLevel: Int = 1,
                     color: Color = Color(Theme.accent), symbol: String = "speedometer", action: @escaping () -> Void) -> some View {
         HStack {
             Image(systemName: symbol).foregroundStyle(color).frame(width: 28)
@@ -216,6 +217,9 @@ struct UpgradesView: View {
             Spacer()
             if level >= max {
                 Text("MAX").font(.caption.bold()).foregroundStyle(.secondary)
+            } else if engine.state.level < requiredLevel {
+                Label("Lv \(requiredLevel)", systemImage: "lock.fill").font(.caption.bold()).foregroundStyle(Color(Theme.warning))
+                    .accessibilityLabel("Unlocks at operator level \(requiredLevel)")
             } else {
                 Button(action: action) {
                     Text(money(cost)).font(.caption.bold())
@@ -666,6 +670,47 @@ struct CampaignView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 6)
                 }
+                Section("Operator") {
+                    HStack {
+                        Text("Level \(s.level)").font(.headline)
+                        Spacer()
+                        Text("\(s.xpProgress.current)/\(s.xpProgress.needed) XP").font(.caption.monospacedDigit()).foregroundStyle(.secondary)
+                    }
+                    ProgressView(value: Double(s.xpProgress.current), total: Double(max(1, s.xpProgress.needed))).tint(Color(Theme.warning))
+                    let nextUnlocks = ((s.level + 1)...max(s.level + 1, Progression.maxLevel)).lazy
+                        .compactMap { lvl -> (Int, [ModuleKind])? in
+                            let mods = GameState.modulesUnlocked(atLevel: lvl)
+                            return mods.isEmpty ? nil : (lvl, mods)
+                        }.first
+                    if let (lvl, mods) = nextUnlocks {
+                        Text("Level \(lvl) unlocks \(mods.map(\.displayName).joined(separator: ", ")).")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                    if s.level < Progression.requiredLevel(forUpgradeTo: 2) {
+                        Text("Level \(Progression.requiredLevel(forUpgradeTo: 2)) unlocks module upgrades.").font(.caption).foregroundStyle(.secondary)
+                    } else if s.level < Progression.requiredLevel(forUpgradeTo: 3) {
+                        Text("Level \(Progression.requiredLevel(forUpgradeTo: 3)) unlocks level 3 upgrades.").font(.caption).foregroundStyle(.secondary)
+                    }
+                    statRow("Reputation", "\(s.reputation)")
+                }
+                Section("Achievements") {
+                    ForEach(Achievement.allCases, id: \.self) { a in
+                        let done = s.achievements.contains(a)
+                        HStack(spacing: 10) {
+                            Image(systemName: a.icon).foregroundStyle(done ? Color(Theme.success) : .secondary).frame(width: 24)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(a.displayName).font(.subheadline.weight(.semibold)).foregroundStyle(done ? .primary : .secondary)
+                                Text(a.detail).font(.caption).foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            VStack(alignment: .trailing, spacing: 2) {
+                                Text(money(a.rewardMoney)).font(.caption.monospacedDigit())
+                                Text("+\(a.rewardXP) XP").font(.caption2.monospacedDigit())
+                            }
+                            .foregroundStyle(done ? Color(Theme.success) : .secondary)
+                        }
+                    }
+                }
                 Section("Sites") {
                     ForEach(LocationKind.allCases, id: \.self) { l in
                         let n = l.spec.contracts.count
@@ -742,6 +787,9 @@ struct HelpView: View {
             List {
                 Section("Goal") {
                     Text("Customer files flow in from the intake. You arrange modules and belts to clean, package and deliver them. A clean file that meets the contract earns money; delivering malicious content is a breach.")
+                }
+                Section("Operator level") {
+                    Text("Accepted deliveries and finished contracts earn experience. Levels unlock modules (Scanner at 2, Quarantine at 3, Router at 4, Transformer at 5, Sandbox at 7) and upgrade tiers (level 3 and 6). Achievements pay cash and experience; see the Campaign page.")
                 }
                 Section("Tension: security ↔ usability") {
                     Text("Clean too aggressively and the file breaks, the customer won't pay. Go easy and malware slips through. Accounting wants formulas, the bank wants zero active content, the design agency wants image quality.")

@@ -190,6 +190,7 @@ import Testing
 
     @Test func softwareHouseRewardsScannerAndPunishesScriptFilter() {
         var s = GameState(seed: 10)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 5000
         s.progress.index = 3
         #expect(s.activeContract.customer == .softwareHouse)
@@ -205,6 +206,7 @@ import Testing
         #expect(good.delivered >= 40)
 
         var t = GameState(seed: 10)
+        t.xp = 100_000 // seviye kilitleri bu testin konusu değil
         t.money = 5000
         t.progress.index = 3
         lay(&t, path: path, modules: [
@@ -220,6 +222,7 @@ import Testing
     @Test func hospitalNeedsGentleTransformer() {
         func build(transformerLevel: Int) -> GameState {
             var s = GameState(seed: 11)
+            s.xp = 100_000 // seviye kilitleri bu testin konusu değil
             s.money = 30_000; s.reputation = 100
             _ = s.unlockLocation(.company); _ = s.switchLocation(.company)
             s.progress.index = 3
@@ -249,6 +252,7 @@ import Testing
     @Test func privateBankingNeedsEncryptedRoutingIntoQuarantine() {
         func build(withRouter: Bool) -> GameState {
             var s = GameState(seed: 12)
+            s.xp = 100_000 // seviye kilitleri bu testin konusu değil
             s.money = 80_000; s.reputation = 300
             _ = s.unlockLocation(.bank); _ = s.switchLocation(.bank)
             s.progress.index = 2
@@ -281,6 +285,7 @@ import Testing
 
     @Test func intelligenceServiceAirGappedAndEncrypted() {
         var s = GameState(seed: 13)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 200_000; s.reputation = 500
         _ = s.unlockLocation(.government); _ = s.switchLocation(.government)
         s.progress.index = 2

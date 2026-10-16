@@ -57,6 +57,7 @@ import Testing
             #expect(kind.spec.availableModules.contains(.sandbox) == (kind == .dataCenter))
         }
         var s = GameState(seed: 1)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 10_000
         #expect(s.placeModule(.sandbox, at: GridPos(1, 1), facing: .right).error == .notAvailableHere)
     }
@@ -105,6 +106,7 @@ import Testing
 
     func dataCenter(index: Int) -> GameState {
         var s = GameState(seed: 21)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 1_000_000; s.reputation = 1000
         for kind in LocationKind.allCases { _ = s.unlockLocation(kind) }
         #expect(s.switchLocation(.dataCenter).isSuccess)

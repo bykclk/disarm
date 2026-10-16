@@ -58,6 +58,7 @@ import Testing
 
     @Test func officeFullRun() {
         var s = GameState(seed: 1)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         // Başlangıç parasıyla kurulabilmeli: ayrıştırıcı 120 + 2 filtre 180 + paketleyici 100 + bantlar.
         let path = row(1, 1...5) + column(6, 1...7)
         lay(&s, path: path, modules: [
@@ -74,6 +75,7 @@ import Testing
 
     @Test func officeScannerOnlyFailsAtTierTwo() {
         var s = GameState(seed: 2)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.progress.index = 1 // Avukatlık: betikler
         let path = row(1, 1...5) + column(6, 1...7)
         lay(&s, path: path, modules: [GridPos(2, 1): (.scanner, nil)])
@@ -86,6 +88,7 @@ import Testing
 
     @Test func companyNeedsParserLevelTwo() {
         var s = GameState(seed: 3)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 20_000
         s.reputation = 100
         #expect(s.unlockLocation(.company).isSuccess)
@@ -112,6 +115,7 @@ import Testing
 
     @Test func bankScannerIsBlindToUnknown() {
         var s = GameState(seed: 4)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 50_000
         s.reputation = 200
         #expect(s.unlockLocation(.bank).isSuccess)
@@ -129,6 +133,7 @@ import Testing
         #expect(r.breaches > 0)
 
         var t = GameState(seed: 4)
+        t.xp = 100_000 // seviye kilitleri bu testin konusu değil
         t.money = 50_000; t.reputation = 200
         _ = t.unlockLocation(.bank); _ = t.switchLocation(.bank)
         t.moduleLevels[.parser] = 3; t.moduleLevels[.transformer] = 2
@@ -144,6 +149,7 @@ import Testing
 
     @Test func governmentAirGapped() {
         var s = GameState(seed: 5)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 100_000; s.reputation = 500
         _ = s.unlockLocation(.government); _ = s.switchLocation(.government)
         s.moduleLevels[.parser] = 3; s.moduleLevels[.transformer] = 3; s.moduleLevels[.filter] = 3; s.moduleLevels[.packager] = 3

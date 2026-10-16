@@ -119,6 +119,7 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
         case .keepScripts: return loc == .smallOffice && index == 3
         case .upgrades:
             return s.tutorialSeen && loc == .smallOffice && index >= 1
+                && s.level >= Progression.requiredLevel(forUpgradeTo: 2)
                 && s.level(of: .parser) == 1 && s.money >= ModuleKind.parser.upgradeCost(toLevel: 2)
         case .company: return loc == .company
         case .nestedZip: return loc == .company && index == 0 && s.level(of: .parser) < 2

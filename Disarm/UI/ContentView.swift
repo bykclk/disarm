@@ -72,9 +72,18 @@ struct HUDView: View {
                     .foregroundStyle(Color(Theme.success))
                     .contentTransition(.numericText(value: Double(s.money)))
                     .animation(.snappy(duration: 0.35), value: s.money)
-                Label("\(s.reputation)", systemImage: "star.fill")
-                    .font(.system(.subheadline, design: .rounded).weight(.semibold))
-                    .foregroundStyle(Color(Theme.warning))
+                // Operatör seviyesi ve XP çubuğu; dokununca kampanya sayfası (itibar orada).
+                Button { engine.sheet = .campaign } label: {
+                    HStack(spacing: 6) {
+                        Text("Lv \(s.level)")
+                            .font(.system(.subheadline, design: .rounded).weight(.bold))
+                            .foregroundStyle(Color(Theme.warning))
+                        ProgressView(value: Double(s.xpProgress.current), total: Double(max(1, s.xpProgress.needed)))
+                            .tint(Color(Theme.warning))
+                            .frame(width: 54)
+                    }
+                }
+                .accessibilityLabel("Operator level \(s.level), \(s.xpProgress.current) of \(s.xpProgress.needed) experience")
                 if s.prestige > 0 {
                     Button { engine.sheet = .campaign } label: {
                         Label("\(s.prestige)", systemImage: "sparkles")
@@ -269,12 +278,15 @@ struct PaletteView: View {
         let active = engine.tool == .place(kind)
         let affordable = engine.state.money >= kind.baseCost
         let level = engine.state.level(of: kind)
-        Button { engine.tool = .place(kind) } label: {
+        let unlocked = engine.state.isUnlocked(kind)
+        Button {
+            if unlocked { engine.tool = .place(kind) } else { engine.lockedModuleTapped(kind) }
+        } label: {
             VStack(spacing: 2) {
                 ZStack(alignment: .topTrailing) {
-                    Image(systemName: Theme.symbol(kind))
+                    Image(systemName: unlocked ? Theme.symbol(kind) : "lock.fill")
                         .font(.title3)
-                        .foregroundStyle(Color(Theme.color(kind)))
+                        .foregroundStyle(unlocked ? Color(Theme.color(kind)) : .secondary)
                         .frame(width: 40, height: 24)
                     if level > 1 {
                         Text("L\(level)").font(.caption2.weight(.bold))
@@ -282,7 +294,11 @@ struct PaletteView: View {
                     }
                 }
                 Text(kind.displayName).font(.caption2).lineLimit(1).minimumScaleFactor(0.7)
-                Text(money(kind.baseCost)).font(.caption2).foregroundStyle(affordable ? .secondary : Color(Theme.danger))
+                if unlocked {
+                    Text(money(kind.baseCost)).font(.caption2).foregroundStyle(affordable ? .secondary : Color(Theme.danger))
+                } else {
+                    Text("Lv \(kind.requiredLevel)").font(.caption2.weight(.semibold)).foregroundStyle(Color(Theme.warning))
+                }
             }
             .padding(.horizontal, 4)
             .frame(minWidth: 70, minHeight: 56)
@@ -290,9 +306,9 @@ struct PaletteView: View {
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(active ? Color(Theme.color(kind)) : .clear, lineWidth: 1.5))
         }
         .foregroundStyle(.white)
-        .opacity(affordable ? 1 : 0.6)
+        .opacity(unlocked ? (affordable ? 1 : 0.6) : 0.5)
         .accessibilityLabel(Text("\(kind.displayName), \(money(kind.baseCost))") + (level > 1 ? Text(", level \(level)") : Text("")))
-        .accessibilityHint(affordable ? "Select to place" : "Not enough money")
+        .accessibilityHint(unlocked ? (affordable ? "Select to place" : "Not enough money") : "Unlocks at operator level \(kind.requiredLevel)")
     }
 }
 

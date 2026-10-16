@@ -37,6 +37,8 @@ public enum SaveRepair: Equatable, Sendable {
     case levelsClamped
     case contractIndexClamped(LocationKind)
     case anchorsRestored(LocationKind)
+    /// İlerleme sisteminden önceki kayıt: XP istatistiklerden türetildi (yerleşik modüller kilit arkasında kalmasın).
+    case xpDerived
 }
 
 public struct LoadedSave: Sendable {
@@ -128,6 +130,22 @@ public enum SaveMigrator {
                 s.contracts[kind]!.index = min(max(0, p.index), maxIndex)
                 repairs.append(.contractIndexClamped(kind))
             }
+        }
+
+        // İlerleme sisteminden önceki kayıt: XP'yi geçmiş teslimat ve sözleşmelerden türet; ayrıca yerleşik ya da
+        // yükseltilmiş modüllerin gerektirdiği seviyeye ulaşmasını garanti et.
+        if s.xp == 0 && (s.stats.totalAccepted > 0 || s.stats.contractsCompleted > 0) {
+            var needed = s.stats.totalAccepted + 20 * s.stats.contractsCompleted
+            var requiredLevel = 1
+            for grid in s.layouts.values {
+                for p in grid.allPositions {
+                    if let m = grid[p]?.module, m.kind.isPlaceable { requiredLevel = max(requiredLevel, m.kind.requiredLevel) }
+                }
+            }
+            for (_, lvl) in s.moduleLevels { requiredLevel = max(requiredLevel, Progression.requiredLevel(forUpgradeTo: lvl)) }
+            needed = max(needed, Progression.xp(forLevel: requiredLevel))
+            s.xp = needed
+            repairs.append(.xpDerived)
         }
 
         // Seviyeler tanımlı aralıkta kalsın.
@@ -235,6 +253,7 @@ extension Stats {
     enum CodingKeys: String, CodingKey {
         case totalDelivered, totalAccepted, totalBreaches, totalEarned, totalQuarantined
         case contractsCompleted, campaignsCompleted, bestCampaignSeconds
+        case acceptedStreak, bestAcceptedStreak, cleanContracts, upgradesBought
     }
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -247,6 +266,10 @@ extension Stats {
         contractsCompleted = c.decodeOr(Int.self, .contractsCompleted, 0)
         campaignsCompleted = c.decodeOr(Int.self, .campaignsCompleted, 0)
         bestCampaignSeconds = c.decodeOr(Double.self, .bestCampaignSeconds, 0)
+        acceptedStreak = c.decodeOr(Int.self, .acceptedStreak, 0)
+        bestAcceptedStreak = c.decodeOr(Int.self, .bestAcceptedStreak, 0)
+        cleanContracts = c.decodeOr(Int.self, .cleanContracts, 0)
+        upgradesBought = c.decodeOr(Int.self, .upgradesBought, 0)
     }
 }
 
@@ -336,7 +359,7 @@ extension GameState {
     enum CodingKeys: String, CodingKey {
         case money, reputation, currentLocation, unlockedLocations, layouts, contracts
         case moduleLevels, beltLevel, intakeLevel, stats, lastSaved, incomeRatePerSec, rngSeed, tutorialSeen
-        case prestige, campaignCompleted, seenHints
+        case prestige, campaignCompleted, seenHints, xp, achievements
     }
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -358,6 +381,8 @@ extension GameState {
         prestige = max(0, c.decodeOr(Int.self, .prestige, 0))
         campaignCompleted = c.decodeOr(Bool.self, .campaignCompleted, false)
         seenHints = c.decodeEnumSet(.seenHints)
+        xp = max(0, c.decodeOr(Int.self, .xp, 0))
+        achievements = c.decodeEnumSet(.achievements)
         // Yerleşim/sözleşme eksikleri SaveMigrator.repair ile tamamlanır.
     }
 }

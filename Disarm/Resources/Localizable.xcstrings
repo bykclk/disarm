@@ -2211,6 +2211,226 @@
           }
         }
       }
+    },
+    "Level %lld!": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seviye %lld!"
+          }
+        }
+      }
+    },
+    "Level %lld! Unlocked: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seviye %lld! Açıldı: %@"
+          }
+        }
+      }
+    },
+    "Module upgrades to level 2 are now available.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modüller artık 2. seviyeye yükseltilebilir."
+          }
+        }
+      }
+    },
+    "Module upgrades to level 3 are now available.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modüller artık 3. seviyeye yükseltilebilir."
+          }
+        }
+      }
+    },
+    "Reached operator level %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Operatör seviyesi %lld'ye ulaşıldı"
+          }
+        }
+      }
+    },
+    "Achievement: %@ (+%@, +%lld XP)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Başarım: %@ (+%@, +%lld XP)"
+          }
+        }
+      }
+    },
+    "Achievement unlocked: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Başarım açıldı: %@"
+          }
+        }
+      }
+    },
+    "Unlocks at operator level %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Operatör seviyesi %lld'de açılır"
+          }
+        }
+      }
+    },
+    "%@ unlocks at operator level %lld. You are level %lld.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ operatör seviyesi %2$lld'de açılır. Sen seviye %3$lld'sin."
+          }
+        }
+      }
+    },
+    "Lv %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sv %lld"
+          }
+        }
+      }
+    },
+    "Operator level %lld, %lld of %lld experience": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Operatör seviyesi %lld, %lld / %lld deneyim"
+          }
+        }
+      }
+    },
+    "Operator": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Operatör"
+          }
+        }
+      }
+    },
+    "Level %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seviye %lld"
+          }
+        }
+      }
+    },
+    "%lld/%lld XP": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/%lld XP"
+          }
+        }
+      }
+    },
+    "Level %lld unlocks %@.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seviye %lld şunları açar: %@."
+          }
+        }
+      }
+    },
+    "Level %lld unlocks module upgrades.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seviye %lld modül yükseltmelerini açar."
+          }
+        }
+      }
+    },
+    "Level %lld unlocks level 3 upgrades.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seviye %lld 3. seviye yükseltmeleri açar."
+          }
+        }
+      }
+    },
+    "Reputation": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İtibar"
+          }
+        }
+      }
+    },
+    "Achievements": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Başarımlar"
+          }
+        }
+      }
+    },
+    "+%lld XP": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%lld XP"
+          }
+        }
+      }
+    },
+    "Operator level": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Operatör seviyesi"
+          }
+        }
+      }
+    },
+    "Accepted deliveries and finished contracts earn experience. Levels unlock modules (Scanner at 2, Quarantine at 3, Router at 4, Transformer at 5, Sandbox at 7) and upgrade tiers (level 3 and 6). Achievements pay cash and experience; see the Campaign page.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kabul edilen teslimatlar ve biten sözleşmeler deneyim kazandırır. Seviyeler modülleri (Tarayıcı 2, Karantina 3, Yönlendirici 4, Dönüştürücü 5, Kum Havuzu 7) ve yükseltme kademelerini (seviye 3 ve 6) açar. Başarımlar para ve deneyim verir; Kampanya sayfasına bak."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

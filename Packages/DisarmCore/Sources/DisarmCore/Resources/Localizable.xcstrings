@@ -1370,6 +1370,246 @@
           }
         }
       }
+    },
+    "First Delivery": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İlk Teslimat"
+          }
+        }
+      }
+    },
+    "Hundred Files": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yüz Dosya"
+          }
+        }
+      }
+    },
+    "Thousand Files": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bin Dosya"
+          }
+        }
+      }
+    },
+    "Hot Streak": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seri Katil Değil, Seri Kabul"
+          }
+        }
+      }
+    },
+    "Flawless Hundred": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kusursuz Yüz"
+          }
+        }
+      }
+    },
+    "Spotless Contract": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lekesiz Sözleşme"
+          }
+        }
+      }
+    },
+    "Trusted Vendor": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Güvenilir Tedarikçi"
+          }
+        }
+      }
+    },
+    "Better Safe": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tedbirli"
+          }
+        }
+      }
+    },
+    "Tuned Up": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayar Çekildi"
+          }
+        }
+      }
+    },
+    "Expanding": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Büyüyoruz"
+          }
+        }
+      }
+    },
+    "Everywhere at Once": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Her Yerde Birden"
+          }
+        }
+      }
+    },
+    "Campaign Veteran": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kampanya Gazisi"
+          }
+        }
+      }
+    },
+    "Deliver a file the customer accepts.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Müşterinin kabul ettiği bir dosya teslim et."
+          }
+        }
+      }
+    },
+    "Deliver 100 files.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "100 dosya teslim et."
+          }
+        }
+      }
+    },
+    "Deliver 1,000 files.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1.000 dosya teslim et."
+          }
+        }
+      }
+    },
+    "25 accepted deliveries in a row.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üst üste 25 kabul edilen teslimat."
+          }
+        }
+      }
+    },
+    "100 accepted deliveries in a row.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üst üste 100 kabul edilen teslimat."
+          }
+        }
+      }
+    },
+    "Complete a contract with no complaints and no breaches.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şikayetsiz ve ihlalsiz bir sözleşme bitir."
+          }
+        }
+      }
+    },
+    "Complete five spotless contracts.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beş lekesiz sözleşme bitir."
+          }
+        }
+      }
+    },
+    "Send a file to quarantine.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bir dosyayı karantinaya gönder."
+          }
+        }
+      }
+    },
+    "Buy your first module upgrade.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İlk modül yükseltmeni al."
+          }
+        }
+      }
+    },
+    "Unlock a second site.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İkinci bir mekân aç."
+          }
+        }
+      }
+    },
+    "Unlock every site.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tüm mekânları aç."
+          }
+        }
+      }
+    },
+    "Finish the campaign.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kampanyayı bitir."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -153,6 +153,7 @@ final class GameEngine {
             var s = GameState(seed: 7)
             s.money = 5000
             s.tutorialSeen = true
+        s.xp = 100_000 // demo: tüm modüller ve yükseltmeler açık
             func belt(_ cells: [(Int, Int)], _ d: Direction) { for (x, y) in cells { s.placeBelt(at: GridPos(x, y), facing: d) } }
             belt([(1, 1), (2, 1), (3, 1), (4, 1)], .right)
             belt([(5, 1), (5, 2)], .down)
@@ -188,6 +189,13 @@ final class GameEngine {
             sim = Simulation(seed: 13)
             sheet = .campaign
         }
+        if args.contains("-fresh") {
+            // Kayıt yok sayılır: sıfırdan, yardım kapalı (ilerleme/kilit testleri için).
+            state = GameState()
+            state.tutorialSeen = true
+            sim = Simulation(seed: state.rngSeed)
+            sheet = nil
+        }
         if args.contains("-skipHelp") { sheet = nil }
         if let i = args.firstIndex(of: "-sheet"), i + 1 < args.count {
             switch args[i + 1] {
@@ -210,6 +218,7 @@ final class GameEngine {
         s.money = 80_000
         s.reputation = 300
         s.tutorialSeen = true
+        s.xp = 100_000 // demo: tüm modüller ve yükseltmeler açık
         _ = s.unlockLocation(.company)
         _ = s.unlockLocation(.bank)
         _ = s.switchLocation(.bank)
@@ -238,6 +247,7 @@ final class GameEngine {
         s.money = 500_000
         s.reputation = 400
         s.tutorialSeen = true
+        s.xp = 100_000 // demo: tüm modüller ve yükseltmeler açık
         for kind in LocationKind.allCases { _ = s.unlockLocation(kind) }
         _ = s.switchLocation(.dataCenter)
         s.progress.index = 1
@@ -261,6 +271,7 @@ final class GameEngine {
         var s = GameState(seed: 11)
         s.money = 2000
         s.tutorialSeen = true
+        s.xp = 100_000 // demo: tüm modüller ve yükseltmeler açık
         for x in 1...2 { s.placeBelt(at: GridPos(x, 1), facing: .right) }
         s.placeModule(.scanner, at: GridPos(3, 1), facing: .right)
         s.placeModule(.parser, at: GridPos(4, 1), facing: .down)
@@ -393,6 +404,27 @@ final class GameEngine {
                 fx.append(.contractFailed)
                 toast(String(localized: "Contract cancelled: \(c.title). Too many breaches."), .bad, 4)
                 addLog(String(localized: "Contract cancelled: \(c.title). Reputation -5"), .bad)
+            case .levelUp(let level):
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                audio.play(.unlock)
+                fx.append(.contractCompleted)
+                let unlocked = GameState.modulesUnlocked(atLevel: level)
+                if unlocked.isEmpty {
+                    toast(String(localized: "Level \(level)!"), .good, 4)
+                } else {
+                    let names = unlocked.map(\.displayName).joined(separator: ", ")
+                    toast(String(localized: "Level \(level)! Unlocked: \(names)"), .good, 5)
+                }
+                if level == Progression.requiredLevel(forUpgradeTo: 2) {
+                    toast(String(localized: "Module upgrades to level 2 are now available."), .info, 5)
+                } else if level == Progression.requiredLevel(forUpgradeTo: 3) {
+                    toast(String(localized: "Module upgrades to level 3 are now available."), .info, 5)
+                }
+                addLog(String(localized: "Reached operator level \(level)"), .good)
+            case .achievementUnlocked(let a):
+                audio.play(.contract, volume: 0.8)
+                toast(String(localized: "Achievement: \(a.displayName) (+\(money(a.rewardMoney)), +\(a.rewardXP) XP)"), .good, 4)
+                addLog(String(localized: "Achievement unlocked: \(a.displayName)"), .good)
             case .locationFinished(let site):
                 fx.append(.contractCompleted)
                 if let next = site.next {
@@ -554,6 +586,7 @@ final class GameEngine {
             case .maxLevel: toast(String(localized: "Already at max level"), .info)
             case .locked: toast(String(localized: "Kilitli"), .warn)
             case .reputationTooLow(let n): toast(String(localized: "Reputation too low: \(n) needed"), .warn)
+            case .levelTooLow(let n): toast(String(localized: "Unlocks at operator level \(n)"), .warn)
             }
         }
     }
@@ -565,7 +598,24 @@ final class GameEngine {
     func setFilter(at p: GridPos, _ k: PartKind) { layoutEdit(state.configure(at: p) { $0.filterTarget = k }) }
     func setRoute(at p: GridPos, _ c: ContainerKind) { layoutEdit(state.configure(at: p) { $0.routeTarget = c }) }
     func setRouteEncrypted(at p: GridPos, _ on: Bool) { layoutEdit(state.configure(at: p) { $0.routeEncrypted = on }) }
-    func upgrade(_ k: ModuleKind) { report(state.upgradeModule(k), sound: .upgrade); if state.level(of: k) > 1 { layoutVersion += 1 } }
+    func upgrade(_ k: ModuleKind) {
+        report(state.upgradeModule(k), sound: .upgrade)
+        if state.level(of: k) > 1 { layoutVersion += 1 }
+        settleProgression()
+    }
+
+    func lockedModuleTapped(_ kind: ModuleKind) {
+        audio.play(.error, volume: 0.4)
+        toast(String(localized: "\(kind.displayName) unlocks at operator level \(kind.requiredLevel). You are level \(state.level)."), .warn, 3)
+    }
+
+    /// Simülasyon dışı bir durum değişikliğinden (yükseltme, mekân açma) sonra başarımları ve seviyeyi işler.
+    private func settleProgression() {
+        let before = state.level
+        var events: [GameEvent] = state.claimAchievements().map { .achievementUnlocked($0) }
+        if state.level > before { events.append(.levelUp(state.level)) }
+        if !events.isEmpty { handle(events) }
+    }
     func upgradeBelt() { report(state.upgradeBelt(), sound: .upgrade) }
     func upgradeIntake() { report(state.upgradeIntake(), sound: .upgrade) }
 
@@ -576,6 +626,7 @@ final class GameEngine {
             audio.play(.unlock)
             toast(String(localized: "\(l.spec.displayName) unlocked!"), .good, 3)
             switchLocation(l)
+            settleProgression()
         }
     }
 

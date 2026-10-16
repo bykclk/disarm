@@ -6,6 +6,7 @@ import Testing
     /// Giriş (0,1) sağa bakar. Düz bir bant + ayrıştırıcı + filtre + paketleyici + teslimat.
     func buildPipeline() -> GameState {
         var s = GameState(seed: 3)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 100_000
         // Satır 1: (1..3) bant, (4) ayrıştırıcı, (5) filtre, (6) paketleyici -> aşağı -> bant -> teslimat (6,8)
         for x in 1...3 { s.placeBelt(at: GridPos(x, 1), facing: .right) }
@@ -62,6 +63,7 @@ import Testing
 
     @Test func noPipelineMeansNoDelivery() {
         var s = GameState(seed: 1)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         var sim = Simulation(seed: 1)
         let events = run(&s, sim: &sim, seconds: 20)
         #expect(!events.contains { if case .delivered = $0 { return true }; return false })
@@ -70,6 +72,7 @@ import Testing
 
     @Test func unfilteredPipelineBreaches() {
         var s = GameState(seed: 9)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 100_000
         // Doğrudan teslimat: (1..5,1) sağ, (6,1..7) aşağı -> teslimat (6,8)
         for x in 1...5 { s.placeBelt(at: GridPos(x, 1), facing: .right) }
@@ -102,6 +105,7 @@ import Testing
 
     @Test func offlineSettlement() {
         var s = GameState(seed: 1)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.incomeRatePerSec = 2
         s.lastSaved = Date(timeIntervalSinceNow: -3600)
         let before = s.money
@@ -125,6 +129,7 @@ import Testing
 @Suite struct EconomyTests {
     @Test func cannotOverspend() {
         var s = GameState(seed: 1)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 10
         #expect(s.placeModule(.parser, at: GridPos(2, 2), facing: .right) .error == .insufficientFunds(needed: 120))
         #expect(s.placeBelt(at: GridPos(2, 2), facing: .right) .isSuccess)
@@ -133,6 +138,7 @@ import Testing
 
     @Test func protectedModulesStay() {
         var s = GameState(seed: 1)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         let src = s.location.sourcePos
         #expect(s.remove(at: src) .error == .protected)
         #expect(s.rotate(at: src) .error == .protected)
@@ -140,6 +146,7 @@ import Testing
 
     @Test func moduleAvailabilityPerLocation() {
         var s = GameState(seed: 1)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 100_000
         #expect(s.placeModule(.transformer, at: GridPos(2, 2), facing: .right) .error == .notAvailableHere)
         #expect(s.unlockLocation(.company) .error == .reputationTooLow(needed: 20))
@@ -153,6 +160,7 @@ import Testing
 @Suite struct ReachabilityTests {
     @Test func detectsConnectedAndBrokenLines() {
         var s = GameState(seed: 1)
+        s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         s.money = 10_000
         let src = s.location.sourcePos
         #expect(!s.grid.sinkReachable(from: src))

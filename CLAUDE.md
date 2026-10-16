@@ -8,7 +8,7 @@
 ## Komutlar
 - `make test` — çekirdek testleri (hızlı, önce bunu çalıştır)
 - `make build` — simülatör derlemesi
-- `make run ARGS="-demo"` — örnek hatla başlat; `-demoBank` (Özel Bankacılık, şifreli dosyalar, yönlendirici→karantina), `-demoEnd` (kampanyası bitmiş durum, prestij akışı), `-demoDC` (Veri Merkezi, kum havuzu hattı), `-demoBelt` (modülsüz S bant, köşe görsel testi), `-demoSiteDone` (ofis bitmiş, şirket kilitli: sıradaki mekân yönlendirmesi), `-skipHelp`, `-sheet contracts|upgrades|locations|log|campaign|module` dev argümanları
+- `make run ARGS="-demo"` — örnek hatla başlat; `-demoBank` (Özel Bankacılık, şifreli dosyalar, yönlendirici→karantina), `-demoEnd` (kampanyası bitmiş durum, prestij akışı), `-demoDC` (Veri Merkezi, kum havuzu hattı), `-demoBelt` (modülsüz S bant, köşe görsel testi), `-demoSiteDone` (ofis bitmiş, şirket kilitli: sıradaki mekân yönlendirmesi), `-fresh` (kayıt yok sayılır, seviye 1, kilitler görünür), `-skipHelp`, `-sheet contracts|upgrades|locations|log|campaign|module` dev argümanları
 - `make device ARGS="..."` — bağlı iPhone'a imzalı Debug derlemesi yükle ve başlat (ekip `project.yml`'de; `DEVICE=<udid>` ile cihaz seç)
 - `make screenshot` — ekran görüntüsü `.screens/` altına
 - `-fps` — sahnede fps/çizim/düğüm sayacı, SwiftUI gövde sıklığı günlükte `[render]` satırları (`xcrun simctl spawn <udid> log stream --predicate 'process == "Disarm"'`). Bu Mac'te `timeout` yok; süreli yakalama için arka plan + `sleep` + `kill`.
@@ -16,6 +16,11 @@
 ## Ses ve efektler
 - Sesler `scripts/make-sounds.swift` ile sentezlenir → `Disarm/Resources/Sounds/*.wav` (git'te). Yeni efekt: betiğe `sfx(...)` ekle, `AudioManager.Sfx` enum'una aynı adı ekle, betiği çalıştır.
 - Görsel efektler: motor `fx: [FxEvent]` kuyruğuna yazar, `GameScene.drainFx()` her karede tüketir. Yeni efekt için önce `FxEvent` case'i.
+
+## İlerleme
+- `DisarmCore/Progression.swift`: XP (kabul edilen teslimat 1+tier/3, sözleşme itibar×2, başarım ödülü), seviye `10·(n−1)(n+1)`, modül kilitleri `ModuleKind.requiredLevel`, yükseltme kademeleri `Progression.requiredLevel(forUpgradeTo:)` (3 ve 6), başarımlar `Achievement` (koşul `isMet`, ödül para+XP, `claimAchievements`). Olaylar `.levelUp`, `.achievementUnlocked`.
+- Yeni modül eklerken `requiredLevel` ver; yeni başarım eklerken `isMet` için gerekli istatistiği `Stats`'a ekle. Eski kayıtlarda XP `SaveMigrator.repair` ile istatistiklerden türetilir (`xpDerived`).
+- Testlerde yerleşim kuran senaryolar `s.xp = 100_000` ile kilitleri aşar; hız testi `LevelTests.officePacing...`.
 
 ## Öğretici
 - Küçük ofisin ilk sözleşmesi: `GameEngine.tutorialStep` (durumdan türeyen 5 adım, ilk teslimatta biter).

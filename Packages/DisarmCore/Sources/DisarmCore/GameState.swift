@@ -10,6 +10,12 @@ public struct Stats: Codable, Hashable, Sendable {
     public var campaignsCompleted = 0
     /// En hızlı kampanya süresi (simülasyon saniyesi); 0 = henüz yok.
     public var bestCampaignSeconds: Double = 0
+    /// Ardışık kabul serisi (şikayet/ihlalde sıfırlanır) ve en iyisi.
+    public var acceptedStreak = 0
+    public var bestAcceptedStreak = 0
+    /// Şikayetsiz ve ihlalsiz biten sözleşmeler.
+    public var cleanContracts = 0
+    public var upgradesBought = 0
     public init() {}
 }
 
@@ -40,6 +46,10 @@ public struct GameState: Codable, Hashable, Sendable {
     public var campaignCompleted: Bool
     /// Kapatılmış ipucu kartları; prestijde korunur.
     public var seenHints: Set<Hint>
+    /// Deneyim puanı; hiç azalmaz. Seviye `Progression.level(forXP:)`.
+    public var xp: Int
+    /// Alınmış başarımlar; prestijde korunur.
+    public var achievements: Set<Achievement>
 
     public init(seed: UInt64 = UInt64(Date().timeIntervalSince1970)) {
         money = Self.startingMoney
@@ -59,6 +69,8 @@ public struct GameState: Codable, Hashable, Sendable {
         prestige = 0
         campaignCompleted = false
         seenHints = []
+        xp = 0
+        achievements = []
     }
 
     // MARK: - Kampanya ve prestij
@@ -92,11 +104,16 @@ public struct GameState: Codable, Hashable, Sendable {
         let keptStats = stats
         let seenTutorial = tutorialSeen
         let keptHints = seenHints
+        let keptXP = xp
+        let keptAchievements = achievements
         let nextPrestige = prestige + 1
         self = GameState(seed: rngSeed &+ 1)
         stats = keptStats
+        stats.acceptedStreak = 0
         tutorialSeen = seenTutorial
         seenHints = keptHints
+        xp = keptXP // seviye ve açılmış modüller kalır: yeni kampanya hız, para değil
+        achievements = keptAchievements
         prestige = nextPrestige
         money += Self.prestigeStartingBonus * nextPrestige
     }
@@ -138,6 +155,8 @@ public struct GameState: Codable, Hashable, Sendable {
         case maxLevel
         case locked
         case reputationTooLow(needed: Int)
+        /// Operatör seviyesi yetersiz (modül ya da yükseltme kademesi kilitli).
+        case levelTooLow(needed: Int)
     }
 
     @discardableResult
@@ -158,6 +177,7 @@ public struct GameState: Codable, Hashable, Sendable {
     public mutating func placeModule(_ kind: ModuleKind, at p: GridPos, facing: Direction) -> Result<Void, ActionError> {
         guard kind.isPlaceable else { return .failure(.notPlaceable) }
         guard location.availableModules.contains(kind) else { return .failure(.notAvailableHere) }
+        guard isUnlocked(kind) else { return .failure(.levelTooLow(needed: kind.requiredLevel)) }
         guard grid.contains(p) else { return .failure(.outOfBounds) }
         if grid[p]?.module != nil { return .failure(.cellOccupied) }
         let refund = grid[p]?.beltDirection != nil ? Self.beltCost : 0
@@ -220,10 +240,13 @@ public struct GameState: Codable, Hashable, Sendable {
     public mutating func upgradeModule(_ kind: ModuleKind) -> Result<Void, ActionError> {
         let current = level(of: kind)
         guard current < kind.maxLevel else { return .failure(.maxLevel) }
+        let needed = Progression.requiredLevel(forUpgradeTo: current + 1)
+        guard level >= needed else { return .failure(.levelTooLow(needed: needed)) }
         let cost = kind.upgradeCost(toLevel: current + 1)
         guard money >= cost else { return .failure(.insufficientFunds(needed: cost)) }
         money -= cost
         moduleLevels[kind] = current + 1
+        stats.upgradesBought += 1
         return .success(())
     }
 

@@ -101,6 +101,7 @@ import Testing
             for (i, spec) in kind.spec.contracts.enumerated() {
                 var s = GameState(seed: 100 + UInt64(i))
                 s.money = 1_000_000; s.reputation = 10_000
+                s.xp = 100_000 // tam yükseltilmiş hat: seviye kilitleri bu testin konusu değil
                 s.tutorialSeen = true
                 for k in LocationKind.allCases { _ = s.unlockLocation(k) }
                 #expect(s.switchLocation(kind).isSuccess)
