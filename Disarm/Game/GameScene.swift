@@ -215,10 +215,52 @@ final class GameScene: SKScene {
         return group
     }
 
+    /// Köşe yayı: giriş kenarı ortasından çıkış kenarı ortasına çeyrek daire (dosyalarla aynı yol).
+    /// `from` ile yayın bir kısmından başlanır (ikinci okun yarım fazı için).
+    private func cornerPath(entry e: Direction, exit h: Direction, from t0: CGFloat = 0) -> CGPath {
+        let ev = vector(e), hv = vector(h), r = cs / 2
+        let ox = -ev.dx * r + hv.dx * r, oy = -ev.dy * r + hv.dy * r
+        let path = CGMutablePath()
+        let n = 16
+        for i in 0...n {
+            let t = t0 + (1 - t0) * CGFloat(i) / CGFloat(n)
+            let th = t * .pi / 2
+            let p = CGPoint(x: ox + (-hv.dx * cos(th) + ev.dx * sin(th)) * r,
+                            y: oy + (-hv.dy * cos(th) + ev.dy * sin(th)) * r)
+            if i == 0 { path.move(to: p) } else { path.addLine(to: p) }
+        }
+        return path
+    }
+
     private func makeBelt(_ d: Direction, connections: Set<Direction>) -> SKNode {
         let n = SKNode()
         let outer = SKNode()
         outer.addChild(beltBody(connections: connections, color: Theme.belt))
+
+        // Köşe bant: tek bir yandan besleniyorsa oklar yayı izler, teğete döner.
+        let incoming = connections.subtracting([d])
+        if incoming.count == 1, let feed = incoming.first, feed != d.opposite {
+            let entry = feed.opposite
+            let full = cornerPath(entry: entry, exit: d)
+            let half = cornerPath(entry: entry, exit: d, from: 0.5)
+            let duration = Double((.pi / 4) * cs / (cs * 0.34 / 0.7)) // düz banttaki ok hızıyla aynı
+            for i in 0..<2 {
+                let holder = SKNode()
+                let chev = chevron(size: cs * 0.15)
+                chev.zRotation = -.pi / 2 // ok ucu +x: follow'un "ileri" yönü
+                chev.alpha = 0.6
+                holder.addChild(chev)
+                let loop = SKAction.repeatForever(.follow(full, asOffset: false, orientToPath: true, duration: duration))
+                if i == 0 {
+                    holder.run(loop)
+                } else {
+                    holder.run(.sequence([.follow(half, asOffset: false, orientToPath: true, duration: duration / 2), loop]))
+                }
+                outer.addChild(holder)
+            }
+            return outer
+        }
+
         // Yalnızca oklar akış yönüne döner; gövde ızgara yönlerinde sabit kalır.
         // Kırpma düğümü yok (pahalı): oklar gövdenin merkez dairesi içinde kalacak kadar kısa akar.
         n.zRotation = -CGFloat(d.angle)
