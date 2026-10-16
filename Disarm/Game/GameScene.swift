@@ -25,6 +25,9 @@ final class GameScene: SKScene {
     /// Dosyanın bulunduğu hücreye hangi yönde girdiği: köşe dönüşlerinde L biçimli yol çizmek için.
     private var itemEntry: [UUID: (pos: GridPos, entry: Direction)] = [:]
     private var frameDt: TimeInterval = 0
+    /// Bant oklarının küresel akış fazı (0..1, hücre birimi) ve ok kayıtları.
+    private var flowPhase: CGFloat = 0
+    private var flowChevrons: [FlowChevron] = []
     /// Konum/ölçek yumuşatma zaman sabiti (sn). Modül giriş/çıkışındaki yarım hücrelik sıçramaları kayışa çevirir.
     private let smoothing: TimeInterval = 0.07
     private var knownCells: Set<GridPos> = []
@@ -121,6 +124,7 @@ final class GameScene: SKScene {
             renderedLayoutVersion = engine.layoutVersion
         }
         syncItems()
+        if !paused { advanceFlow(dt: frameDt) }
         drainFx()
     }
 
@@ -130,6 +134,7 @@ final class GameScene: SKScene {
         guard let engine else { return }
         boardLayer.removeAllChildren()
         cellLayer.removeAllChildren()
+        flowChevrons.removeAll()
         moduleNodes.removeAll()
         let g = engine.state.grid
         let spec = engine.state.location
@@ -152,7 +157,11 @@ final class GameScene: SKScene {
             guard let cell = g[p] else { continue }
             let node: SKNode
             switch cell {
-            case .belt(let d): node = makeBelt(d, connections: beltConnections(at: p, facing: d, in: g))
+            case .belt(let d):
+                let conn = beltConnections(at: p, facing: d, in: g)
+                let feeds = conn.subtracting([d]).filter { g[p.moved($0)]?.beltDirection != nil }
+                node = makeBelt(d, connections: conn, fedByBelt: !feeds.isEmpty,
+                                exitsToBelt: g[p.moved(d)]?.beltDirection != nil)
             case .module(let m): node = makeModule(m, level: engine.state.level(of: m.kind), airGapped: spec.airGapped)
             }
             node.position = point(for: p)
@@ -232,55 +241,73 @@ final class GameScene: SKScene {
         return path
     }
 
-    private func makeBelt(_ d: Direction, connections: Set<Direction>) -> SKNode {
-        let n = SKNode()
+    /// Bant hücresi: gövde + küresel akış fazıyla sürülen iki ok. Oklar SKAction kullanmaz; `advanceFlow`
+    /// her karede aynı fazla konumlar, böylece bir hücreden çıkan ok komşuda aynı noktadan devam eder.
+    private func makeBelt(_ d: Direction, connections: Set<Direction>, fedByBelt: Bool, exitsToBelt: Bool) -> SKNode {
         let outer = SKNode()
         outer.addChild(beltBody(connections: connections, color: Theme.belt))
 
-        // Köşe bant: tek bir yandan besleniyorsa hareketli ok yerine durağan, kıvrımlı tek ok.
-        // Yay giriş kenarından çıkışa doğru çizilir, ok ucu çıkış yönüne bakar; akış hissini dosyalar verir.
         let incoming = connections.subtracting([d])
+        let kind: FlowKind
         if incoming.count == 1, let feed = incoming.first, feed != d.opposite {
-            let entry = feed.opposite
-            let arc = SKShapeNode(path: cornerPath(entry: entry, exit: d, from: 0.12, to: 0.78))
-            arc.strokeColor = Theme.beltArrow
-            arc.lineWidth = max(2, cs * 0.08)
-            arc.lineCap = .round
-            arc.alpha = 0.6
-            outer.addChild(arc)
-            // Ok ucu: yayın ucunda, çıkış yönüne bakar (teğet orada tam çıkış yönüdür).
-            let head = chevron(size: cs * 0.12)
-            let hv = vector(d), ev = vector(entry), r = cs / 2
-            let th = 0.86 * CGFloat.pi / 2
-            let ox = -ev.dx * r + hv.dx * r, oy = -ev.dy * r + hv.dy * r
-            head.position = CGPoint(x: ox + (-hv.dx * cos(th) + ev.dx * sin(th)) * r,
-                                    y: oy + (-hv.dy * cos(th) + ev.dy * sin(th)) * r)
-            head.zRotation = -CGFloat(d.angle)
-            head.alpha = 0.6
-            outer.addChild(head)
-            return outer
+            kind = .corner(entry: feed.opposite, exit: d)
+        } else {
+            kind = .straight(d)
         }
-
-        // Yalnızca oklar akış yönüne döner; gövde ızgara yönlerinde sabit kalır.
-        // Kırpma düğümü yok (pahalı): oklar gövdenin merkez dairesi içinde kalacak kadar kısa akar.
-        n.zRotation = -CGFloat(d.angle)
-        outer.addChild(n)
-        // İki chevron, yarım faz farkıyla yukarı akar: bant hareket ediyor hissi.
-        let span = cs * 0.34
         for i in 0..<2 {
-            let chev = chevron(size: cs * 0.15)
-            let phase = CGFloat(i) * 0.5
-            chev.position = CGPoint(x: 0, y: -span / 2 + span * phase)
-            chev.alpha = 0.6
-            let flow = SKAction.sequence([
-                .moveBy(x: 0, y: span * (1 - phase), duration: 0.7 * Double(1 - phase)),
-                .moveTo(y: -span / 2, duration: 0),
-                .repeatForever(.sequence([.moveBy(x: 0, y: span, duration: 0.7), .moveTo(y: -span / 2, duration: 0)])),
-            ])
-            chev.run(flow)
-            n.addChild(chev)
+            let chev: SKShapeNode
+            if case .corner = kind { chev = chevron(size: cs * 0.15, wide: true) } else { chev = chevron(size: cs * 0.15) }
+            outer.addChild(chev)
+            flowChevrons.append(FlowChevron(node: chev, kind: kind, phaseOffset: CGFloat(i) * 0.5,
+                                            fadeIn: !fedByBelt, fadeOut: !exitsToBelt))
         }
         return outer
+    }
+
+    private enum FlowKind { case straight(Direction), corner(entry: Direction, exit: Direction) }
+    private struct FlowChevron {
+        let node: SKShapeNode
+        let kind: FlowKind
+        let phaseOffset: CGFloat
+        /// Komşu bant yoksa kenarda belirip kaybolur; varsa kesintisiz geçer.
+        let fadeIn: Bool
+        let fadeOut: Bool
+    }
+
+    /// Hücre içindeki yol parametresi t∈[0,1): giriş kenarı → çıkış kenarı. Konum (hücre merkezine göre) ve ok dönüşü.
+    private func flowPose(_ kind: FlowKind, t: CGFloat) -> (CGPoint, CGFloat) {
+        switch kind {
+        case .straight(let d):
+            let v = vector(d)
+            let off = (t - 0.5) * cs
+            return (CGPoint(x: v.dx * off, y: v.dy * off), -CGFloat(d.angle))
+        case .corner(let e, let h):
+            let ev = vector(e), hv = vector(h), r = cs / 2
+            let ox = -ev.dx * r + hv.dx * r, oy = -ev.dy * r + hv.dy * r
+            let th = t * .pi / 2
+            let p = CGPoint(x: ox + (-hv.dx * cos(th) + ev.dx * sin(th)) * r,
+                            y: oy + (-hv.dy * cos(th) + ev.dy * sin(th)) * r)
+            // Teğet: e·cosθ + h·sinθ; ok ucu +y olduğundan −π/2.
+            let tx = ev.dx * cos(th) + hv.dx * sin(th), ty = ev.dy * cos(th) + hv.dy * sin(th)
+            return (p, atan2(ty, tx) - .pi / 2)
+        }
+    }
+
+    /// Tüm bant oklarını tek fazla ilerletir: hat tek parça bir bant gibi akar. Hız bant seviyesiyle artar.
+    private func advanceFlow(dt: TimeInterval) {
+        guard let engine, !flowChevrons.isEmpty else { return }
+        let speed = CGFloat(engine.state.beltSpeed) * 0.4 // hücre/sn
+        flowPhase = (flowPhase + CGFloat(dt) * speed).truncatingRemainder(dividingBy: 1)
+        for c in flowChevrons {
+            let t = (flowPhase + c.phaseOffset).truncatingRemainder(dividingBy: 1)
+            let (p, rot) = flowPose(c.kind, t: t)
+            c.node.position = p
+            c.node.zRotation = rot
+            var a: CGFloat = 0.6
+            if c.fadeIn && t < 0.25 { a *= t / 0.25 }
+            if c.fadeOut && t > 0.75 { a *= (1 - t) / 0.25 }
+            c.node.alpha = a
+        }
     }
 
     /// `wide`: 120° açılı ok; yay üzerinde 45° dönünce kolları eksene hizalanıp "L" gibi görünmesin.
