@@ -16,7 +16,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": " · air-gap"
+            "value": " · kapalı ağ"
           }
         }
       }
@@ -26,7 +26,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": " · air-gapped"
+            "value": " · kapalı ağ (air-gapped)"
           }
         }
       }
@@ -87,7 +87,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ · seviye %lld · %@/dosya"
+            "value": "%@ · kademe %lld · %@/dosya"
           }
         }
       }
@@ -257,7 +257,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Her şeyi agresif temizlersen dosya bozulur, müşteri ödemez. Gevşek bırakırsan zararlı kaçar. Muhasebe formül ister, banka hiçbir aktif içerik istemez, tasarım ajansı görsel kalitesi ister."
+            "value": "Fazla sert temizlersen dosya bozulur, müşteri ödemez. Gevşek bırakırsan zararlı kaçar. Muhasebe formül ister, banka sıfır aktif içerik, tasarım ajansı görsel kalitesi."
           }
         }
       }
@@ -327,7 +327,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sözleşme iptal: %@. Çok fazla ihlal."
+            "value": "Sözleşme iptal edildi: %@. Çok fazla ihlal."
           }
         }
       }
@@ -387,7 +387,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Müşterilerin dosyaları girişten akar. Sen modülleri ve bantları dizerek dosyaları temizler, paketler ve teslimata ulaştırırsın. Temiz ve sözleşmeye uygun dosya para kazandırır; zararlı içerik teslim etmek ihlaldir."
+            "value": "Müşteri dosyaları girişten akar. Modülleri ve bantları dizerek dosyaları temizler, paketler ve teslim edersin. Temiz ve sözleşmeye uygun dosya para kazandırır; zararlı içerik teslim etmek ihlaldir."
           }
         }
       }
@@ -397,7 +397,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Teslim"
+            "value": "Teslim edilen"
           }
         }
       }
@@ -427,7 +427,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bant aracıyla parmağını sürükle: bant yolu çizilir. Modül aracıyla boş hücreye dokun: yerleşir (yön butonuyla çıkış yönünü seç). Seç aracıyla modüle dokun: ayarlar; bant üzerindeki dosyaya dokun: ne taşıdığını gör."
+            "value": "Bant aracıyla parmağını sürükle: bant yolu çizilir. Modül aracıyla boş hücreye dokun: yerleşir (çıkış yönünü Yön düğmesiyle seç). Seç aracıyla modüle dokun: ayarlar; sürükle: taşı. Banttaki dosyaya dokun: ne taşıdığını gör."
           }
         }
       }
@@ -777,7 +777,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "MAX"
+            "value": "MAKS"
           }
         }
       }
@@ -917,7 +917,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Karantina"
+            "value": "Karantinaya alınan"
           }
         }
       }
@@ -997,7 +997,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bu ağda imzalar güncellenmiyor; tarayıcı yalnızca eski makroları tanır."
+            "value": "Bu ağda imzalar güncellenmez; tarayıcı yalnızca eski makroları tanır."
           }
         }
       }
@@ -1037,7 +1037,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "İstatistik"
+            "value": "İstatistikler"
           }
         }
       }
@@ -1107,7 +1107,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sen yokken hat çalıştı"
+            "value": "Sen yokken hat çalışmaya devam etti"
           }
         }
       }
@@ -1117,7 +1117,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pipeline %lld dakika boyunca dosya işledi."
+            "value": "Hat %lld dakika boyunca dosya işledi."
           }
         }
       }
@@ -1157,7 +1157,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tehdit seviyeleri"
+            "value": "Tehdit kademeleri"
           }
         }
       }
@@ -1167,7 +1167,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Seviye %lld"
+            "value": "Kademe %lld"
           }
         }
       }
@@ -1467,7 +1467,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kampanya %lld başlıyor: ödeme +%@, daha hızlı akış."
+            "value": "%lld. kampanya başlıyor: ödeme +%@, daha hızlı akış."
           }
         }
       }
@@ -1517,7 +1517,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kampanya %lld"
+            "value": "%lld. Kampanya"
           }
         }
       }
@@ -1647,7 +1647,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Evet, ilerlemeyi sıfırla ve kampanya %lld'yi başlat"
+            "value": "Evet, ilerlemeyi sıfırla ve %lld. kampanyayı başlat"
           }
         }
       }

@@ -66,7 +66,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Air-gapped ağ. İmza güncellemesi yok, tarayıcı yalnızca yıllanmış makroları tanır. Her şey disarm ile çözülecek."
+            "value": "Kapalı (air-gapped) ağ. İmza güncellemesi yok; tarayıcı yalnızca yıllanmış makroları tanır. Her şey etkisizleştirerek çözülecek."
           }
         }
       }
@@ -76,7 +76,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Air-gapped ağ: imza güncellemesi yok. Tarayıcı kör, sadece disarm işe yarar."
+            "value": "Kapalı (air-gapped) ağ: imza güncellemesi yok. Tarayıcı kör; yalnızca etkisizleştirme işe yarar."
           }
         }
       }
@@ -126,7 +126,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ucuz ve hızlı. Dosyayı açmadan bilinen imzalı tehditleri siler. Bilinmeyen tehditleri göremez; imzasız ağlarda işe yaramaz."
+            "value": "Ucuz ve hızlı. Dosyayı açmadan bilinen, imzalı tehditleri siler. Bilinmeyen tehditlere kördür; imza güncellemesi olmayan ağlarda işe yaramaz."
           }
         }
       }
@@ -196,7 +196,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Seçilen kap türündeki dosyaları sağ tarafa ayırır, diğerleri düz devam eder."
+            "value": "Seçilen kap türündeki dosyaları sağa ayırır; diğerleri düz devam eder. Şifreli dosyalar için de ayarlanabilir."
           }
         }
       }
@@ -246,7 +246,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "FLT"
+            "value": "FİL"
           }
         }
       }
@@ -366,7 +366,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Görsel kalitesi düşük (%@, istenen en az %@)"
+            "value": "Görsel kalitesi düşük (%@; müşteri en az %@ istiyor)"
           }
         }
       }
@@ -716,7 +716,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dosyayı parçalarına ayırır. Filtre ve dönüştürücü ancak açılmış dosyada çalışır. Seviye arttıkça iç içe katmanları ve polyglot dosyaları da açar."
+            "value": "Dosyayı parçalarına ayırır. Filtre ve dönüştürücü yalnızca açılmış dosyada çalışır. Üst seviyeler iç içe katmanları ve polyglot dosyaları da açar."
           }
         }
       }
@@ -786,7 +786,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sıfır aktif içerik. Zararsız bile olsa makro, betik, gömülü dosya teslim edilmeyecek. Görünüm bozulsa da olur."
+            "value": "Sıfır aktif içerik. Zararsız bile olsa makro, betik ve gömülü dosya teslim edilemez. Görünüm bozulursa bozulsun."
           }
         }
       }
@@ -996,7 +996,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Air-gapped ağda şifreli yazışmalar. Tarayıcı kör, ayrıştırıcı kilitli; şifrelileri karantinaya yönlendir, kalanı etkisizleştir. Sonsuz akış. Ne kadar dayanabilirsin?"
+            "value": "Kapalı ağda şifreli yazışmalar. Tarayıcı kör, ayrıştırıcı kilitli; şifrelileri karantinaya yönlendir, kalanı etkisizleştir. Sonsuz akış. Ne kadar dayanabilirsin?"
           }
         }
       }
@@ -1026,7 +1026,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bu müşteri betiklerini korur. Betik filtreleme: İmza Tarayıcı yalnızca zararlıları siler, kaynak koda dokunmaz."
+            "value": "Bu müşteri betiklerinin korunmasını ister. Betik filtresi koyma: İmza Tarayıcı yalnızca zararlı olanları siler, kaynak koda dokunmaz."
           }
         }
       }
@@ -1126,7 +1126,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Air-gapped ağ: imza güncellemesi yok. Tarayıcı yalnızca eski makroları tanır; her şeyi Ayrıştırıcı, Filtreler ve Dönüştürücü ile etkisizleştir."
+            "value": "Kapalı (air-gapped) ağ: imza güncellemesi yok. Tarayıcı yalnızca eski makroları tanır; her şeyi Ayrıştırıcı, Filtreler ve Dönüştürücü ile etkisizleştir."
           }
         }
       }
@@ -1236,7 +1236,7 @@
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kusursuz görseller ve imzasız tehditler, dakikada otuz dosya. Seviye 3 dönüştürücü %95 korur; Kum Havuzu %100 korur ama zaman alır. Geniş kur."
+            "value": "Kusursuz görseller ve imzasız tehditler, dakikada otuz dosya. Seviye 3 dönüştürücü %95 korur; Kum Havuzu %100 korur ama zaman alır. Hattı geniş kur, paralel çalış."
           }
         }
       }
