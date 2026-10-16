@@ -62,6 +62,19 @@ public struct Simulation: Codable, Hashable, Sendable {
             return false
         }
 
+        // Akarken üstüne modül konan dosya: hücre artık bant değil, bant adımı onu ilerletemez.
+        // Modül boşsa işleme girmiş say; doluysa sırasını bekler (bir sonraki tick yeniden dener).
+        for i in items.indices where !items[i].inModule {
+            guard case .module(let m) = grid[items[i].pos] else { continue }
+            let pos = items[i].pos
+            let occupied = items.indices.contains { $0 != i && items[$0].inModule && items[$0].pos == pos }
+            if occupied { continue }
+            items[i].inModule = true
+            items[i].progress = 0
+            items[i].lastNote = nil
+            items[i].remaining = m.kind.processTime(level: state.level(of: m.kind))
+        }
+
         spawn(dt: dt, grid: grid, state: &state, events: &events)
 
         // Öndeki önce hareket eder: hücre içi ilerlemeye göre azalan sıra.

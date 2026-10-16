@@ -26,6 +26,28 @@ import Testing
         return events
     }
 
+    /// Akarken bant hücresinin üstüne modül konursa oradaki dosya donmamalı: modüle girip devam etmeli.
+    @Test func placingModuleUnderMovingFileDoesNotStrandIt() {
+        var s = buildPipeline()
+        var sim = Simulation(seed: 3)
+        var events: [GameEvent] = []
+        // (2,1) bandının üstünde bir dosya belirene kadar ilerle.
+        var guardTicks = 0
+        while !sim.items.contains(where: { $0.pos == GridPos(2, 1) && !$0.inModule }) && guardTicks < 3000 {
+            sim.tick(dt: 1.0 / 30.0, state: &s, events: &events)
+            guardTicks += 1
+        }
+        let stuckID = try! #require(sim.items.first { $0.pos == GridPos(2, 1) && !$0.inModule }).id
+        #expect(s.placeModule(.filter, at: GridPos(2, 1), facing: .right).isSuccess)
+
+        let after = run(&s, sim: &sim, seconds: 20)
+        #expect(!sim.items.contains { $0.id == stuckID && $0.pos == GridPos(2, 1) && !$0.inModule }, "file stayed frozen on the new module")
+        #expect(!sim.items.contains { $0.pos == GridPos(2, 1) && !$0.inModule })
+        let processedThere = after.contains { if case .processed(let id, let p, .filter, _) = $0 { return id == stuckID && p == GridPos(2, 1) }; return false }
+        let gone = !sim.items.contains { $0.id == stuckID }
+        #expect(processedThere || gone, "the stranded file should be processed by the new filter or have moved on")
+    }
+
     @Test func filesFlowAndGetDelivered() {
         var s = buildPipeline()
         var sim = Simulation(seed: 3)
