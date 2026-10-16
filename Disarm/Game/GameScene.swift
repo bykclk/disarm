@@ -320,7 +320,7 @@ final class GameScene: SKScene {
     /// Tüm bant oklarını tek fazla ilerletir: hat tek parça bir bant gibi akar. Hız bant seviyesiyle artar.
     private func advanceFlow(dt: TimeInterval) {
         guard let engine, !flowChevrons.isEmpty else { return }
-        let speed = CGFloat(engine.state.beltSpeed) * 0.4 // hücre/sn
+        let speed = CGFloat(engine.state.beltSpeed * engine.speed) * 0.4 // hücre/sn; oyun hızına eşlik eder
         flowPhase = (flowPhase + CGFloat(dt) * speed).truncatingRemainder(dividingBy: 1)
         for c in flowChevrons {
             let t = (flowPhase + c.phaseOffset).truncatingRemainder(dividingBy: 1)
@@ -451,7 +451,8 @@ final class GameScene: SKScene {
         var busy: Set<GridPos> = []
         let paused = engine.paused
         // Kare süresine bağlı üstel yumuşatma katsayısı (0 = yerinde kal, 1 = hedefe atla).
-        let k = paused ? 0 : CGFloat(1 - exp(-frameDt / smoothing))
+        // Oyun hızlanınca yumuşatma da sıkılaşır; yoksa dosyalar hedefin gerisinde kalır.
+        let k = paused ? 0 : CGFloat(1 - exp(-frameDt / (smoothing / max(1, engine.speed))))
         for item in engine.sim.items {
             seen.insert(item.id)
             if item.inModule { busy.insert(item.pos) }

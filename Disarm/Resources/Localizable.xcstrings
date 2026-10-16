@@ -2021,6 +2021,96 @@
           }
         }
       }
+    },
+    "Rushing at 3× until the contract ends": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sözleşme bitene kadar 3× hızda"
+          }
+        }
+      }
+    },
+    "Back to 1×": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1× hıza dönüldü"
+          }
+        }
+      }
+    },
+    "Breach! Slowed back to 1× so you can react.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İhlal! Tepki verebilmen için 1× hıza düşüldü."
+          }
+        }
+      }
+    },
+    "Contract finished, back to 1×.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sözleşme bitti, 1× hıza dönüldü."
+          }
+        }
+      }
+    },
+    "Contract cancelled, back to 1×.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sözleşme iptal oldu, 1× hıza dönüldü."
+          }
+        }
+      }
+    },
+    "Speed 3×, rushing until the contract ends": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hız 3×, sözleşme bitene kadar hızlı"
+          }
+        }
+      }
+    },
+    "Speed %lld×": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hız %lld×"
+          }
+        }
+      }
+    },
+    "Tap to change speed, hold to rush until the contract ends": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hızı değiştirmek için dokun, sözleşme bitene kadar hızlı mod için basılı tut"
+          }
+        }
+      }
+    },
+    "Tap the speed button to cycle 1×, 2×, 3×. Hold it to rush at 3× until the contract ends; a breach drops you back to 1× so you can react.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hız düğmesine dokununca 1×, 2×, 3× döner. Basılı tutarsan sözleşme bitene kadar 3× gider; ihlal olursa tepki verebilmen için 1× hıza düşer."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

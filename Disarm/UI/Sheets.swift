@@ -762,6 +762,7 @@ struct HelpView: View {
                 }
                 Section("Controls") {
                     Text("Drag with the Belt tool to draw a belt path. Tap an empty cell with a module tool to place it (pick the output direction with the Facing button). Tap a module with the Select tool for settings; tap a file on the belt to see what it carries.")
+                    Text("Tap the speed button to cycle 1×, 2×, 3×. Hold it to rush at 3× until the contract ends; a breach drops you back to 1× so you can react.")
                 }
                 Section("Threat tiers") {
                     Text("1 Macro → 2 Script → 3 ZIP inside ZIP (parser level 2) → 4 Polyglot and hidden data (parser level 3, transformer) → 5 Unknown: no signature, the scanner can't see it, only the transformer destroys it; archives nest three deep → 6 Encrypted: nothing can open it. Set a router to divert encrypted files into quarantine.")

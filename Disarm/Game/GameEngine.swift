@@ -81,6 +81,9 @@ final class GameEngine {
     var tool: Tool = .select
     var brush: Direction = .right
     var speed: Double = 1
+    /// "Sözleşme bitene kadar hızlı": 3×, sözleşme bitince/iptal olunca ya da ihlalde kendiliğinden 1×.
+    var rush = false
+    static let maxSpeed: Double = 3
     var paused = false
     var layoutVersion = 0
     var toasts: [Toast] = []
@@ -360,6 +363,7 @@ final class GameEngine {
                     toast(String(localized: "First delivery! The line is yours now."), .good, 3)
                 }
                 if o.breach {
+                    endRush(String(localized: "Breach! Slowed back to 1× so you can react."))
                     UINotificationFeedbackGenerator().notificationOccurred(.error)
                     audio.play(.breach)
                     fx.append(.breach(text: o.issues.first?.shortText ?? "", id: id))
@@ -377,12 +381,14 @@ final class GameEngine {
                     audio.play(.deliver, volume: 0.6)
                 }
             case .contractCompleted(let c):
+                endRush(String(localized: "Contract finished, back to 1×."))
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                 audio.play(.contract)
                 fx.append(.contractCompleted)
                 toast(String(localized: "Contract complete: \(c.title) +\(money(c.completionBonus))"), .good, 4)
                 addLog(String(localized: "Contract complete: \(c.title). Bonus \(money(c.completionBonus)), reputation +\(c.reputationReward)"), .good)
             case .contractFailed(let c):
+                endRush(String(localized: "Contract cancelled, back to 1×."))
                 audio.play(.error)
                 fx.append(.contractFailed)
                 toast(String(localized: "Contract cancelled: \(c.title). Too many breaches."), .bad, 4)
@@ -596,6 +602,28 @@ final class GameEngine {
         sim.clear()
         layoutVersion += 1
         toast(String(localized: "Line cleared, costs refunded"), .info)
+    }
+
+    /// Dokunma: 1× → 2× → 3× → 1×. Elle hız seçmek rush modunu kapatır.
+    func cycleSpeed() {
+        rush = false
+        speed = speed >= Self.maxSpeed ? 1 : speed + 1
+        audio.play(.tap, volume: 0.5)
+    }
+
+    /// Basılı tutma: sözleşme bitene kadar 3×.
+    func toggleRush() {
+        rush.toggle()
+        speed = rush ? Self.maxSpeed : 1
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        toast(rush ? String(localized: "Rushing at 3× until the contract ends") : String(localized: "Back to 1×"), .info, 2)
+    }
+
+    private func endRush(_ reason: String) {
+        guard rush else { return }
+        rush = false
+        speed = 1
+        toast(reason, .info, 3)
     }
 
     func resetGame() {

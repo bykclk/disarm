@@ -82,12 +82,20 @@ struct HUDView: View {
                     .accessibilityLabel("Prestige \(s.prestige)")
                 }
                 Spacer()
-                Button { engine.speed = engine.speed == 1 ? 2 : 1 } label: {
-                    Text(engine.speed == 1 ? "1×" : "2×")
-                        .font(.system(.caption, design: .rounded).weight(.bold))
-                        .frame(width: 34, height: 28)
-                        .background(.white.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+                // Dokun: 1×/2×/3× döner. Basılı tut: sözleşme bitene kadar 3× (rush).
+                Button { engine.cycleSpeed() } label: {
+                    HStack(spacing: 2) {
+                        Text("\(Int(engine.speed))×")
+                        if engine.rush { Image(systemName: "forward.end.fill").font(.system(size: 9)) }
+                    }
+                    .font(.system(.caption, design: .rounded).weight(.bold))
+                    .frame(width: engine.rush ? 48 : 34, height: 28)
+                    .background(engine.rush ? Color(Theme.accent).opacity(0.35) : .white.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(engine.rush ? Color(Theme.accent) : .clear, lineWidth: 1.5))
                 }
+                .simultaneousGesture(LongPressGesture(minimumDuration: 0.45).onEnded { _ in engine.toggleRush() })
+                .accessibilityLabel(engine.rush ? "Speed 3×, rushing until the contract ends" : "Speed \(Int(engine.speed))×")
+                .accessibilityHint("Tap to change speed, hold to rush until the contract ends")
                 Button { engine.paused.toggle() } label: {
                     Image(systemName: engine.paused ? "play.fill" : "pause.fill")
                         .frame(width: 34, height: 28)
