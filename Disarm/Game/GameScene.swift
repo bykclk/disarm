@@ -133,14 +133,20 @@ final class GameScene: SKScene {
         let spec = engine.state.location
         var nowCells: Set<GridPos> = []
 
+        // Tüm hücre arka planları tek yolda: hücre başına 2 yerine toplam 2 çizim çağrısı.
+        let bgPath = CGMutablePath()
         for p in g.allPositions {
-            let bg = SKShapeNode(rectOf: CGSize(width: cs - 1, height: cs - 1), cornerRadius: 3)
-            bg.fillColor = Theme.cellEmpty
-            bg.strokeColor = Theme.gridLine
-            bg.lineWidth = 1
-            bg.position = point(for: p)
-            boardLayer.addChild(bg)
+            let c = point(for: p)
+            bgPath.addRoundedRect(in: CGRect(x: c.x - (cs - 1) / 2, y: c.y - (cs - 1) / 2, width: cs - 1, height: cs - 1),
+                                  cornerWidth: 3, cornerHeight: 3)
+        }
+        let bg = SKShapeNode(path: bgPath)
+        bg.fillColor = Theme.cellEmpty
+        bg.strokeColor = Theme.gridLine
+        bg.lineWidth = 1
+        boardLayer.addChild(bg)
 
+        for p in g.allPositions {
             guard let cell = g[p] else { continue }
             let node: SKNode
             switch cell {
@@ -211,18 +217,14 @@ final class GameScene: SKScene {
         let n = SKNode()
         let outer = SKNode()
         outer.addChild(beltBody(connections: connections, color: Theme.belt))
-        let crop = SKCropNode()
-        crop.maskNode = beltBody(connections: connections, color: .white)
         // Yalnızca oklar akış yönüne döner; gövde ızgara yönlerinde sabit kalır.
-        let rot = SKNode()
-        rot.zRotation = -CGFloat(d.angle)
-        rot.addChild(n)
-        crop.addChild(rot)
-        outer.addChild(crop)
+        // Kırpma düğümü yok (pahalı): oklar gövdenin merkez dairesi içinde kalacak kadar kısa akar.
+        n.zRotation = -CGFloat(d.angle)
+        outer.addChild(n)
         // İki chevron, yarım faz farkıyla yukarı akar: bant hareket ediyor hissi.
-        let span = cs * 0.5
+        let span = cs * 0.34
         for i in 0..<2 {
-            let chev = chevron(size: cs * 0.2)
+            let chev = chevron(size: cs * 0.15)
             let phase = CGFloat(i) * 0.5
             chev.position = CGPoint(x: 0, y: -span / 2 + span * phase)
             chev.alpha = 0.6
@@ -417,14 +419,18 @@ final class GameScene: SKScene {
             itemEntry[id] = nil
         }
         // Çalışan modül: parlama ve ikon nabzı.
+        // glowWidth pahalı (ekstra geçişler); yerine kalın kenar + dolgu nabzı.
         for p in busy.subtracting(busyModules) {
-            guard let n = moduleNodes[p] else { continue }
-            (n.childNode(withName: "body") as? SKShapeNode)?.glowWidth = cs * 0.07
+            guard let n = moduleNodes[p], let body = n.childNode(withName: "body") as? SKShapeNode else { continue }
+            body.lineWidth = 3.5
+            body.run(.repeatForever(.sequence([.fadeAlpha(to: 0.75, duration: 0.3), .fadeAlpha(to: 1.0, duration: 0.3)])), withKey: "pulse")
             n.childNode(withName: "icon")?.run(.repeatForever(.sequence([.scale(to: 1.15, duration: 0.25), .scale(to: 1.0, duration: 0.25)])), withKey: "pulse")
         }
         for p in busyModules.subtracting(busy) {
-            guard let n = moduleNodes[p] else { continue }
-            (n.childNode(withName: "body") as? SKShapeNode)?.glowWidth = 0
+            guard let n = moduleNodes[p], let body = n.childNode(withName: "body") as? SKShapeNode else { continue }
+            body.lineWidth = 2
+            body.removeAction(forKey: "pulse")
+            body.alpha = 1
             n.childNode(withName: "icon")?.removeAction(forKey: "pulse")
             n.childNode(withName: "icon")?.setScale(1)
         }

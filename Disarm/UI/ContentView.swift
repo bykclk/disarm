@@ -16,7 +16,8 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 HUDView(engine: engine)
                 GuidanceBanner(engine: engine)
-                SpriteView(scene: scene, preferredFramesPerSecond: 60)
+                SpriteView(scene: scene, preferredFramesPerSecond: 120,
+                           debugOptions: ProcessInfo.processInfo.arguments.contains("-fps") ? [.showsFPS, .showsDrawCount, .showsNodeCount] : [])
                     .onAppear { scene.engine = engine }
                     .overlay(alignment: .top) { ToastStack(toasts: engine.toasts) }
                 PaletteView(engine: engine)

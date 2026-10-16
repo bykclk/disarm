@@ -23,6 +23,15 @@ targets:
       - path: Disarm
     dependencies:
       - package: DisarmCore
+    # Özel Info.plist anahtarları (INFOPLIST_KEY_ yalnızca Xcode'un bildiği anahtarları alır).
+    # XcodeGen bu dosyayı üretir; Xcode INFOPLIST_KEY_ ayarlarını üstüne birleştirir.
+    info:
+      path: Disarm/Info.plist
+      properties:
+        # ProMotion: iPhone'da 60 Hz üstü çizim için gerekli; SpriteView 120 ister, ekran neyi veriyorsa onu alır.
+        CADisableMinimumFrameDurationOnPhone: true
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.omerbuyukcelik.disarm
