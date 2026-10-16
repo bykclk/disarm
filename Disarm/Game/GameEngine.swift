@@ -292,13 +292,16 @@ final class GameEngine {
         let steps = max(1, Int((dt / 0.05).rounded(.up)))
         let stepDt = dt / Double(steps)
         for _ in 0..<steps { sm.tick(dt: stepDt, state: &s, events: &events) }
-        state = s
+        // Gözlenen alanlara yalnızca gerçekten değişince yaz: 120 Hz'de HUD her karede yeniden çizilmesin.
+        if s != state { state = s }
         sim = sm
         handle(events)
 
         let now = Date()
-        toasts.removeAll { $0.until < now }
-        recentOutcomes.removeAll { now.timeIntervalSince($0.at) > 1.2 }
+        if toasts.contains(where: { $0.until < now }) { toasts.removeAll { $0.until < now } }
+        if recentOutcomes.contains(where: { now.timeIntervalSince($0.at) > 1.2 }) {
+            recentOutcomes.removeAll { now.timeIntervalSince($0.at) > 1.2 }
+        }
 
         saveTimer += rawDt
         if saveTimer > 10 { save() }

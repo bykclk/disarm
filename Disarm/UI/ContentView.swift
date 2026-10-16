@@ -95,41 +95,55 @@ struct HUDView: View {
             }
             .foregroundStyle(.white)
 
-            Button { engine.sheet = .contracts } label: {
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Image(systemName: Theme.symbol(c.customer))
-                        Text(c.title).font(.subheadline.weight(.semibold))
-                        Spacer()
-                        Text("\(s.location.displayName)" + (s.location.airGapped ? " · air-gap" : ""))
-                            .font(.caption2).foregroundStyle(.secondary)
-                    }
-                    HStack(spacing: 8) {
-                        ProgressView(value: Double(p.delivered), total: Double(c.targetFiles))
-                            .tint(Color(Theme.accent))
-                        Text("\(p.delivered)/\(c.targetFiles)")
-                            .font(.caption.monospacedDigit())
-                        Button { engine.sheet = .deliveries } label: {
-                            HStack(spacing: 8) {
-                                Label("\(p.accepted)", systemImage: "checkmark.circle.fill")
-                                    .foregroundStyle(Color(Theme.success))
-                                    .accessibilityLabel("Accepted \(p.accepted)")
-                                Label("\(p.complaints)", systemImage: "exclamationmark.bubble.fill")
-                                    .foregroundStyle(p.complaints > 0 ? Color(Theme.warning) : .secondary)
-                                    .accessibilityLabel("Complaints \(p.complaints)")
-                                Label("\(p.breaches)/\(c.maxBreaches)", systemImage: "xmark.octagon.fill")
-                                    .foregroundStyle(p.breaches > 0 ? Color(Theme.danger) : .secondary)
-                                    .accessibilityLabel("Breaches \(p.breaches) of \(c.maxBreaches)")
-                            }
-                            .font(.caption.monospacedDigit())
+            // İki ayrı düğme yan yana (iç içe düğme dokunuşu yutar): sol = sözleşme, sağ = son teslimatlar.
+            HStack(spacing: 0) {
+                Button { engine.sheet = .contracts } label: {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Image(systemName: Theme.symbol(c.customer))
+                            Text(c.title).font(.subheadline.weight(.semibold))
+                                .lineLimit(1).minimumScaleFactor(0.75)
+                            Spacer(minLength: 4)
+                            Text("\(s.location.displayName)" + (s.location.airGapped ? " · air-gap" : ""))
+                                .font(.caption2).foregroundStyle(.secondary)
+                                .lineLimit(1).layoutPriority(-1)
                         }
-                        .accessibilityHint("Shows recent deliveries")
+                        HStack(spacing: 8) {
+                            ProgressView(value: Double(p.delivered), total: Double(c.targetFiles))
+                                .tint(Color(Theme.accent))
+                            Text("\(p.delivered)/\(c.targetFiles)")
+                                .font(.caption.monospacedDigit())
+                        }
                     }
+                    .padding(8)
+                    .contentShape(Rectangle())
                 }
-                .foregroundStyle(.white)
-                .padding(8)
-                .background(.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 10))
+                .buttonStyle(.plain)
+                Button { engine.sheet = .deliveries } label: {
+                    HStack(spacing: 8) {
+                        Label("\(p.accepted)", systemImage: "checkmark.circle.fill")
+                            .foregroundStyle(Color(Theme.success))
+                            .accessibilityLabel("Accepted \(p.accepted)")
+                        Label("\(p.complaints)", systemImage: "exclamationmark.bubble.fill")
+                            .foregroundStyle(p.complaints > 0 ? Color(Theme.warning) : .secondary)
+                            .accessibilityLabel("Complaints \(p.complaints)")
+                        Label("\(p.breaches)/\(c.maxBreaches)", systemImage: "xmark.octagon.fill")
+                            .foregroundStyle(p.breaches > 0 ? Color(Theme.danger) : .secondary)
+                            .accessibilityLabel("Breaches \(p.breaches) of \(c.maxBreaches)")
+                    }
+                    .font(.caption.monospacedDigit())
+                    .padding(.horizontal, 10)
+                    .frame(maxHeight: .infinity)
+                    .background(.white.opacity(0.05))
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityHint("Shows recent deliveries")
             }
+            .foregroundStyle(.white)
+            .background(.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 10))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, 12)
         .padding(.top, 6)
