@@ -144,7 +144,7 @@ final class GameScene: SKScene {
             guard let cell = g[p] else { continue }
             let node: SKNode
             switch cell {
-            case .belt(let d): node = makeBelt(d)
+            case .belt(let d): node = makeBelt(d, connections: beltConnections(at: p, facing: d, in: g))
             case .module(let m): node = makeModule(m, level: engine.state.level(of: m.kind), airGapped: spec.airGapped)
             }
             node.position = point(for: p)
@@ -160,18 +160,64 @@ final class GameScene: SKScene {
         firstBuild = false
     }
 
-    private func makeBelt(_ d: Direction) -> SKNode {
+    /// Bant hücresinin görsel olarak bağlandığı yönler: kendi çıkışı (komşu varsa) ve bu hücreye akan komşular
+    /// (bize bakan bant, çıkışı bize dönük modül; yönlendiricinin yan çıkışı dahil).
+    private func beltConnections(at p: GridPos, facing d: Direction, in g: Grid) -> Set<Direction> {
+        var conn: Set<Direction> = []
+        if g[p.moved(d)] != nil { conn.insert(d) }
+        for dir in Direction.allCases {
+            guard let c = g[p.moved(dir)] else { continue }
+            switch c {
+            case .belt(let bd):
+                if bd == dir.opposite { conn.insert(dir) }
+            case .module(let m):
+                guard m.kind != .sink && m.kind != .quarantine else { continue }
+                if m.facing == dir.opposite || (m.kind == .router && m.facing.clockwise == dir.opposite) {
+                    conn.insert(dir)
+                }
+            }
+        }
+        return conn
+    }
+
+    /// Bant gövdesi: merkezde daire (uçlar ve köşeler yuvarlak), bağlı her yöne hücre kenarına kadar kalın kol.
+    /// Komşu da kendi kolunu çizdiği için hat kesintisiz görünür. Örtüşme yok: dolgu kuralı sorun çıkarmaz.
+    private func beltBody(connections: Set<Direction>, color: UIColor) -> SKNode {
+        let w = cs * 0.72
+        let group = SKNode()
+        let dot = SKShapeNode(circleOfRadius: w / 2)
+        dot.fillColor = color
+        dot.strokeColor = .clear
+        group.addChild(dot)
+        if !connections.isEmpty {
+            let path = CGMutablePath()
+            for dir in connections {
+                let v = vector(dir)
+                let len = cs / 2 + 1 // 1 px taşma: komşuyla aradaki ince çizgi kapansın
+                path.move(to: .zero)
+                path.addLine(to: CGPoint(x: v.dx * len, y: v.dy * len))
+            }
+            let arms = SKShapeNode(path: path)
+            arms.strokeColor = color
+            arms.lineWidth = w
+            arms.lineCap = .butt
+            arms.fillColor = .clear
+            group.addChild(arms)
+        }
+        return group
+    }
+
+    private func makeBelt(_ d: Direction, connections: Set<Direction>) -> SKNode {
         let n = SKNode()
-        let base = SKShapeNode(rectOf: CGSize(width: cs - 2, height: cs - 2), cornerRadius: 4)
-        base.fillColor = Theme.belt
-        base.strokeColor = .clear
         let outer = SKNode()
-        outer.addChild(base)
+        outer.addChild(beltBody(connections: connections, color: Theme.belt))
         let crop = SKCropNode()
-        let maskNode = SKShapeNode(rectOf: CGSize(width: cs - 6, height: cs - 6), cornerRadius: 3)
-        maskNode.fillColor = .white
-        crop.maskNode = maskNode
-        crop.addChild(n)
+        crop.maskNode = beltBody(connections: connections, color: .white)
+        // Yalnızca oklar akış yönüne döner; gövde ızgara yönlerinde sabit kalır.
+        let rot = SKNode()
+        rot.zRotation = -CGFloat(d.angle)
+        rot.addChild(n)
+        crop.addChild(rot)
         outer.addChild(crop)
         // İki chevron, yarım faz farkıyla yukarı akar: bant hareket ediyor hissi.
         let span = cs * 0.5
@@ -188,8 +234,6 @@ final class GameScene: SKScene {
             chev.run(flow)
             n.addChild(chev)
         }
-
-        outer.zRotation = -CGFloat(d.angle)
         return outer
     }
 
