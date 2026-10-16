@@ -14,7 +14,9 @@ struct SheetRouter: View {
         case .log: LogView(engine: engine).presentationDetents([.medium, .large])
         case .campaign: CampaignView(engine: engine).presentationDetents([.large])
         case .module(let p): ModuleConfigView(engine: engine, pos: p).presentationDetents([.medium])
-        case .file(let id): FileInspectorView(engine: engine, id: id).presentationDetents([.medium])
+        case .file(let id): FileInspectorView(engine: engine, id: id).presentationDetents([.medium, .large])
+        case .deliveries: DeliveriesView(engine: engine).presentationDetents([.medium, .large])
+        case .delivery(let id): DeliveryRecordView(engine: engine, id: id).presentationDetents([.medium, .large])
         case .offline(let secs, let earned): OfflineView(seconds: secs, earned: earned).presentationDetents([.height(260)])
         }
     }
@@ -380,58 +382,9 @@ struct FileInspectorView: View {
     var body: some View {
         NavigationStack {
             if let item = engine.item(id) {
-                let f = item.file
-                let policy = engine.state.activeContract.policy
                 List {
-                    Section {
-                        HStack(spacing: 12) {
-                            RoundedRectangle(cornerRadius: 6).fill(Color(Theme.color(f.container))).frame(width: 36, height: 44)
-                                .overlay(Text(f.container.displayName).font(.system(size: 9, weight: .bold)))
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(f.container.displayName + (f.polyglot ? " (polyglot: also a ZIP)" : "")).font(.headline)
-                                if f.encrypted {
-                                    Label("Encrypted: can't be opened or inspected", systemImage: "lock.fill")
-                                        .font(.caption).foregroundStyle(Color(Theme.warning))
-                                } else {
-                                    Text(f.isOpen ? "Open · visible layer \(f.exposedDepth)" : "Closed").font(.caption).foregroundStyle(.secondary)
-                                }
-                                if f.hasImage {
-                                    Text("Image quality \("\(Int(f.imageQuality * 100))%")").font(.caption).foregroundStyle(.secondary)
-                                }
-                                if let note = item.lastNote, !note.isEmpty {
-                                    Text("Last step: \(note)").font(.caption).foregroundStyle(Color(Theme.accent))
-                                }
-                            }
-                        }
-                    }
-                    Section("Parts") {
-                        if f.parts.isEmpty { Text("Empty container").foregroundStyle(.secondary) }
-                        ForEach(f.parts) { p in
-                            let exposed = f.isExposed(p)
-                            let hiddenNested = p.depth > 0 && !exposed
-                            HStack {
-                                Image(systemName: hiddenNested ? "questionmark.circle" : Theme.symbol(p.kind))
-                                    .foregroundStyle(hiddenNested ? .secondary : Color(Theme.color(p.kind))).frame(width: 24)
-                                VStack(alignment: .leading) {
-                                    Text(hiddenNested ? "Hidden content (layer \(p.depth))" : p.kind.displayName)
-                                    Text(partStatus(p, exposed: exposed, hiddenNested: hiddenNested, policy: policy))
-                                        .font(.caption).foregroundStyle(.secondary)
-                                }
-                                Spacer()
-                                if p.malicious && !hiddenNested {
-                                    Text(p.signatureKnown ? "MALICIOUS" : "MALICIOUS · no signature")
-                                        .font(.caption2.bold()).foregroundStyle(Color(Theme.danger))
-                                }
-                            }
-                        }
-                    }
-                    Section {
-                        let o = DeliveryEvaluator.evaluate(f, policy: policy, payPerFile: engine.state.activeContract.payPerFile)
-                        Text(o.breach ? "If delivered now: BREACH (\(money(o.pay)))" : "If delivered now: \(money(o.pay)) · usability \("\(Int(o.usability * 100))%")")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(o.breach ? Color(Theme.danger) : (o.accepted ? Color(Theme.success) : Color(Theme.warning)))
-                        ForEach(o.issues, id: \.self) { Text($0.text).font(.caption) }
-                    }
+                    FileDetailSections(file: item.file, policy: engine.state.activeContract.policy,
+                                       payPerFile: engine.state.activeContract.payPerFile, lastNote: item.lastNote, delivered: nil)
                 }
                 .navigationTitle("File")
                 .navigationBarTitleDisplayMode(.inline)
@@ -440,14 +393,165 @@ struct FileInspectorView: View {
             }
         }
     }
+}
 
-    func partStatus(_ p: Part, exposed: Bool, hiddenNested: Bool, policy: Policy) -> String {
+// MARK: - Teslimatlar
+
+struct DeliveriesView: View {
+    @Bindable var engine: GameEngine
+
+    var body: some View {
+        NavigationStack {
+            List {
+                if engine.recentDeliveries.isEmpty {
+                    Text("No deliveries yet.").foregroundStyle(.secondary)
+                } else {
+                    Section {
+                        Text("Tap a delivery to inspect the file exactly as the customer received it.")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                    ForEach(engine.recentDeliveries) { r in
+                        Button { engine.sheet = .delivery(r.id) } label: {
+                            HStack(spacing: 10) {
+                                Image(systemName: r.outcome.breach ? "xmark.octagon.fill" : (r.outcome.accepted ? "checkmark.circle.fill" : "exclamationmark.bubble.fill"))
+                                    .foregroundStyle(r.outcome.breach ? Color(Theme.danger) : (r.outcome.accepted ? Color(Theme.success) : Color(Theme.warning)))
+                                    .frame(width: 24)
+                                RoundedRectangle(cornerRadius: 4).fill(Color(Theme.color(r.file.container))).frame(width: 24, height: 30)
+                                    .overlay(Text(r.file.container.displayName).font(.system(size: 7, weight: .bold)).foregroundStyle(.white))
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(r.outcome.breach || !r.outcome.accepted ? (r.outcome.issues.first?.shortText ?? "") : "Accepted")
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundStyle(r.outcome.breach ? Color(Theme.danger) : .primary)
+                                    Text(r.contractTitle).font(.caption).foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                VStack(alignment: .trailing, spacing: 2) {
+                                    Text(money(r.outcome.pay)).font(.caption.monospacedDigit())
+                                        .foregroundStyle(r.outcome.pay < 0 ? Color(Theme.danger) : .primary)
+                                    Text(r.time, style: .time).font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .navigationTitle("Recent deliveries")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+}
+
+struct DeliveryRecordView: View {
+    @Bindable var engine: GameEngine
+    var id: UUID
+
+    var body: some View {
+        NavigationStack {
+            if let r = engine.delivery(id) {
+                List {
+                    Section {
+                        HStack {
+                            Image(systemName: r.outcome.breach ? "xmark.octagon.fill" : (r.outcome.accepted ? "checkmark.circle.fill" : "exclamationmark.bubble.fill"))
+                                .font(.title2)
+                                .foregroundStyle(r.outcome.breach ? Color(Theme.danger) : (r.outcome.accepted ? Color(Theme.success) : Color(Theme.warning)))
+                            VStack(alignment: .leading) {
+                                Text(r.outcome.breach ? "Breach" : (r.outcome.accepted ? "Accepted" : "Complaint")).font(.headline)
+                                Text("\(r.contractTitle) · \(r.time, style: .time)").font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    FileDetailSections(file: r.file, policy: r.policy, payPerFile: r.payPerFile, lastNote: nil, delivered: r.outcome)
+                }
+                .navigationTitle("Delivery")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar { Button("All deliveries") { engine.sheet = .deliveries } }
+            } else {
+                ContentUnavailableView("Delivery is no longer in history", systemImage: "doc.questionmark")
+            }
+        }
+    }
+}
+
+/// Dosya içeriği ve müşteri politikasıyla karşılaştırması; banttaki canlı dosya ve teslim edilmiş kopya için ortak.
+struct FileDetailSections: View {
+    var file: FileItem
+    var policy: Policy
+    var payPerFile: Int
+    var lastNote: String?
+    /// Verilmişse gerçek teslimat sonucu gösterilir; yoksa "şimdi teslim edilse" hesaplanır.
+    var delivered: DeliveryOutcome?
+
+    var body: some View {
+        let f = file
+        Section {
+            HStack(spacing: 12) {
+                RoundedRectangle(cornerRadius: 6).fill(Color(Theme.color(f.container))).frame(width: 36, height: 44)
+                    .overlay(Text(f.container.displayName).font(.system(size: 9, weight: .bold)))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(f.container.displayName + (f.polyglot ? " (polyglot: also a ZIP)" : "")).font(.headline)
+                    if f.encrypted {
+                        Label("Encrypted: can't be opened or inspected", systemImage: "lock.fill")
+                            .font(.caption).foregroundStyle(Color(Theme.warning))
+                    } else {
+                        Text(f.isOpen ? "Open · visible layer \(f.exposedDepth)" : "Closed").font(.caption).foregroundStyle(.secondary)
+                    }
+                    if f.hasImage {
+                        Text("Image quality \("\(Int(f.imageQuality * 100))%")").font(.caption).foregroundStyle(.secondary)
+                    }
+                    if let note = lastNote, !note.isEmpty {
+                        Text("Last step: \(note)").font(.caption).foregroundStyle(Color(Theme.accent))
+                    }
+                }
+            }
+        }
+        Section("Parts") {
+            if f.parts.isEmpty { Text("Empty container").foregroundStyle(.secondary) }
+            ForEach(f.parts) { p in
+                let exposed = f.isExposed(p)
+                let hiddenNested = p.depth > 0 && !exposed
+                let rule = policy.rule(for: p.kind)
+                HStack {
+                    Image(systemName: hiddenNested ? "questionmark.circle" : Theme.symbol(p.kind))
+                        .foregroundStyle(hiddenNested ? .secondary : Color(Theme.color(p.kind))).frame(width: 24)
+                    VStack(alignment: .leading) {
+                        Text(hiddenNested ? "Hidden content (layer \(p.depth))" : p.kind.displayName)
+                            .foregroundStyle(rule == .mustRemove && !p.malicious ? Color(Theme.warning) : .primary)
+                        Text(partStatus(p, exposed: exposed, hiddenNested: hiddenNested, rule: rule))
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    if p.malicious && !hiddenNested {
+                        Text(p.signatureKnown ? "MALICIOUS" : "MALICIOUS · no signature")
+                            .font(.caption2.bold()).foregroundStyle(Color(Theme.danger))
+                    } else if rule == .mustRemove {
+                        Text("should be gone").font(.caption2.bold()).foregroundStyle(Color(Theme.warning))
+                    }
+                }
+            }
+        }
+        Section {
+            let o = delivered ?? DeliveryEvaluator.evaluate(f, policy: policy, payPerFile: payPerFile)
+            let pct = "\(Int(o.usability * 100))%"
+            Group {
+                if delivered == nil {
+                    Text(o.breach ? "If delivered now: BREACH (\(money(o.pay)))" : "If delivered now: \(money(o.pay)) · usability \(pct)")
+                } else {
+                    Text(o.breach ? "Delivered: BREACH (\(money(o.pay)))" : "Delivered: \(money(o.pay)) · usability \(pct)")
+                }
+            }
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(o.breach ? Color(Theme.danger) : (o.accepted ? Color(Theme.success) : Color(Theme.warning)))
+            ForEach(o.issues, id: \.self) { Text($0.text).font(.caption) }
+        }
+    }
+
+    func partStatus(_ p: Part, exposed: Bool, hiddenNested: Bool, rule: PolicyRule) -> String {
         var bits: [String] = []
         if p.depth > 0 { bits.append(String(localized: "layer \(p.depth)")) }
         if hiddenNested { bits.append(String(localized: "parser didn't open this layer")) }
         else if exposed { bits.append(String(localized: "open, filterable")) }
         else { bits.append(String(localized: "inside closed container")) }
-        let rule = policy.rule(for: p.kind)
         if rule != .dontCare { bits.append(String(localized: "customer: \(rule.displayName)")) }
         return bits.joined(separator: " · ")
     }
@@ -472,10 +576,19 @@ struct LogView: View {
                 Section("Recent events") {
                     if engine.log.isEmpty { Text("No events yet").foregroundStyle(.secondary) }
                     ForEach(engine.log) { e in
-                        HStack(alignment: .top) {
+                        let row = HStack(alignment: .top) {
                             Text(e.time, style: .time).font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
                             Text(e.text).font(.caption)
                                 .foregroundStyle(e.style == .bad ? Color(Theme.danger) : (e.style == .good ? Color(Theme.success) : .primary))
+                            if e.deliveryID != nil {
+                                Spacer(minLength: 4)
+                                Image(systemName: "doc.text.magnifyingglass").font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
+                        if let id = e.deliveryID, engine.delivery(id) != nil {
+                            Button { engine.sheet = .delivery(id) } label: { row }.buttonStyle(.plain)
+                        } else {
+                            row
                         }
                     }
                 }

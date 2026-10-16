@@ -9,9 +9,10 @@ enum Tool: Equatable {
 }
 
 enum SheetKind: Identifiable, Equatable {
-    case contracts, upgrades, locations, help, log, campaign
+    case contracts, upgrades, locations, help, log, campaign, deliveries
     case module(GridPos)
     case file(UUID)
+    case delivery(UUID)
     case offline(seconds: Double, earned: Int)
 
     var id: String {
@@ -22,8 +23,10 @@ enum SheetKind: Identifiable, Equatable {
         case .help: "help"
         case .log: "log"
         case .campaign: "campaign"
+        case .deliveries: "deliveries"
         case .module(let p): "module-\(p.x)-\(p.y)"
         case .file(let id): "file-\(id)"
+        case .delivery(let id): "delivery-\(id)"
         case .offline: "offline"
         }
     }
@@ -41,10 +44,10 @@ struct Toast: Identifiable, Equatable {
 enum FxEvent {
     case processed(GridPos, text: String, removed: Bool)
     case delivered(pay: Int, good: Bool)
-    /// Şikayetin kısa nedeni, teslimat noktasında uçar.
-    case complaint(text: String)
-    /// Kaçan zararlı türleri etiketi + sarsıntı, flaş, halka.
-    case breach(text: String)
+    /// Şikayetin kısa nedeni, teslimat noktasında uçar; dokununca o teslimat açılır.
+    case complaint(text: String, id: UUID)
+    /// Kaçan zararlı türleri etiketi + sarsıntı, flaş, halka; dokununca o teslimat açılır.
+    case breach(text: String, id: UUID)
     case contractCompleted
     case contractFailed
     case campaignCompleted
@@ -55,6 +58,19 @@ struct LogEntry: Identifiable {
     var time: Date
     var text: String
     var style: Toast.Style
+    /// Bir teslimata bağlıysa günlük satırından o teslimat açılır.
+    var deliveryID: UUID? = nil
+}
+
+/// Teslim edilmiş dosyanın kopyası: banttan silindikten sonra da incelenebilsin.
+struct DeliveryRecord: Identifiable {
+    var id: UUID { file.id }
+    var time: Date
+    var file: FileItem
+    var outcome: DeliveryOutcome
+    var contractTitle: String
+    var policy: Policy
+    var payPerFile: Int
 }
 
 @MainActor
@@ -71,6 +87,9 @@ final class GameEngine {
     var log: [LogEntry] = []
     var sheet: SheetKind?
     var recentOutcomes: [(id: UUID, good: Bool, at: Date)] = []
+    /// Son teslimatlar, en yenisi başta. Kayda girmez.
+    var recentDeliveries: [DeliveryRecord] = []
+    static let maxRecentDeliveries = 40
     /// Sahne her karede boşaltır.
     var fx: [FxEvent] = []
     let audio = AudioManager.shared
@@ -139,6 +158,7 @@ final class GameEngine {
             case "locations": sheet = .locations
             case "log": sheet = .log
             case "campaign": sheet = .campaign
+            case "deliveries": sheet = .deliveries
             case "module": sheet = .module(GridPos(4, 2))
             default: break
             }
@@ -287,9 +307,14 @@ final class GameEngine {
     private func handle(_ events: [GameEvent]) {
         for e in events {
             switch e {
-            case .delivered(let id, let o):
+            case .delivered(let file, let o):
+                let id = file.id
                 let good = !o.breach && o.usability >= 0.9
                 recentOutcomes.append((id, good, Date()))
+                let contract = state.activeContract
+                recentDeliveries.insert(DeliveryRecord(time: Date(), file: file, outcome: o, contractTitle: contract.title,
+                                                       policy: contract.policy, payPerFile: contract.payPerFile), at: 0)
+                if recentDeliveries.count > Self.maxRecentDeliveries { recentDeliveries.removeLast() }
                 fx.append(.delivered(pay: o.pay, good: good))
                 if !state.tutorialSeen && !o.breach {
                     state.tutorialSeen = true
@@ -298,16 +323,16 @@ final class GameEngine {
                 if o.breach {
                     UINotificationFeedbackGenerator().notificationOccurred(.error)
                     audio.play(.breach)
-                    fx.append(.breach(text: o.issues.first?.shortText ?? ""))
+                    fx.append(.breach(text: o.issues.first?.shortText ?? "", id: id))
                     toast(String(localized: "BREACH! \(o.issues.first?.text ?? "") \(money(o.pay))"), .bad, 3)
-                    addLog(o.issues.first?.text ?? String(localized: "Breach"), .bad)
+                    addLog(o.issues.first?.text ?? String(localized: "Breach"), .bad, deliveryID: id)
                 } else if o.usability < 0.9 {
                     audio.play(.complaint, volume: 0.7)
-                    addLog("Complaint: \(o.issues.first?.text ?? String(localized: "low quality")) (+\(money(o.pay)))", .warn)
+                    addLog("Complaint: \(o.issues.first?.text ?? String(localized: "low quality")) (+\(money(o.pay)))", .warn, deliveryID: id)
                     // Neden etiketi: yoğun akışta üst üste binmesin diye en çok saniyede bir.
                     if let issue = o.issues.first, Date().timeIntervalSince(lastComplaintFx) > 1.0 {
                         lastComplaintFx = Date()
-                        fx.append(.complaint(text: issue.shortText))
+                        fx.append(.complaint(text: issue.shortText, id: id))
                     }
                 } else {
                     audio.play(.deliver, volume: 0.6)
@@ -351,9 +376,16 @@ final class GameEngine {
         if toasts.count > 3 { toasts.removeFirst(toasts.count - 3) }
     }
 
-    private func addLog(_ text: String, _ style: Toast.Style) {
-        log.insert(LogEntry(time: Date(), text: text, style: style), at: 0)
+    private func addLog(_ text: String, _ style: Toast.Style, deliveryID: UUID? = nil) {
+        log.insert(LogEntry(time: Date(), text: text, style: style, deliveryID: deliveryID), at: 0)
         if log.count > 80 { log.removeLast() }
+    }
+
+    func delivery(_ id: UUID) -> DeliveryRecord? { recentDeliveries.first { $0.id == id } }
+
+    func openDelivery(_ id: UUID) {
+        guard delivery(id) != nil else { return }
+        sheet = .delivery(id)
     }
 
     // MARK: - Dokunma
@@ -363,7 +395,8 @@ final class GameEngine {
         switch tool {
         case .select:
             if let m = state.grid[p]?.module {
-                if m.kind.isPlaceable || m.kind == .source || m.kind == .sink { sheet = .module(p) }
+                if m.kind == .sink { sheet = .deliveries }
+                else if m.kind.isPlaceable || m.kind == .source { sheet = .module(p) }
             } else if state.grid[p]?.beltDirection != nil {
                 report(state.rotate(at: p), sound: .rotate)
             }

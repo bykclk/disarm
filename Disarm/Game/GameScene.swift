@@ -450,11 +450,11 @@ final class GameScene: SKScene {
                 let text = pay >= 0 ? "+\(money(pay))" : money(pay)
                 floatLabel(text, at: CGPoint(x: sinkPt.x, y: sinkPt.y + cs * 0.45), color: good ? Theme.success : (pay < 0 ? Theme.danger : Theme.warning), size: cs * 0.3, rise: cs * 1.1, duration: 1.0)
                 if good { burst(at: sinkPt, color: Theme.success, count: 14, speed: cs * 2.2) }
-            case .complaint(let text):
-                floatLabel(text, at: CGPoint(x: sinkPt.x, y: sinkPt.y + cs * 0.1), color: Theme.warning, size: cs * 0.2, rise: cs * 0.9, duration: 1.4)
-            case .breach(let text):
+            case .complaint(let text, let id):
+                floatLabel(text, at: CGPoint(x: sinkPt.x, y: sinkPt.y + cs * 0.1), color: Theme.warning, size: cs * 0.2, rise: cs * 0.9, duration: 2.2, tapID: id)
+            case .breach(let text, let id):
                 if !text.isEmpty {
-                    floatLabel(text, at: CGPoint(x: sinkPt.x, y: sinkPt.y + cs * 0.1), color: Theme.danger, size: cs * 0.22, rise: cs * 1.0, duration: 1.6)
+                    floatLabel(text, at: CGPoint(x: sinkPt.x, y: sinkPt.y + cs * 0.1), color: Theme.danger, size: cs * 0.22, rise: cs * 1.0, duration: 2.4, tapID: id)
                 }
                 burst(at: sinkPt, color: Theme.danger, count: 24, speed: cs * 3.5)
                 let ring = SKShapeNode(circleOfRadius: cs * 0.5)
@@ -481,7 +481,8 @@ final class GameScene: SKScene {
         }
     }
 
-    private func floatLabel(_ text: String, at p: CGPoint, color: UIColor, size: CGFloat, rise: CGFloat, duration: Double) {
+    /// `tapID` verilirse etiket dokunulabilir olur ve o teslimatı açar (daha geniş, görünmez bir tutamakla).
+    private func floatLabel(_ text: String, at p: CGPoint, color: UIColor, size: CGFloat, rise: CGFloat, duration: Double, tapID: UUID? = nil) {
         let label = SKLabelNode(fontNamed: "AvenirNext-Bold")
         label.text = text
         label.fontSize = size
@@ -489,6 +490,16 @@ final class GameScene: SKScene {
         label.position = p
         label.zPosition = 5
         label.setScale(0.6)
+        if let tapID {
+            let pad = SKShapeNode(rectOf: CGSize(width: max(label.frame.width + cs * 0.6, cs * 1.5), height: cs * 0.7), cornerRadius: cs * 0.1)
+            pad.fillColor = color.withAlphaComponent(0.14)
+            pad.strokeColor = .clear
+            pad.position = CGPoint(x: 0, y: size * 0.35)
+            pad.zPosition = -1
+            pad.name = "delivery:\(tapID.uuidString)"
+            label.addChild(pad)
+            label.name = pad.name
+        }
         fxLayer.addChild(label)
         label.run(.sequence([
             .group([.scale(to: 1, duration: 0.12), .moveBy(x: 0, y: rise, duration: duration),
@@ -582,6 +593,13 @@ final class GameScene: SKScene {
         guard let engine, let t = touches.first else { return }
         let pt = t.location(in: self)
         dragged = false
+        // Uçan şikayet/ihlal etiketi: o teslimatı aç.
+        if let hit = nodes(at: pt).first(where: { $0.name?.hasPrefix("delivery:") == true }),
+           let name = hit.name, let id = UUID(uuidString: String(name.dropFirst("delivery:".count))) {
+            engine.openDelivery(id)
+            touchStartCell = nil
+            return
+        }
         if engine.tool == .select, let id = itemHit(pt) {
             engine.itemTapped(id)
             touchStartCell = nil

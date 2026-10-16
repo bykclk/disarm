@@ -109,18 +109,21 @@ struct HUDView: View {
                             .tint(Color(Theme.accent))
                         Text("\(p.delivered)/\(c.targetFiles)")
                             .font(.caption.monospacedDigit())
-                        Label("\(p.accepted)", systemImage: "checkmark.circle.fill")
+                        Button { engine.sheet = .deliveries } label: {
+                            HStack(spacing: 8) {
+                                Label("\(p.accepted)", systemImage: "checkmark.circle.fill")
+                                    .foregroundStyle(Color(Theme.success))
+                                    .accessibilityLabel("Accepted \(p.accepted)")
+                                Label("\(p.complaints)", systemImage: "exclamationmark.bubble.fill")
+                                    .foregroundStyle(p.complaints > 0 ? Color(Theme.warning) : .secondary)
+                                    .accessibilityLabel("Complaints \(p.complaints)")
+                                Label("\(p.breaches)/\(c.maxBreaches)", systemImage: "xmark.octagon.fill")
+                                    .foregroundStyle(p.breaches > 0 ? Color(Theme.danger) : .secondary)
+                                    .accessibilityLabel("Breaches \(p.breaches) of \(c.maxBreaches)")
+                            }
                             .font(.caption.monospacedDigit())
-                            .foregroundStyle(Color(Theme.success))
-                            .accessibilityLabel("Accepted \(p.accepted)")
-                        Label("\(p.complaints)", systemImage: "exclamationmark.bubble.fill")
-                            .font(.caption.monospacedDigit())
-                            .foregroundStyle(p.complaints > 0 ? Color(Theme.warning) : .secondary)
-                            .accessibilityLabel("Complaints \(p.complaints)")
-                        Label("\(p.breaches)/\(c.maxBreaches)", systemImage: "xmark.octagon.fill")
-                            .font(.caption.monospacedDigit())
-                            .foregroundStyle(p.breaches > 0 ? Color(Theme.danger) : .secondary)
-                            .accessibilityLabel("Breaches \(p.breaches) of \(c.maxBreaches)")
+                        }
+                        .accessibilityHint("Shows recent deliveries")
                     }
                 }
                 .foregroundStyle(.white)

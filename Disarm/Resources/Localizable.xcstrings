@@ -1841,6 +1841,116 @@
           }
         }
       }
+    },
+    "Recent deliveries": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son teslimatlar"
+          }
+        }
+      }
+    },
+    "Tap a delivery to inspect the file exactly as the customer received it.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosyayı müşterinin aldığı haliyle incelemek için bir teslimata dokun."
+          }
+        }
+      }
+    },
+    "Delivery": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teslimat"
+          }
+        }
+      }
+    },
+    "All deliveries": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tüm teslimatlar"
+          }
+        }
+      }
+    },
+    "Complaint": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şikayet"
+          }
+        }
+      }
+    },
+    "Delivery is no longer in history": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teslimat artık geçmişte yok"
+          }
+        }
+      }
+    },
+    "Delivered: BREACH (%@)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teslim edildi: İHLAL (%@)"
+          }
+        }
+      }
+    },
+    "Delivered: %@ · usability %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teslim edildi: %@ · kullanılabilirlik %@"
+          }
+        }
+      }
+    },
+    "should be gone": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gitmeliydi"
+          }
+        }
+      }
+    },
+    "Shows recent deliveries": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son teslimatları gösterir"
+          }
+        }
+      }
+    },
+    "%@ · %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

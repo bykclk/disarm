@@ -17,7 +17,8 @@ public struct MovingItem: Codable, Hashable, Sendable, Identifiable {
 public enum GameEvent: Equatable, Sendable {
     case spawned(UUID)
     case processed(UUID, GridPos, ModuleKind, [ProcessNote])
-    case delivered(UUID, DeliveryOutcome)
+    /// Teslim edilen dosyanın son hali ve sonucu; dosya bu anda banttan silinir, inceleme için kopyası olaydadır.
+    case delivered(FileItem, DeliveryOutcome)
     case quarantined(UUID)
     case contractCompleted(ContractSpec)
     case contractFailed(ContractSpec)
@@ -262,7 +263,7 @@ public struct Simulation: Codable, Hashable, Sendable {
                 progress.complaintReasons[reason, default: 0] += 1
             }
         }
-        events.append(.delivered(file.id, outcome))
+        events.append(.delivered(file, outcome))
 
         if progress.breaches > contract.maxBreaches {
             progress.resetCounters()
