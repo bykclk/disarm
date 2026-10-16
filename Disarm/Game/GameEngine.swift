@@ -41,6 +41,8 @@ struct Toast: Identifiable, Equatable {
 enum FxEvent {
     case processed(GridPos, text: String, removed: Bool)
     case delivered(pay: Int, good: Bool)
+    /// Şikayetin kısa nedeni, teslimat noktasında uçar.
+    case complaint(text: String)
     case breach
     case contractCompleted
     case contractFailed
@@ -73,6 +75,7 @@ final class GameEngine {
     let audio = AudioManager.shared
 
     private var saveTimer: Double = 0
+    private var lastComplaintFx = Date.distantPast
     private let store = SaveStore()
 
     init() {
@@ -300,6 +303,11 @@ final class GameEngine {
                 } else if o.usability < 0.9 {
                     audio.play(.complaint, volume: 0.7)
                     addLog("Complaint: \(o.issues.first?.text ?? String(localized: "low quality")) (+\(money(o.pay)))", .warn)
+                    // Neden etiketi: yoğun akışta üst üste binmesin diye en çok saniyede bir.
+                    if let issue = o.issues.first, Date().timeIntervalSince(lastComplaintFx) > 1.0 {
+                        lastComplaintFx = Date()
+                        fx.append(.complaint(text: issue.shortText))
+                    }
                 } else {
                     audio.play(.deliver, volume: 0.6)
                 }

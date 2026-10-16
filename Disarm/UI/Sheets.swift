@@ -33,6 +33,24 @@ struct ContractsView: View {
                 Section("Active Contract") {
                     ContractRow(spec: active, progress: s.progress, isActive: true)
                 }
+                Section("Why customers complained") {
+                    let reasons = s.progress.sortedComplaintReasons
+                    if reasons.isEmpty {
+                        Text(s.progress.delivered > 0 ? "No complaints so far in this contract." : "No deliveries yet.")
+                            .font(.caption).foregroundStyle(.secondary)
+                    } else {
+                        ForEach(reasons, id: \.reason) { r in
+                            HStack {
+                                Image(systemName: "exclamationmark.bubble.fill").foregroundStyle(Color(Theme.warning)).frame(width: 24)
+                                Text(r.reason.displayName)
+                                Spacer()
+                                Text("×\(r.count)").font(.body.monospacedDigit()).foregroundStyle(.secondary)
+                            }
+                        }
+                        Text("Accepted \(s.progress.accepted) of \(s.progress.delivered) deliveries. A complaint still pays, but less, and earns no reputation.")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                }
                 Section("Customer Policy") {
                     ForEach(PartKind.allCases, id: \.self) { k in
                         let rule = active.policy.rule(for: k)

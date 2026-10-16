@@ -1290,6 +1290,76 @@
           }
         }
       }
+    },
+    "Delivered open": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Açık teslim edildi"
+          }
+        }
+      }
+    },
+    "Encrypted file": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şifreli dosya"
+          }
+        }
+      }
+    },
+    "%@ left in file": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ dosyada kaldı"
+          }
+        }
+      }
+    },
+    "%@ lost": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kayboldu"
+          }
+        }
+      }
+    },
+    "Image quality too low": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görsel kalitesi düşük"
+          }
+        }
+      }
+    },
+    "BREACH": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İHLAL"
+          }
+        }
+      }
+    },
+    "Image %@ < %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görsel %@ < %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

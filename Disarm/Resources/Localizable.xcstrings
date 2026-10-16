@@ -1751,6 +1751,76 @@
           }
         }
       }
+    },
+    "Accepted %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kabul %lld"
+          }
+        }
+      }
+    },
+    "Complaints %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şikayet %lld"
+          }
+        }
+      }
+    },
+    "Why customers complained": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Müşteriler neden şikayet etti"
+          }
+        }
+      }
+    },
+    "No complaints so far in this contract.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu sözleşmede henüz şikayet yok."
+          }
+        }
+      }
+    },
+    "No deliveries yet.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Henüz teslimat yok."
+          }
+        }
+      }
+    },
+    "×%lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "×%lld"
+          }
+        }
+      }
+    },
+    "Accepted %lld of %lld deliveries. A complaint still pays, but less, and earns no reputation.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%2$lld teslimatın %1$lld tanesi kabul edildi. Şikayetli teslimat yine öder ama daha az, itibar kazandırmaz."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

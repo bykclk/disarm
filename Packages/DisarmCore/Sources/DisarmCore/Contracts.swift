@@ -110,6 +110,8 @@ public struct ContractProgress: Codable, Hashable, Sendable {
     public var breaches: Int
     public var complaints: Int
     public var completions: Int
+    /// Bu sözleşme turundaki şikayet nedenleri ve sayıları; oyuncunun "neden ödemiyorlar" sorusuna cevap.
+    public var complaintReasons: [ComplaintReason: Int]
 
     public init(index: Int = 0) {
         self.index = index
@@ -118,6 +120,7 @@ public struct ContractProgress: Codable, Hashable, Sendable {
         breaches = 0
         complaints = 0
         completions = 0
+        complaintReasons = [:]
     }
 
     public mutating func resetCounters() {
@@ -125,6 +128,32 @@ public struct ContractProgress: Codable, Hashable, Sendable {
         accepted = 0
         breaches = 0
         complaints = 0
+        complaintReasons = [:]
+    }
+
+    /// Nedenler, en sık olandan başlayarak.
+    public var sortedComplaintReasons: [(reason: ComplaintReason, count: Int)] {
+        complaintReasons.map { (reason: $0.key, count: $0.value) }
+            .sorted { $0.count != $1.count ? $0.count > $1.count : $0.reason.displayName < $1.reason.displayName }
+    }
+}
+
+/// Şikayetin normalleştirilmiş nedeni (sayım ve kısa etiket için).
+public enum ComplaintReason: Hashable, Codable, Sendable {
+    case deliveredOpen
+    case encrypted
+    case left(PartKind)
+    case lost(PartKind)
+    case lowImageQuality
+
+    public var displayName: String {
+        switch self {
+        case .deliveredOpen: L("Delivered open")
+        case .encrypted: L("Encrypted file")
+        case .left(let k): L("\(k.displayName) left in file")
+        case .lost(let k): L("\(k.displayName) lost")
+        case .lowImageQuality: L("Image quality too low")
+        }
     }
 }
 
@@ -151,6 +180,27 @@ public enum DeliveryIssue: Equatable, Hashable, Sendable {
             return L("\(k.displayName) should have been kept but was lost")
         case .lowImageQuality(let a, let m):
             return L("Image quality too low (\("\(a)%"), customer requires at least \("\(m)%"))")
+        }
+    }
+
+    /// Şikayet nedeni; ihlal için nil (ihlal ayrı sayılır).
+    public var reason: ComplaintReason? {
+        switch self {
+        case .breach: nil
+        case .deliveredOpen: .deliveredOpen
+        case .encryptedRejected: .encrypted
+        case .mustRemoveLeft(let k): .left(k)
+        case .mustKeepLost(let k): .lost(k)
+        case .lowImageQuality: .lowImageQuality
+        }
+    }
+
+    /// Sahnede uçan kısa etiket.
+    public var shortText: String {
+        switch self {
+        case .breach: L("BREACH")
+        case .lowImageQuality(let a, let m): L("Image \("\(a)%") < \("\(m)%")")
+        default: reason?.displayName ?? ""
         }
     }
 }

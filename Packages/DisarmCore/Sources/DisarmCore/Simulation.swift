@@ -253,6 +253,9 @@ public struct Simulation: Codable, Hashable, Sendable {
             state.stats.totalAccepted += 1
         } else {
             progress.complaints += 1
+            for reason in outcome.issues.compactMap(\.reason) {
+                progress.complaintReasons[reason, default: 0] += 1
+            }
         }
         events.append(.delivered(file.id, outcome))
 

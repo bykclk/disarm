@@ -450,6 +450,8 @@ final class GameScene: SKScene {
                 let text = pay >= 0 ? "+\(money(pay))" : money(pay)
                 floatLabel(text, at: CGPoint(x: sinkPt.x, y: sinkPt.y + cs * 0.45), color: good ? Theme.success : (pay < 0 ? Theme.danger : Theme.warning), size: cs * 0.3, rise: cs * 1.1, duration: 1.0)
                 if good { burst(at: sinkPt, color: Theme.success, count: 14, speed: cs * 2.2) }
+            case .complaint(let text):
+                floatLabel(text, at: CGPoint(x: sinkPt.x, y: sinkPt.y + cs * 0.1), color: Theme.warning, size: cs * 0.2, rise: cs * 0.9, duration: 1.4)
             case .breach:
                 burst(at: sinkPt, color: Theme.danger, count: 24, speed: cs * 3.5)
                 let ring = SKShapeNode(circleOfRadius: cs * 0.5)

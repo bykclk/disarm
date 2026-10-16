@@ -251,7 +251,7 @@ extension Stats {
 
 extension ContractProgress {
     enum CodingKeys: String, CodingKey {
-        case index, delivered, accepted, breaches, complaints, completions
+        case index, delivered, accepted, breaches, complaints, completions, complaintReasons
     }
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -261,6 +261,7 @@ extension ContractProgress {
         breaches = c.decodeOr(Int.self, .breaches, 0)
         complaints = c.decodeOr(Int.self, .complaints, 0)
         completions = c.decodeOr(Int.self, .completions, 0)
+        complaintReasons = c.decodeOr([ComplaintReason: Int].self, .complaintReasons, [:])
     }
 }
 
