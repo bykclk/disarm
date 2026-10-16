@@ -5,7 +5,7 @@ DERIVED = $(HOME)/Library/Developer/Xcode/DerivedData
 DEVICE ?= $(shell xcrun devicectl list devices 2>/dev/null | grep -i physical | grep -oE '[0-9A-F]{8}-[0-9A-F]{16}' | head -1)
 DEVICE_APP = $(shell ls -td $(DERIVED)/Disarm-*/Build/Products/Debug-iphoneos/Disarm.app 2>/dev/null | head -1)
 
-.PHONY: gen build test run screenshot device device-build clean
+.PHONY: gen build test run screenshot device device-build archive export store-screenshots clean
 
 gen: ## project.yml -> Disarm.xcodeproj
 	xcodegen generate
@@ -36,6 +36,15 @@ device-build: gen ## Bağlı iPhone için imzalı Debug derlemesi (profil otomat
 device: device-build ## Bağlı iPhone'a yükle ve başlat (ARGS="-demo" ile)
 	xcrun devicectl device install app --device $(DEVICE) "$(DEVICE_APP)" | grep -E "installationURL|rror" || true
 	xcrun devicectl device process launch --terminate-existing --device $(DEVICE) $(BUNDLE) $(if $(ARGS),-- $(ARGS),)
+
+archive: gen ## App Store için Release arşivi → .store/Disarm.xcarchive
+	xcodebuild -project Disarm.xcodeproj -scheme Disarm -configuration Release -destination 'generic/platform=iOS' -archivePath .store/Disarm.xcarchive archive -allowProvisioningUpdates | grep -E "error:|warning: .*Disarm/|ARCHIVE"
+
+export: ## Arşivden App Store imzalı .ipa → .store/export/Disarm.ipa
+	xcodebuild -exportArchive -archivePath .store/Disarm.xcarchive -exportPath .store/export -exportOptionsPlist scripts/ExportOptions.plist -allowProvisioningUpdates | grep -E "error:|EXPORT|Exported"
+
+store-screenshots: build ## Mağaza ekran görüntüleri (6,9", TR+EN) → .store/screenshots
+	sh scripts/store-screenshots.sh
 
 screenshot: ## Çalışan simülatörden ekran görüntüsü
 	mkdir -p .screens && xcrun simctl io $(UDID) screenshot .screens/$$(date +%H%M%S).png

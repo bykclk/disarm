@@ -12,7 +12,7 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
     SWIFT_STRICT_CONCURRENCY: complete
-    MARKETING_VERSION: "0.1.0"
+    MARKETING_VERSION: "1.0.0"
     CURRENT_PROJECT_VERSION: "1"
     DEVELOPMENT_TEAM: 9DDG73TKPX
 targets:
@@ -32,6 +32,8 @@ targets:
         CADisableMinimumFrameDurationOnPhone: true
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        # Ağ yok, şifreleme yok: her yüklemede ihracat uyumluluğu sorusu çıkmasın.
+        ITSAppUsesNonExemptEncryption: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.omerbuyukcelik.disarm

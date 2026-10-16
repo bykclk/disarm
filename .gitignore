@@ -8,5 +8,8 @@ Packages/DisarmCore/.build/
 .screens/
 *.ipa
 *.dSYM.zip
+# Mağaza ekran görüntüleri ve arşivler üretilir (scripts/store-screenshots.sh); metinler store/ altında git'te
+.store/
+*.xcarchive
 # XcodeGen üretir; kaynağı project.yml
 Disarm.xcodeproj/

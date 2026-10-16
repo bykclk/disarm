@@ -1,0 +1,12 @@
+{
+  "en-US": {
+    "name": "Disarm",
+    "subtitle": "Build the line that cleans files",
+    "privacyPolicyURL": "https://REPLACE-ME/privacy"
+  },
+  "tr": {
+    "name": "Disarm",
+    "subtitle": "Dosyaları temizleyen hattı kur",
+    "privacyPolicyURL": "https://REPLACE-ME/privacy"
+  }
+}
