@@ -239,23 +239,9 @@ struct PaletteView: View {
                 }
                 .padding(.horizontal, 12)
             }
-            Text(hint)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .padding(.bottom, 4)
         }
-        .padding(.top, 6)
+        .padding(.vertical, 6)
         .background(.black.opacity(0.3))
-    }
-
-    private var hint: String {
-        switch engine.tool {
-        case .select: String(localized: "Tap module: settings · Drag module: move · Tap file: contents · Tap belt: rotate")
-        case .belt: String(localized: "Tap: place belt · Drag: draw belts · Tap existing belt: rotate")
-        case .erase: String(localized: "Tap or drag: remove (modules refund 50%)")
-        case .place(let k): String(localized: "\(k.displayName): tap an empty cell · facing \(engine.brush.displayName) · tap same module: rotate")
-        }
     }
 
     @ViewBuilder

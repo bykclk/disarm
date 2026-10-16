@@ -102,16 +102,6 @@
         }
       }
     },
-    "%@: tap an empty cell · facing %@ · tap same module: rotate": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@: boş hücreye dokun · yönü %@ · aynı modüle dokun: döndür"
-          }
-        }
-      }
-    },
     "%lld×%lld cells": {
       "localizations": {
         "tr": {
@@ -1052,26 +1042,6 @@
         }
       }
     },
-    "Tap or drag: remove (modules refund 50%)": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dokun ya da sürükle: kaldır (modüller %50 iade)"
-          }
-        }
-      }
-    },
-    "Tap: place belt · Drag: draw belts · Tap existing belt: rotate": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dokun: bant koy · Sürükle: bant çiz · Mevcut banta dokun: döndür"
-          }
-        }
-      }
-    },
     "Target": {
       "localizations": {
         "tr": {
@@ -1938,16 +1908,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ · %@"
-          }
-        }
-      }
-    },
-    "Tap module: settings · Drag module: move · Tap file: contents · Tap belt: rotate": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modüle dokun: ayarlar · Modülü sürükle: taşı · Dosyaya dokun: içerik · Banda dokun: döndür"
           }
         }
       }
