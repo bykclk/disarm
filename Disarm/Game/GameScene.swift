@@ -22,6 +22,11 @@ final class GameScene: SKScene {
     private var itemNodes: [UUID: ItemNode] = [:]
     private var moduleNodes: [GridPos: SKNode] = [:]
     private var busyModules: Set<GridPos> = []
+    /// Dosyanın bulunduğu hücreye hangi yönde girdiği: köşe dönüşlerinde L biçimli yol çizmek için.
+    private var itemEntry: [UUID: (pos: GridPos, entry: Direction)] = [:]
+    private var frameDt: TimeInterval = 0
+    /// Konum/ölçek yumuşatma zaman sabiti (sn). Modül giriş/çıkışındaki yarım hücrelik sıçramaları kayışa çevirir.
+    private let smoothing: TimeInterval = 0.07
     private var knownCells: Set<GridPos> = []
     private var firstBuild = true
     private var particleTexture: SKTexture?
@@ -71,6 +76,7 @@ final class GameScene: SKScene {
         renderedLayoutVersion = -1
         itemNodes.values.forEach { $0.removeFromParent() }
         itemNodes.removeAll()
+        itemEntry.removeAll()
     }
 
     func point(for p: GridPos) -> CGPoint {
@@ -96,7 +102,14 @@ final class GameScene: SKScene {
         guard let engine else { return }
         let dt = lastTime.map { currentTime - $0 } ?? 0
         lastTime = currentTime
+        frameDt = min(dt, 0.1)
         engine.tick(dt: dt)
+
+        // Duraklatınca bant okları, modül nabzı ve efektler de dursun.
+        let paused = engine.paused
+        for layer in [boardLayer, cellLayer, itemLayer, fxLayer] where layer.isPaused != paused {
+            layer.isPaused = paused
+        }
 
         if engine.state.grid.width != gridW || engine.state.grid.height != gridH {
             relayout()
@@ -293,36 +306,71 @@ final class GameScene: SKScene {
         guard let engine else { return }
         var seen: Set<UUID> = []
         var busy: Set<GridPos> = []
+        let paused = engine.paused
+        // Kare süresine bağlı üstel yumuşatma katsayısı (0 = yerinde kal, 1 = hedefe atla).
+        let k = paused ? 0 : CGFloat(1 - exp(-frameDt / smoothing))
         for item in engine.sim.items {
             seen.insert(item.id)
             if item.inModule { busy.insert(item.pos) }
             let node: ItemNode
+            var isNew = false
             if let existing = itemNodes[item.id] {
                 node = existing
             } else {
                 node = ItemNode()
                 itemNodes[item.id] = node
                 itemLayer.addChild(node)
+                isNew = true
             }
             node.configure(item.file, cs: cs)
+
+            // Hücreye giriş yönü: önceki hücreden bu hücreye hareket yönü. İlk görüşte heading (arkadan geldi).
+            let entry: Direction
+            if let prev = itemEntry[item.id], prev.pos == item.pos {
+                entry = prev.entry
+            } else if let prev = itemEntry[item.id],
+                      let d = Direction.from(dx: item.pos.x - prev.pos.x, dy: item.pos.y - prev.pos.y) {
+                entry = d
+            } else {
+                entry = item.heading
+            }
+            itemEntry[item.id] = (item.pos, entry)
+
             let base = point(for: item.pos)
+            let target: CGPoint
+            let targetScale: CGFloat
             if item.inModule {
-                node.position = CGPoint(x: base.x, y: base.y + cs * 0.04)
-                node.setScale(0.8)
+                target = CGPoint(x: base.x, y: base.y + cs * 0.04)
+                targetScale = 0.8
                 node.setProgress(item.progress)
                 node.zPosition = 1
             } else {
-                let v = vector(item.heading)
-                let off = CGFloat(item.progress - 0.5) * cs
-                node.position = CGPoint(x: base.x + v.dx * off, y: base.y + v.dy * off)
-                node.setScale(1)
+                // İlk yarı: giriş kenarından merkeze (giriş yönünde). İkinci yarı: merkezden çıkış kenarına (bant yönünde).
+                // Köşede yol L çizer; hücre sınırında çıkış kenarı = sonraki hücrenin giriş kenarı, sıçrama olmaz.
+                let p = CGFloat(item.progress)
+                let v = vector(p < 0.5 ? entry : item.heading)
+                let off = (p - 0.5) * cs
+                target = CGPoint(x: base.x + v.dx * off, y: base.y + v.dy * off)
+                targetScale = 1
                 node.setProgress(nil)
                 node.zPosition = 0
+            }
+
+            // Uzak sıçrama (mekân değişimi, düşme) ya da yeni düğüm: doğrudan yerleş. Diğer her şey kayarak gider.
+            let far = hypot(target.x - node.position.x, target.y - node.position.y) > cs * 1.5
+            if isNew || far {
+                node.position = target
+                node.setScale(targetScale)
+            } else if !paused {
+                node.position = CGPoint(x: node.position.x + (target.x - node.position.x) * k,
+                                        y: node.position.y + (target.y - node.position.y) * k)
+                node.setScale(node.xScale + (targetScale - node.xScale) * k)
             }
         }
         for (id, node) in itemNodes where !seen.contains(id) {
             node.removeFromParent()
             itemNodes[id] = nil
+            itemEntry[id] = nil
         }
         // Çalışan modül: parlama ve ikon nabzı.
         for p in busy.subtracting(busyModules) {
