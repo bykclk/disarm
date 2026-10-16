@@ -12,7 +12,7 @@ App Store Connect'e gidecek metinler ve yayın adımları. Ekran görüntüleri 
 - Yaş sınıfı: 4+ (şiddet, kumar, reklam, kullanıcı içeriği yok)
 - Gizlilik etiketi: "Veri toplanmıyor" (ağ erişimi yok, analitik yok, hesap yok)
 - İhracat uyumluluğu: `ITSAppUsesNonExemptEncryption = false` (Info.plist)
-- Cihaz: yalnızca iPhone (TARGETED_DEVICE_FAMILY 1); iPad düzeni test edilmedi
+- Cihaz: iPhone ve iPad (TARGETED_DEVICE_FAMILY 1,2; 1.1'den itibaren). iPad dikey, tam ekran; mağaza için 13" iPad görüntüleri betikten çıkar (APP_IPAD_PRO_3GEN_129)
 - Fiyat: karar bekliyor (öneri: ücretsiz, satın alma yok)
 
 ## Yayın adımları

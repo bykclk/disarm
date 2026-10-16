@@ -4,6 +4,7 @@ import DisarmCore
 
 struct ContentView: View {
     @Bindable var engine: GameEngine
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOver
     @State private var scene: GameScene = {
         let s = GameScene()
         s.scaleMode = .resizeFill
@@ -20,10 +21,13 @@ struct ContentView: View {
                 SpriteView(scene: scene, preferredFramesPerSecond: 120,
                            debugOptions: ProcessInfo.processInfo.arguments.contains("-fps") ? [.showsFPS, .showsDrawCount, .showsNodeCount] : [])
                     .onAppear { scene.engine = engine }
+                    .overlay { if voiceOver { GridAccessibilityOverlay(engine: engine) } }
                     .overlay(alignment: .top) { ToastStack(toasts: engine.toasts) }
                 PaletteView(engine: engine)
             }
         }
+        // Çok büyük erişilebilirlik boyutlarında HUD ve palet taşmasın; sayfalar (sheet) tam ölçeklenir.
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .sheet(item: $engine.sheet) { kind in
             SheetRouter(engine: engine, kind: kind)
                 .presentationDragIndicator(.visible)
@@ -161,6 +165,9 @@ struct HUDView: View {
                             .accessibilityLabel("Breaches \(p.breaches) of \(c.maxBreaches)")
                     }
                     .font(.caption.monospacedDigit())
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                    .fixedSize(horizontal: true, vertical: false)
                     .padding(.horizontal, 10)
                     .frame(maxHeight: .infinity)
                     .background(.white.opacity(0.05))
@@ -202,7 +209,7 @@ struct PaletteView: View {
                                 .frame(height: 24)
                             Text("Facing").font(.caption2)
                         }
-                        .frame(width: 58, height: 56)
+                        .frame(minWidth: 58, minHeight: 56)
                         .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
                     }
                     .foregroundStyle(.white)
@@ -211,7 +218,7 @@ struct PaletteView: View {
                             Image(systemName: "arrow.uturn.backward").font(.title3).frame(height: 24)
                             Text("Undo").font(.caption2)
                         }
-                        .frame(width: 58, height: 56)
+                        .frame(minWidth: 58, minHeight: 56)
                         .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
                     }
                     .foregroundStyle(engine.canUndo ? .white : .white.opacity(0.35))
@@ -250,7 +257,7 @@ struct PaletteView: View {
                 Image(systemName: icon).font(.title3).frame(height: 24)
                 Text(cost.map { "\(title) \(money($0))" } ?? title).font(.caption2)
             }
-            .frame(width: 58, height: 56)
+            .frame(minWidth: 58, minHeight: 56)
             .background(active ? Color(Theme.accent).opacity(0.35) : .white.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(active ? Color(Theme.accent) : .clear, lineWidth: 1.5))
         }
@@ -270,19 +277,73 @@ struct PaletteView: View {
                         .foregroundStyle(Color(Theme.color(kind)))
                         .frame(width: 40, height: 24)
                     if level > 1 {
-                        Text("L\(level)").font(.system(size: 9, weight: .bold))
+                        Text("L\(level)").font(.caption2.weight(.bold))
                             .foregroundStyle(Color(Theme.warning))
                     }
                 }
-                Text(kind.displayName).font(.system(size: 9)).lineLimit(1)
-                Text(money(kind.baseCost)).font(.system(size: 9)).foregroundStyle(affordable ? .secondary : Color(Theme.danger))
+                Text(kind.displayName).font(.caption2).lineLimit(1).minimumScaleFactor(0.7)
+                Text(money(kind.baseCost)).font(.caption2).foregroundStyle(affordable ? .secondary : Color(Theme.danger))
             }
-            .frame(width: 70, height: 56)
+            .padding(.horizontal, 4)
+            .frame(minWidth: 70, minHeight: 56)
             .background(active ? Color(Theme.color(kind)).opacity(0.3) : .white.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(active ? Color(Theme.color(kind)) : .clear, lineWidth: 1.5))
         }
         .foregroundStyle(.white)
         .opacity(affordable ? 1 : 0.6)
+        .accessibilityLabel(Text("\(kind.displayName), \(money(kind.baseCost))") + (level > 1 ? Text(", level \(level)") : Text("")))
+        .accessibilityHint(affordable ? "Select to place" : "Not enough money")
+    }
+}
+
+// MARK: - VoiceOver: ızgara
+
+/// SpriteKit sahnesi VoiceOver'a kapalı; bu görünmez katman her hücreyi erişilebilir bir öğe olarak sunar.
+/// Geometri sahneyle aynı: 12 pt kenar payı, kare hücre, ortalanmış ızgara. Yalnızca VoiceOver açıkken var.
+struct GridAccessibilityOverlay: View {
+    @Bindable var engine: GameEngine
+
+    var body: some View {
+        GeometryReader { geo in
+            let g = engine.state.grid
+            let pad: CGFloat = 12
+            let cs = floor(min((geo.size.width - pad * 2) / CGFloat(g.width), (geo.size.height - pad * 2) / CGFloat(g.height)))
+            let ox = (geo.size.width - cs * CGFloat(g.width)) / 2
+            let oy = (geo.size.height - cs * CGFloat(g.height)) / 2
+            ForEach(g.allPositions, id: \.self) { p in
+                Color.clear
+                    .frame(width: cs, height: cs)
+                    .position(x: ox + (CGFloat(p.x) + 0.5) * cs, y: oy + (CGFloat(p.y) + 0.5) * cs)
+                    .accessibilityElement()
+                    .accessibilityLabel(label(for: p))
+                    .accessibilityAddTraits(.isButton)
+                    .accessibilityAction { engine.tapped(p) }
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    private func label(for p: GridPos) -> String {
+        let s = engine.state
+        var parts: [String] = []
+        switch s.grid[p] {
+        case .module(let m):
+            var text = m.kind.displayName
+            if m.kind.isPlaceable { text += ", " + String(localized: "level \(s.level(of: m.kind))") }
+            if m.kind.isConfigurable { text = m.summary + ", " + String(localized: "level \(s.level(of: m.kind))") }
+            if m.kind != .sink && m.kind != .quarantine { text += ", " + String(localized: "output \(m.facing.displayName)") }
+            parts.append(text)
+        case .belt(let d):
+            parts.append(String(localized: "Belt, \(d.displayName)"))
+        case nil:
+            parts.append(String(localized: "Empty cell"))
+        }
+        let files = engine.sim.items.filter { $0.pos == p }
+        if !files.isEmpty {
+            parts.append(String(localized: "\(files.count) files, \(files.map { $0.file.container.displayName }.joined(separator: ", "))"))
+        }
+        parts.append(String(localized: "row \(p.y + 1), column \(p.x + 1)"))
+        return parts.joined(separator: ". ")
     }
 }
 

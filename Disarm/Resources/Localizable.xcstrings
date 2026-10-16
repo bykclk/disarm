@@ -2111,6 +2111,106 @@
           }
         }
       }
+    },
+    "level %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "seviye %lld"
+          }
+        }
+      }
+    },
+    ", level %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", seviye %lld"
+          }
+        }
+      }
+    },
+    "output %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "çıkış %@"
+          }
+        }
+      }
+    },
+    "Belt, %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bant, %@"
+          }
+        }
+      }
+    },
+    "Empty cell": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Boş hücre"
+          }
+        }
+      }
+    },
+    "%lld files, %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld dosya, %@"
+          }
+        }
+      }
+    },
+    "row %lld, column %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "satır %lld, sütun %lld"
+          }
+        }
+      }
+    },
+    "Select to place": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yerleştirmek için seç"
+          }
+        }
+      }
+    },
+    "Not enough money": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para yetersiz"
+          }
+        }
+      }
+    },
+    "%@, %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
