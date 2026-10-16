@@ -2,7 +2,8 @@ SIM ?= iPhone 17
 BUNDLE = com.omerbuyukcelik.disarm
 DERIVED = $(HOME)/Library/Developer/Xcode/DerivedData
 # Bağlı fiziksel cihaz (ilk eşleşmiş iPhone). DEVICE=<udid> ile geçersiz kılınabilir.
-DEVICE ?= $(shell xcrun devicectl list devices 2>/dev/null | grep -i physical | grep -oE '[0-9A-F]{8}-[0-9A-F]{16}' | head -1)
+# Fiziksel UDID biçimi 8-16 hex; simülatörler UUID. (Xcode 27.1 çıktısında "physical" sütunu her zaman yok.)
+DEVICE ?= $(shell xcrun devicectl list devices 2>/dev/null | grep -v simulated | grep -oE '[0-9A-F]{8}-[0-9A-F]{16}' | head -1)
 DEVICE_APP = $(shell ls -td $(DERIVED)/Disarm-*/Build/Products/Debug-iphoneos/Disarm.app 2>/dev/null | head -1)
 
 .PHONY: gen build test run screenshot device device-build archive export store-screenshots clean
