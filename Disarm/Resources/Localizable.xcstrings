@@ -1971,6 +1971,56 @@
           }
         }
       }
+    },
+    "%@ complete! Next site: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ tamamlandı! Sıradaki mekân: %@"
+          }
+        }
+      }
+    },
+    "%@ complete. Next site: %@ (%@, reputation %lld)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ tamamlandı. Sıradaki mekân: %@ (%@, itibar %lld)"
+          }
+        }
+      }
+    },
+    "%@ complete!": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ tamamlandı!"
+          }
+        }
+      }
+    },
+    "NEXT": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SIRADAKİ"
+          }
+        }
+      }
+    },
+    " · %lld/%lld contracts": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " · %lld/%lld sözleşme"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -34,6 +34,8 @@ Proje dosyası `project.yml`'den üretilir (`make gen`), repoya girmez. Cihaz de
 | `-demoBank` | Özel Bankacılık: şifreli dosyalar, yönlendirici→karantina |
 | `-demoDC` | Veri Merkezi: Adli Bilişim için kum havuzu hattı |
 | `-demoEnd` | Kampanyası bitmiş durum, prestij akışı |
+| `-demoBelt` | Modülsüz S biçimli bant: köşe ve akış görsel testi |
+| `-demoSiteDone` | Küçük ofis bitmiş, şirket kilitli: sıradaki mekân yönlendirmesi |
 | `-skipHelp` | İlk açılış yardımını atla |
 | `-sheet contracts\|upgrades\|locations\|log\|campaign\|deliveries\|module` | Açılışta ilgili sayfayı aç |
 | `-fps` | Sahnede fps/çizim/düğüm sayacı; SwiftUI gövde sıklığı günlüğe (`[render]`) |

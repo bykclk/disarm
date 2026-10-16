@@ -8,10 +8,29 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
     case bank, unknownThreat, encrypted
     case airGapped
     case dataCenter, forensics
+    /// Mekânın tüm sözleşmeleri bitti, sıradaki mekân kilitli: oyuncuyu Mekânlar sayfasına yönlendir.
+    case officeDone, companyDone, bankDone, governmentDone
     case campaignDone
 
     public enum Action: Sendable, Equatable {
-        case openContracts, openUpgrades, openCampaign
+        case openContracts, openUpgrades, openCampaign, openLocations
+    }
+
+    /// "Mekân bitti" ipucunun ait olduğu mekân.
+    public var finishedSite: LocationKind? {
+        switch self {
+        case .officeDone: .smallOffice
+        case .companyDone: .company
+        case .bankDone: .bank
+        case .governmentDone: .government
+        default: nil
+        }
+    }
+
+    static func siteDoneText(from site: LocationKind) -> String {
+        guard let next = site.next else { return "" }
+        let spec = next.spec
+        return L("Every contract in \(site.spec.displayName) is done. Next up: \(spec.displayName). Unlock it from Sites for \(spec.unlockCost) cash and \(spec.unlockReputation) reputation; the line here keeps earning meanwhile.")
     }
 
     public var text: String {
@@ -46,6 +65,8 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
             L("Top floor. The Sandbox detonates a file in isolation and removes whatever misbehaves: no signatures, no quality loss, closed files welcome. It is slow and blind to encryption and polyglots. At this flow rate, build parallel lines.")
         case .forensics:
             L("Evidence must stay untouched, so no transformer here. Put a Sandbox first for unsigned payloads, then Parser, Filter(Macro) and Packager for the harmless macros.")
+        case .officeDone, .companyDone, .bankDone, .governmentDone:
+            Self.siteDoneText(from: finishedSite!)
         case .campaignDone:
             L("Every contract delivered. The Campaign page now offers a new campaign with permanent bonuses.")
         }
@@ -69,6 +90,7 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
         case .airGapped: "antenna.radiowaves.left.and.right.slash"
         case .dataCenter: "flame"
         case .forensics: "magnifyingglass"
+        case .officeDone, .companyDone, .bankDone, .governmentDone: "map"
         case .campaignDone: "trophy.fill"
         }
     }
@@ -77,6 +99,7 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
         switch self {
         case .upgrades, .nestedZip, .hiddenData, .hospital: .openUpgrades
         case .bank, .company: .openContracts
+        case .officeDone, .companyDone, .bankDone, .governmentDone: .openLocations
         case .campaignDone: .openCampaign
         default: nil
         }
@@ -88,6 +111,9 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
         let index = s.progress.index
         switch self {
         case .campaignDone: return s.campaignCompleted
+        case .officeDone, .companyDone, .bankDone, .governmentDone:
+            guard let site = finishedSite, let next = site.next else { return false }
+            return loc == site && s.isFinished(site) && !s.unlockedLocations.contains(next)
         case .scripts: return loc == .smallOffice && index == 1
         case .imageQuality: return loc == .smallOffice && index == 2
         case .keepScripts: return loc == .smallOffice && index == 3
@@ -112,7 +138,9 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
     /// Küçük ofisin ilk sözleşmesinde adım adım öğretici sürerken ipucu gösterilmez.
     public static func pending(for s: GameState) -> Hint? {
         if !s.tutorialSeen && s.currentLocation == .smallOffice { return nil }
-        let order: [Hint] = [.campaignDone] + allCases.filter { $0 != .campaignDone }
+        // Öncelik: kampanya bitişi, sonra "mekân bitti" yönlendirmesi, sonra geri kalanlar.
+        let first: [Hint] = [.campaignDone, .officeDone, .companyDone, .bankDone, .governmentDone]
+        let order: [Hint] = first + allCases.filter { !first.contains($0) }
         return order.first { !s.seenHints.contains($0) && $0.applies(to: s) }
     }
 }

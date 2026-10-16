@@ -133,6 +133,18 @@ final class GameEngine {
             sim = Simulation(seed: 12)
             sheet = nil
         }
+        if args.contains("-demoSiteDone") {
+            // Küçük ofis bitmiş, şirket kilitli: sıradaki mekâna yönlendirme.
+            var s = Self.demoState()
+            let n = LocationKind.smallOffice.spec.contracts.count
+            s.progress = ContractProgress(index: n - 1)
+            s.progress.completions = n
+            s.money = 3000
+            s.reputation = 25
+            state = s
+            sim = Simulation(seed: 11)
+            sheet = nil
+        }
         if args.contains("-demoBelt") {
             // Görsel test: modülsüz S biçimli bant, art arda köşeler.
             var s = GameState(seed: 7)
@@ -301,6 +313,7 @@ final class GameEngine {
         case .openContracts: sheet = .contracts
         case .openUpgrades: sheet = .upgrades
         case .openCampaign: sheet = .campaign
+        case .openLocations: sheet = .locations
         }
     }
 
@@ -374,6 +387,14 @@ final class GameEngine {
                 fx.append(.contractFailed)
                 toast(String(localized: "Contract cancelled: \(c.title). Too many breaches."), .bad, 4)
                 addLog(String(localized: "Contract cancelled: \(c.title). Reputation -5"), .bad)
+            case .locationFinished(let site):
+                fx.append(.contractCompleted)
+                if let next = site.next {
+                    toast(String(localized: "\(site.spec.displayName) complete! Next site: \(next.spec.displayName)"), .good, 5)
+                    addLog(String(localized: "\(site.spec.displayName) complete. Next site: \(next.spec.displayName) (\(money(next.spec.unlockCost)), reputation \(next.spec.unlockReputation))"), .good)
+                } else {
+                    toast(String(localized: "\(site.spec.displayName) complete!"), .good, 4)
+                }
             case .campaignCompleted:
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                 audio.play(.unlock)

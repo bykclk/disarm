@@ -83,6 +83,12 @@ import Testing
         }
         var done = state(); done.campaignCompleted = true
         for h in Hint.allCases where h.applies(to: done) { reachable.insert(h) }
+        // Mekân bitmiş, sıradaki kilitli.
+        for loc in LocationKind.allCases where loc.next != nil {
+            var s = state(loc)
+            s.contracts[loc]!.completions = loc.spec.contracts.count
+            for h in Hint.allCases where h.applies(to: s) { reachable.insert(h) }
+        }
         #expect(reachable == Set(Hint.allCases), "unreachable: \(Set(Hint.allCases).subtracting(reachable))")
     }
 

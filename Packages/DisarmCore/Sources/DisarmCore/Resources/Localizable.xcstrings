@@ -1360,6 +1360,16 @@
           }
         }
       }
+    },
+    "Every contract in %@ is done. Next up: %@. Unlock it from Sites for %lld cash and %lld reputation; the line here keeps earning meanwhile.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ mekânındaki tüm sözleşmeler bitti. Sırada %2$@ var. Mekânlar sayfasından %3$lld para ve %4$lld itibarla aç; bu arada buradaki hat kazanmaya devam eder."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

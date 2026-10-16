@@ -22,7 +22,9 @@ public enum GameEvent: Equatable, Sendable {
     case quarantined(UUID)
     case contractCompleted(ContractSpec)
     case contractFailed(ContractSpec)
-    /// Dört mekândaki tüm sözleşmeler ilk kez bitti.
+    /// Mekândaki tüm sözleşmeler ilk kez bitti; sıradaki mekâna geçme zamanı.
+    case locationFinished(LocationKind)
+    /// Tüm mekânlardaki tüm sözleşmeler ilk kez bitti.
     case campaignCompleted
     case dropped(UUID)
 }
@@ -303,6 +305,9 @@ public struct Simulation: Codable, Hashable, Sendable {
             if progress.index < state.location.contracts.count - 1 { progress.index += 1 }
             events.append(.contractCompleted(contract))
             state.progress = progress
+            if progress.completions == state.location.contracts.count {
+                events.append(.locationFinished(state.currentLocation))
+            }
             if !state.campaignCompleted && state.campaignFinished {
                 state.campaignCompleted = true
                 state.stats.campaignsCompleted += 1

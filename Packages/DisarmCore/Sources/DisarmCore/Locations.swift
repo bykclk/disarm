@@ -4,6 +4,13 @@ public enum LocationKind: String, Codable, CaseIterable, Sendable {
     case smallOffice, company, bank, government, dataCenter
 
     public var spec: LocationSpec { LocationCatalog.spec(for: self) }
+
+    /// Kampanya sırasında bir sonraki mekân; son mekânda nil.
+    public var next: LocationKind? {
+        let all = Self.allCases
+        guard let i = all.firstIndex(of: self), i + 1 < all.count else { return nil }
+        return all[i + 1]
+    }
 }
 
 public struct LocationSpec: Sendable {

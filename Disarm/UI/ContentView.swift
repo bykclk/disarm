@@ -366,6 +366,7 @@ struct GuidanceBanner: View {
         case .openContracts: "Contracts"
         case .openUpgrades: "Upgrades"
         case .openCampaign: "Campaign"
+        case .openLocations: "Sites"
         }
     }
 }

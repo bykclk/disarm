@@ -238,16 +238,32 @@ struct LocationsView: View {
         let s = engine.state
         NavigationStack {
             List {
+                let nextSite = LocationKind.allCases.first { !s.unlockedLocations.contains($0) }
                 ForEach(LocationKind.allCases, id: \.self) { l in
                     let spec = l.spec
                     let unlocked = s.unlockedLocations.contains(l)
                     let current = s.currentLocation == l
+                    let finished = s.isFinished(l)
+                    let done = s.completedContracts(in: l)
                     VStack(alignment: .leading, spacing: 6) {
                         HStack {
                             Image(systemName: Theme.symbol(l)).font(.title2).foregroundStyle(unlocked ? Color(Theme.accent) : .secondary)
                             VStack(alignment: .leading) {
-                                Text(spec.displayName).font(.headline)
-                                Text("\(spec.width)×\(spec.height) cells" + (spec.airGapped ? " · air-gapped" : "")).font(.caption).foregroundStyle(.secondary)
+                                HStack(spacing: 6) {
+                                    Text(spec.displayName).font(.headline)
+                                    if finished {
+                                        Image(systemName: "checkmark.seal.fill").foregroundStyle(Color(Theme.success)).font(.subheadline)
+                                    } else if l == nextSite {
+                                        Text("NEXT").font(.caption2.bold())
+                                            .padding(.horizontal, 6).padding(.vertical, 2)
+                                            .background(Color(Theme.warning).opacity(0.25), in: Capsule())
+                                            .foregroundStyle(Color(Theme.warning))
+                                    }
+                                }
+                                Text(String(localized: "\(spec.width)×\(spec.height) cells")
+                                     + (spec.airGapped ? String(localized: " · air-gapped") : "")
+                                     + (unlocked ? String(localized: " · \(done)/\(spec.contracts.count) contracts") : ""))
+                                    .font(.caption).foregroundStyle(.secondary)
                             }
                             Spacer()
                             if current {
