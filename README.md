@@ -4,7 +4,9 @@ CDR (Content Disarm & Reconstruction) temalı, iOS için fabrika/tycoon oyunu. M
 
 ## Oynanış özeti
 - **Dosyalar**: kap (PDF, DOCX, XLSX, PNG, ZIP) + parçalar (metin, görsel, formül, makro, betik, gömülü dosya, gizli veri, bilinmeyen). Parçaların derinliği var: ZIP içinde ZIP bir kat içeride, polyglot dosyanın ikinci kimliği gizli.
-- **Modüller**: İmza Tarayıcı (ucuz, kapalı dosyada çalışır, sadece bilinen tehditler), Ayrıştırıcı (açar; seviye 2 iç içe, seviye 3 polyglot), Filtre (makro/betik/gömülü), Dönüştürücü (gizli veri ve bilinmeyeni yok eder; düşük seviyede görsel kalitesi düşer, formüller düzleşir), Paketleyici (kapatır; şart), Yönlendirici (kap türüne ya da şifreye göre sağa ayırır), Karantina, Kum Havuzu (yalnızca Veri Merkezi'nde: imzasız zararlıyı dosyayı açmadan ve bozmadan yok eder; yavaş, pahalı, şifreli ve polyglot'a kör).
+- **Modüller**: İmza Tarayıcı (ucuz, kapalı dosyada çalışır, sadece bilinen tehditler), Ayrıştırıcı (açar; seviye 2 iç içe, seviye 3 polyglot), Filtre (makro/betik/gömülü), Dönüştürücü (gizli veri ve bilinmeyeni yok eder; düşük seviyede görsel kalitesi düşer, formüller düzleşir), Paketleyici (kapatır; şart), Yönlendirici (kap türüne ya da şifreye göre sağa ayırır), Karantina, Kum Havuzu (yalnızca Veri Merkezi'nde: imzasız zararlıyı dosyayı açmadan ve bozmadan yok eder; yavaş, pahalı, şifreli ve polyglot'a kör), Ayırıcı (şirketten itibaren: dosyaları sırayla düz ve yana gönderir, paralel hat kurmak için).
+- **Akış kapasitesi**: her modül aynı anda tek dosya işler; giriş kuyruğu 3'ü aşarsa dosyalar "geç" işaretlenir, kullanılabilirlik düşer ve şikâyet nedeni "geç teslim" olur. Yüksek akışlı sözleşmeler (Veri Merkezi 36–60 dosya/dk) tek hatla çözülmez.
+- **Krizler**: üçüncü sözleşmeden sonra 2,5–5 dakikada bir süreli olay: sıfırıncı gün dalgası (imzasız yük artar), imza kesintisi (tarayıcılar kör), acil sipariş (2× ödeme, 1,5× akış), uyum denetimi (tek ihlal sözleşmeyi iptal eder).
 - **Sözleşmeler**: Muhasebe (formül korunsun, makro silinsin), Hukuk (metin korunsun), Tasarım Ajansı (görsel kalitesi ≥ %85), Yazılım Evi (betikler kaynak kod: korunsun, yalnızca zararlılar gitsin → tarayıcı), Hastane (görsel ≥ %90 ama gizli hasta verisi silinsin → seviye 3 dönüştürücü), Banka (sıfır aktif içerik, şifreli dosya reddedilir), Kamu (air-gapped: tarayıcı kör), Adli Bilişim (görsel ≥ %97, formüller sağlam: dönüştürücü yasak, kum havuzu şart). Beş mekânda 17 sözleşme.
 - **Tehdit merdiveni**: makro → betik → ZIP içinde ZIP → polyglot/gizli veri → imzasız bilinmeyen ve üç kat iç içe arşiv → şifreli arşiv (hiçbir modül açamaz; yönlendirici "şifrelileri ayır" moduyla karantinaya gönderilir, zararsız şifreliler de gittiği için gelir kaybı).
 - **Tycoon**: para, itibar, modül seviyeleri, bant hızı, giriş hızı, beş mekân (Küçük Ofis 7×10 → Şirket 8×12 → Banka 9×13 → Kamu 10×14 → Veri Merkezi 11×15). Offline kazanç son kazanç hızına göre, 4 saatle sınırlı.
@@ -37,6 +39,7 @@ Proje dosyası `project.yml`'den üretilir (`make gen`), repoya girmez. Cihaz de
 | `-demoEnd` | Kampanyası bitmiş durum, prestij akışı |
 | `-demoBelt` | Modülsüz S biçimli bant: köşe ve akış görsel testi |
 | `-demoSiteDone` | Küçük ofis bitmiş, şirket kilitli: sıradaki mekân yönlendirmesi |
+| `-incident zeroDay|signatureOutage|rushOrder|audit` | Seçilen krizi açılışta başlat |
 | `-skipHelp` | İlk açılış yardımını atla |
 | `-sheet contracts\|upgrades\|locations\|log\|campaign\|deliveries\|module` | Açılışta ilgili sayfayı aç |
 | `-fps` | Sahnede fps/çizim/düğüm sayacı; SwiftUI gövde sıklığı günlüğe (`[render]`) |

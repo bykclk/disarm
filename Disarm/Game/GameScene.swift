@@ -187,7 +187,7 @@ final class GameScene: SKScene {
                 if bd == dir.opposite { conn.insert(dir) }
             case .module(let m):
                 guard m.kind != .sink && m.kind != .quarantine else { continue }
-                if m.facing == dir.opposite || (m.kind == .router && m.facing.clockwise == dir.opposite) {
+                if m.facing == dir.opposite || ((m.kind == .router || m.kind == .splitter) && m.facing.clockwise == dir.opposite) {
                     conn.insert(dir)
                 }
             }
@@ -788,7 +788,7 @@ final class ItemNode: SKNode {
     private var cs: CGFloat = 0
 
     func configure(_ f: FileItem, cs: CGFloat) {
-        let sig = "\(f.container.rawValue)|\(f.isOpen)|\(f.exposedDepth)|\(f.polyglot)|\(f.encrypted)|\(Int(f.imageQuality * 100))|" +
+        let sig = "\(f.container.rawValue)|\(f.isOpen)|\(f.exposedDepth)|\(f.polyglot)|\(f.encrypted)|\(f.late)|\(Int(f.imageQuality * 100))|" +
             f.parts.map { "\($0.kind.rawValue)\($0.depth)\($0.malicious ? "!" : "")" }.joined(separator: ",") + "|\(Int(cs))"
         guard sig != signature else { return }
         signature = sig
@@ -823,6 +823,26 @@ final class ItemNode: SKNode {
             l.fontSize = cs * 0.11
             l.verticalAlignmentMode = .center
             badge.addChild(l)
+            addChild(badge)
+        }
+
+        if f.late {
+            // Geç dosya: sol alt köşede kırmızı saat rozeti.
+            let badge = SKShapeNode(circleOfRadius: cs * 0.08)
+            badge.fillColor = Theme.danger
+            badge.strokeColor = .white
+            badge.lineWidth = 1
+            badge.position = CGPoint(x: -w * 0.5, y: -h * 0.5)
+            badge.zPosition = 2
+            let hand = SKShapeNode(path: {
+                let p = CGMutablePath()
+                p.move(to: CGPoint(x: 0, y: cs * 0.05)); p.addLine(to: .zero); p.addLine(to: CGPoint(x: cs * 0.035, y: 0))
+                return p
+            }())
+            hand.strokeColor = .white
+            hand.lineWidth = 1.2
+            hand.lineCap = .round
+            badge.addChild(hand)
             addChild(badge)
         }
 

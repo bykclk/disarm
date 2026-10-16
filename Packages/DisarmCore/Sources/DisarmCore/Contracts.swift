@@ -154,11 +154,13 @@ public enum ComplaintReason: Hashable, Codable, Sendable {
     case left(PartKind)
     case lost(PartKind)
     case lowImageQuality
+    case late
 
     public var displayName: String {
         switch self {
         case .deliveredOpen: L("Delivered open")
         case .encrypted: L("Encrypted file")
+        case .late: L("Delivered late")
         case .left(let k): L("\(k.displayName) left in file")
         case .lost(let k): L("\(k.displayName) lost")
         case .lowImageQuality: L("Image quality too low")
@@ -170,6 +172,7 @@ public enum DeliveryIssue: Equatable, Hashable, Sendable {
     case breach([PartKind])
     case deliveredOpen
     case encryptedRejected
+    case late
     case mustRemoveLeft(PartKind)
     case mustKeepLost(PartKind)
     case lowImageQuality(actual: Int, minimum: Int)
@@ -183,6 +186,8 @@ public enum DeliveryIssue: Equatable, Hashable, Sendable {
             return L("Delivered unpackaged (open); the customer couldn't open it")
         case .encryptedRejected:
             return L("Encrypted file delivered; the customer refuses anything that couldn't be inspected")
+        case .late:
+            return L("Delivered late: the file waited too long at intake because the line couldn't keep up")
         case .mustRemoveLeft(let k):
             return L("\(k.displayName) should have been removed but stayed in the file")
         case .mustKeepLost(let k):
@@ -198,6 +203,7 @@ public enum DeliveryIssue: Equatable, Hashable, Sendable {
         case .breach: nil
         case .deliveredOpen: .deliveredOpen
         case .encryptedRejected: .encrypted
+        case .late: .late
         case .mustRemoveLeft(let k): .left(k)
         case .mustKeepLost(let k): .lost(k)
         case .lowImageQuality: .lowImageQuality
@@ -242,6 +248,10 @@ public enum DeliveryEvaluator {
             usability = 0
             issues.append(.encryptedRejected)
         }
+        if file.late {
+            usability -= 0.3
+            issues.append(.late)
+        }
         for kind in PartKind.allCases {
             switch policy.rule(for: kind) {
             case .mustRemove:
@@ -277,7 +287,18 @@ public enum FileGenerator {
     public static let encryptedChance = 0.3
     public static let encryptedMaliciousChance = 0.5
 
-    public static func make(for spec: ContractSpec, rng: inout SplitMix64) -> FileItem {
+    /// Sıfırıncı gün dalgasında zararsız dosyaların bu kadarına imzasız yük biner.
+    public static let zeroDayChance = 0.4
+
+    public static func make(for spec: ContractSpec, rng: inout SplitMix64, zeroDay: Bool = false) -> FileItem {
+        var file = makeBase(for: spec, rng: &rng)
+        if zeroDay && !file.hasMalicious && !file.encrypted && rng.chance(zeroDayChance) {
+            file.parts.append(Part(kind: .unknown, malicious: true, signatureKnown: false))
+        }
+        return file
+    }
+
+    static func makeBase(for spec: ContractSpec, rng: inout SplitMix64) -> FileItem {
         let container = pick(spec.containerWeights, rng: &rng)
         var parts: [Part] = []
         let tier = spec.tier

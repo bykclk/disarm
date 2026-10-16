@@ -791,6 +791,9 @@ struct HelpView: View {
                 Section("Operator level") {
                     Text("Accepted deliveries and finished contracts earn experience. Levels unlock modules (Scanner at 2, Quarantine at 3, Router at 4, Transformer at 5, Sandbox at 7) and upgrade tiers (level 3 and 6). Achievements pay cash and experience; see the Campaign page.")
                 }
+                Section("Throughput and incidents") {
+                    Text("Every module handles one file at a time. If the intake queue grows past three, files arrive late and pay less: split the flow into parallel lines with a Splitter. From the third contract on, timed incidents hit now and then (zero-day wave, signature outage, rush order, audit); the banner shows the countdown.")
+                }
                 Section("Tension: security ↔ usability") {
                     Text("Clean too aggressively and the file breaks, the customer won't pay. Go easy and malware slips through. Accounting wants formulas, the bank wants zero active content, the design agency wants image quality.")
                 }

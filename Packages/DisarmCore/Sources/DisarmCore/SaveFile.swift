@@ -305,7 +305,7 @@ extension ModuleConfig {
 
 extension FileItem {
     enum CodingKeys: String, CodingKey {
-        case id, container, parts, isOpen, exposedDepth, polyglot, imageQuality, originalKinds, tier, encrypted
+        case id, container, parts, isOpen, exposedDepth, polyglot, imageQuality, originalKinds, tier, encrypted, late
     }
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -321,6 +321,7 @@ extension FileItem {
         exposedDepth = c.decodeOr(Int.self, .exposedDepth, -1)
         imageQuality = c.decodeOr(Double.self, .imageQuality, 1.0)
         originalKinds = c.decodeEnumSet(.originalKinds)
+        late = c.decodeOr(Bool.self, .late, false)
     }
 }
 
@@ -388,7 +389,10 @@ extension GameState {
 }
 
 extension Simulation {
-    enum CodingKeys: String, CodingKey { case items, spawnAccumulator, rng, elapsed, incomeAccumulator, incomeTimer }
+    enum CodingKeys: String, CodingKey {
+        case items, spawnAccumulator, rng, elapsed, incomeAccumulator, incomeTimer, splitCounters
+        case activeIncident, incidentTimer, incidentsEnabled
+    }
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         // Üreteç durumu olmadan simülasyon tutarsız olur; o zaman tümü sıfırlanır.
@@ -400,5 +404,9 @@ extension Simulation {
         elapsed = c.decodeOr(Double.self, .elapsed, 0)
         incomeAccumulator = c.decodeOr(Double.self, .incomeAccumulator, 0)
         incomeTimer = c.decodeOr(Double.self, .incomeTimer, 0)
+        splitCounters = c.decodeOr([GridPos: Int].self, .splitCounters, [:])
+        activeIncident = (try? c.decodeIfPresent(Lossy<Incident>.self, forKey: .activeIncident))??.value
+        incidentTimer = c.decodeOr(Double.self, .incidentTimer, incidentTimer)
+        incidentsEnabled = c.decodeOr(Bool.self, .incidentsEnabled, true)
     }
 }

@@ -71,6 +71,8 @@ public struct FileItem: Codable, Hashable, Sendable, Identifiable {
     public var tier: Int
     /// Parola korumalı: ayrıştırıcı açamaz, tarayıcı içini göremez. Tek çare yönlendirip karantinaya almak.
     public var encrypted: Bool
+    /// Girişte uzun bekledi (hat yetişemedi): müşteri geç teslimattan şikayet eder, ödeme düşer.
+    public var late: Bool = false
 
     public init(container: ContainerKind, parts: [Part], polyglot: Bool = false, tier: Int = 0, encrypted: Bool = false, id: UUID = UUID()) {
         self.id = id

@@ -47,6 +47,8 @@ import Testing
         s.progress.index = 2
         #expect(Hint.pending(for: s) == .polyglot)
         s.seenHints.insert(.polyglot)
+        #expect(Hint.pending(for: s) == .splitter, "parallel lines come up once the company is underway")
+        s.seenHints.insert(.splitter)
         #expect(Hint.pending(for: s) == nil)
     }
 

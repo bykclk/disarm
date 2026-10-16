@@ -58,6 +58,7 @@ import Testing
         s.placeModule(.packager, at: GridPos(6, 1), facing: .down)
         for y in 2...7 { s.placeBelt(at: GridPos(6, y), facing: .down) }
         var sim = Simulation(seed: 3)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         var events: [GameEvent] = []
         var t = 0.0
         while t < 240 && s.level < 2 {
@@ -94,6 +95,7 @@ import Testing
         }
         #expect(s.money >= 0, "starting money must afford the basic line")
         var sim = Simulation(seed: 21)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         var events: [GameEvent] = []
         var t = 0.0
         var levelAtSoftwareHouse: Int?

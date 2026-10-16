@@ -31,6 +31,7 @@ import Testing
     @Test func placingModuleUnderMovingFileDoesNotStrandIt() {
         var s = buildPipeline()
         var sim = Simulation(seed: 3)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         var events: [GameEvent] = []
         // (2,1) bandının üstünde bir dosya belirene kadar ilerle.
         var guardTicks = 0
@@ -52,6 +53,7 @@ import Testing
     @Test func filesFlowAndGetDelivered() {
         var s = buildPipeline()
         var sim = Simulation(seed: 3)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         let events = run(&s, sim: &sim, seconds: 90)
         let delivered = events.filter { if case .delivered = $0 { return true }; return false }
         #expect(delivered.count > 5)
@@ -65,6 +67,7 @@ import Testing
         var s = GameState(seed: 1)
         s.xp = 100_000 // seviye kilitleri bu testin konusu değil
         var sim = Simulation(seed: 1)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         let events = run(&s, sim: &sim, seconds: 20)
         #expect(!events.contains { if case .delivered = $0 { return true }; return false })
         #expect(sim.items.isEmpty)
@@ -78,6 +81,7 @@ import Testing
         for x in 1...5 { s.placeBelt(at: GridPos(x, 1), facing: .right) }
         for y in 1...7 { s.placeBelt(at: GridPos(6, y), facing: .down) }
         var sim = Simulation(seed: 9)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         let events = run(&s, sim: &sim, seconds: 120)
         let breaches = events.filter { if case .delivered(_, let o) = $0 { return o.breach }; return false }
         #expect(!breaches.isEmpty)
@@ -86,6 +90,7 @@ import Testing
     @Test func removingBeltDropsItems() {
         var s = buildPipeline()
         var sim = Simulation(seed: 3)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         _ = run(&s, sim: &sim, seconds: 10)
         #expect(!sim.items.isEmpty)
         for x in 1...3 { s.remove(at: GridPos(x, 1)) }
@@ -98,6 +103,7 @@ import Testing
     @Test func contractCompletesAndAdvances() {
         var s = buildPipeline()
         var sim = Simulation(seed: 3)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         let events = run(&s, sim: &sim, seconds: 240)
         #expect(events.contains { if case .contractCompleted = $0 { return true }; return false })
         #expect(s.progress.index >= 1)
@@ -117,6 +123,7 @@ import Testing
     @Test func stateRoundTripsThroughJSON() throws {
         var s = buildPipeline()
         var sim = Simulation(seed: 3)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         _ = run(&s, sim: &sim, seconds: 5)
         let data = try JSONEncoder().encode(s)
         let back = try JSONDecoder().decode(GameState.self, from: data)

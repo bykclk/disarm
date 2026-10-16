@@ -25,6 +25,7 @@ import Testing
         for y in 2...7 { s.placeBelt(at: GridPos(6, y), facing: .down) }
 
         var sim = Simulation(seed: 3)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         var events: [GameEvent] = []
         var t = 0.0
         while t < 120 && !events.contains(.locationFinished(.smallOffice)) {

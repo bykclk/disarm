@@ -27,6 +27,8 @@ public enum GameEvent: Equatable, Sendable {
     /// Operatör seviyesi atladı (yeni seviye).
     case levelUp(Int)
     case achievementUnlocked(Achievement)
+    case incidentStarted(IncidentKind)
+    case incidentEnded(IncidentKind)
     /// Tüm mekânlardaki tüm sözleşmeler ilk kez bitti.
     case campaignCompleted
     case dropped(UUID)
@@ -44,9 +46,20 @@ public struct Simulation: Codable, Hashable, Sendable {
     public var incomeAccumulator: Double = 0
     public var incomeTimer: Double = 0
     public static let incomeFlushInterval = 1.0
+    /// Ayırıcı başına sayaç: çift düz, tek sağa.
+    public var splitCounters: [GridPos: Int] = [:]
+    /// Girişte bekleyen dosya sayısı (bu kadar talep karşılanamadı). Bunun üstünde doğan dosyalar "geç" sayılır.
+    public static let lateThreshold = 3
+    public static let maxBacklog = 20.0
+    public var backlog: Int { max(0, Int(spawnAccumulator) - 1) }
+    /// Süreli kriz (Incidents.swift). Testler kapatabilir.
+    public var activeIncident: Incident?
+    public var incidentTimer: Double = 0
+    public var incidentsEnabled = true
 
     public init(seed: UInt64) {
         rng = SplitMix64(seed: seed)
+        incidentTimer = nextIncidentDelay()
     }
 
     public mutating func clear() {
@@ -80,6 +93,7 @@ public struct Simulation: Codable, Hashable, Sendable {
             items[i].remaining = m.kind.processTime(level: state.level(of: m.kind))
         }
 
+        tickIncidents(dt: dt, state: state, events: &events)
         spawn(dt: dt, grid: grid, state: &state, events: &events)
 
         // Öndeki önce hareket eder: hücre içi ilerlemeye göre azalan sıra.
@@ -115,14 +129,18 @@ public struct Simulation: Codable, Hashable, Sendable {
 
     private mutating func spawn(dt: Double, grid: Grid, state: inout GameState, events: inout [GameEvent]) {
         let contract = state.activeContract
-        spawnAccumulator = min(3, spawnAccumulator + dt * contract.filesPerMinute / 60.0 * state.intakeMultiplier * state.prestigeFlowMultiplier)
+        // Talep birikir (sınırlı): hat yetişemezse kuyruk büyür, kuyruk eşiği aşınca doğan dosyalar geç sayılır.
+        let rush = rushOrderActive ? 1.5 : 1.0
+        spawnAccumulator = min(Self.maxBacklog, spawnAccumulator + dt * contract.filesPerMinute / 60.0 * state.intakeMultiplier * state.prestigeFlowMultiplier * rush)
         guard spawnAccumulator >= 1 else { return }
         let src = state.location.sourcePos
         guard case .module(let m) = grid[src], m.kind == .source else { return }
         let next = src.moved(m.facing)
         guard canEnter(next, heading: m.facing, grid: grid) else { return }
+        let waiting = Int(spawnAccumulator)
         spawnAccumulator -= 1
-        let file = FileGenerator.make(for: contract, rng: &rng)
+        var file = FileGenerator.make(for: contract, rng: &rng, zeroDay: zeroDayActive)
+        if waiting > Self.lateThreshold { file.late = true }
         var item = MovingItem(file: file, pos: next, progress: 0, heading: m.facing, inModule: false, remaining: 0, lastNote: nil)
         if case .module(let target) = grid[next]! {
             item.inModule = true
@@ -198,14 +216,24 @@ public struct Simulation: Codable, Hashable, Sendable {
 
         // İşlem bir kez uygulanır; sonra çıkış bekler.
         if item.lastNote == nil {
-            let notes = ModuleProcessor.apply(m, level: state.level(of: m.kind), airGapped: spec.airGapped, to: &item.file)
+            let notes = ModuleProcessor.apply(m, level: state.level(of: m.kind), airGapped: spec.airGapped || signatureOutageActive, to: &item.file)
             if !notes.isEmpty { events.append(.processed(item.id, item.pos, m.kind, notes)) }
             item.lastNote = Self.describe(notes) ?? ""
         }
 
-        let out = outputDirection(m, for: item.file)
+        // Ayırıcı: sırayla düz/sağ; tercih edilen çıkış doluysa diğerini dener (yük dengeleme).
+        let candidates: [Direction]
+        if m.kind == .splitter {
+            let preferred = splitCounters[item.pos, default: 0] % 2 == 0 ? m.facing : m.facing.clockwise
+            let other = preferred == m.facing ? m.facing.clockwise : m.facing
+            candidates = [preferred, other]
+        } else {
+            candidates = [outputDirection(m, for: item.file)]
+        }
+        let out = candidates.first { canEnter(item.pos.moved($0), heading: $0, grid: grid) } ?? candidates[0]
         let next = item.pos.moved(out)
         if canEnter(next, heading: out, grid: grid) {
+            if m.kind == .splitter { splitCounters[item.pos, default: 0] += 1 }
             item.pos = next
             item.progress = 0
             item.heading = out
@@ -259,7 +287,7 @@ public struct Simulation: Codable, Hashable, Sendable {
             if m.kind != .sink && m.kind != .quarantine {
                 // Çıkış tarafından giriş olmaz.
                 if heading == m.facing.opposite { return false }
-                if m.kind == .router && heading == m.facing.clockwise.opposite { return false }
+                if (m.kind == .router || m.kind == .splitter) && heading == m.facing.clockwise.opposite { return false }
             }
             return !items.contains { $0.inModule && $0.pos == pos }
         }
@@ -269,7 +297,7 @@ public struct Simulation: Codable, Hashable, Sendable {
 
     private mutating func deliver(_ file: FileItem, state: inout GameState, events: inout [GameEvent]) {
         let contract = state.activeContract
-        let payPerFile = Int((Double(contract.payPerFile) * state.prestigePayMultiplier).rounded())
+        let payPerFile = Int((Double(contract.payPerFile) * state.prestigePayMultiplier * (rushOrderActive ? 2 : 1)).rounded())
         let outcome = DeliveryEvaluator.evaluate(file, policy: contract.policy, payPerFile: payPerFile)
         state.money += outcome.pay
         state.reputation = max(0, state.reputation + outcome.reputationDelta)
@@ -302,7 +330,7 @@ public struct Simulation: Codable, Hashable, Sendable {
         }
         events.append(.delivered(file, outcome))
 
-        if progress.breaches > contract.maxBreaches {
+        if progress.breaches > (auditActive ? 0 : contract.maxBreaches) {
             progress.resetCounters()
             state.reputation = max(0, state.reputation - 5)
             events.append(.contractFailed(contract))

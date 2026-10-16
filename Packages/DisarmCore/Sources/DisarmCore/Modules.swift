@@ -1,7 +1,7 @@
 import Foundation
 
 public enum ModuleKind: String, Codable, CaseIterable, Sendable {
-    case source, sink, scanner, parser, filter, transformer, packager, router, quarantine, sandbox
+    case source, sink, scanner, parser, filter, transformer, packager, router, quarantine, sandbox, splitter
 
     public var displayName: String {
         switch self {
@@ -15,6 +15,7 @@ public enum ModuleKind: String, Codable, CaseIterable, Sendable {
         case .router: L("Router")
         case .quarantine: L("Quarantine")
         case .sandbox: L("Sandbox")
+        case .splitter: L("Splitter")
         }
     }
 
@@ -30,6 +31,7 @@ public enum ModuleKind: String, Codable, CaseIterable, Sendable {
         case .router: L("RTR")
         case .quarantine: L("QRT")
         case .sandbox: L("SBX")
+        case .splitter: L("SPL")
         }
     }
 
@@ -45,6 +47,7 @@ public enum ModuleKind: String, Codable, CaseIterable, Sendable {
         case .router: L("Diverts files of the selected container type to the right; everything else goes straight.")
         case .quarantine: L("Destroys the file. No money, but no breach either.")
         case .sandbox: L("Detonates the file in isolation and removes whatever misbehaves: no signatures needed, no quality loss, works on closed files. Slow and expensive; blind to encrypted files and a polyglot's second identity. Higher levels see deeper layers.")
+        case .splitter: L("Sends files alternately straight and to the right; if one side is blocked it uses the other. Build parallel lines so a slow module never holds up the whole flow.")
         }
     }
 
@@ -61,6 +64,7 @@ public enum ModuleKind: String, Codable, CaseIterable, Sendable {
         case .router: 150
         case .quarantine: 40
         case .sandbox: 400
+        case .splitter: 120
         }
     }
 
@@ -77,12 +81,13 @@ public enum ModuleKind: String, Codable, CaseIterable, Sendable {
         case .router: 0.3
         case .quarantine: 0.2
         case .sandbox: 3.0
+        case .splitter: 0.3
         }
     }
 
     public var maxLevel: Int {
         switch self {
-        case .source, .sink, .quarantine, .router: 1
+        case .source, .sink, .quarantine, .router, .splitter: 1
         case .parser, .transformer, .sandbox: 3
         case .scanner, .filter, .packager: 3
         }
@@ -166,7 +171,7 @@ public enum ModuleProcessor {
             file.isOpen = false
             file.exposedDepth = -1
             return wasOpen ? [.closed] : [.noEffect(L("File was already closed"))]
-        case .source, .sink, .router, .quarantine:
+        case .source, .sink, .router, .quarantine, .splitter:
             return []
         }
     }

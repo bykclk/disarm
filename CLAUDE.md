@@ -8,7 +8,7 @@
 ## Komutlar
 - `make test` — çekirdek testleri (hızlı, önce bunu çalıştır)
 - `make build` — simülatör derlemesi
-- `make run ARGS="-demo"` — örnek hatla başlat; `-demoBank` (Özel Bankacılık, şifreli dosyalar, yönlendirici→karantina), `-demoEnd` (kampanyası bitmiş durum, prestij akışı), `-demoDC` (Veri Merkezi, kum havuzu hattı), `-demoBelt` (modülsüz S bant, köşe görsel testi), `-demoSiteDone` (ofis bitmiş, şirket kilitli: sıradaki mekân yönlendirmesi), `-fresh` (kayıt yok sayılır, seviye 1, kilitler görünür), `-skipHelp`, `-sheet contracts|upgrades|locations|log|campaign|module` dev argümanları
+- `make run ARGS="-demo"` — örnek hatla başlat; `-demoBank` (Özel Bankacılık, şifreli dosyalar, yönlendirici→karantina), `-demoEnd` (kampanyası bitmiş durum, prestij akışı), `-demoDC` (Veri Merkezi, kum havuzu hattı), `-incident zeroDay|signatureOutage|rushOrder|audit` (seçilen krizi açılışta başlat), `-demoBelt` (modülsüz S bant, köşe görsel testi), `-demoSiteDone` (ofis bitmiş, şirket kilitli: sıradaki mekân yönlendirmesi), `-fresh` (kayıt yok sayılır, seviye 1, kilitler görünür), `-skipHelp`, `-sheet contracts|upgrades|locations|log|campaign|module` dev argümanları
 - `make device ARGS="..."` — bağlı iPhone'a imzalı Debug derlemesi yükle ve başlat (ekip `project.yml`'de; `DEVICE=<udid>` ile cihaz seç)
 - `make screenshot` — ekran görüntüsü `.screens/` altına
 - `-fps` — sahnede fps/çizim/düğüm sayacı, SwiftUI gövde sıklığı günlükte `[render]` satırları (`xcrun simctl spawn <udid> log stream --predicate 'process == "Disarm"'`). Bu Mac'te `timeout` yok; süreli yakalama için arka plan + `sleep` + `kill`.
@@ -25,6 +25,10 @@
 ## Öğretici
 - Küçük ofisin ilk sözleşmesi: `GameEngine.tutorialStep` (durumdan türeyen 5 adım, ilk teslimatta biter).
 - Sonrası: `DisarmCore/Hints.swift` içindeki tek seferlik ipucu kartları. Yeni ipucu için `Hint` case'i + `applies(to:)` + `text` (L, iki katalog) + `icon`, isteğe bağlı `action`; görülenler `GameState.seenHints`. Test: `HintTests.everyHintHasTextAndIsReachable`.
+
+## Krizler ve akış
+- Süreli olaylar `DisarmCore/Incidents.swift`: `IncidentKind` (süre, metin, fırsat mı), `Simulation.tickIncidents` (2 sözleşmeden sonra, `incidentDelay` aralığında rastgele), etkiler simülasyon içinde `zeroDayActive` vb. bayraklarla okunur. Uzun senaryo testlerinde `sim.incidentsEnabled = false`. Yeni kriz: case + süre + metinler (iki katalog) + etkiyi uygulayan yer + `IncidentTests`.
+- Gecikme: `Simulation.lateThreshold` üstünde bekleyen dosya `FileItem.late` alır; `DeliveryEvaluator` kullanılabilirlik düşürür, neden `.late`. Ayırıcı (`ModuleKind.splitter`) `splitCounters` ile sırayla dağıtır; `SplitterTests`.
 
 ## Erişilebilirlik
 - SpriteKit sahnesi VoiceOver'a kapalı; `GridAccessibilityOverlay` (ContentView) yalnızca VoiceOver açıkken her hücreyi etiket + eylemle sunar, geometrisi `GameScene.relayout` ile aynı (12 pt pay, kare hücre, ortalı).

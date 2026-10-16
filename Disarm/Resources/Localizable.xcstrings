@@ -2391,6 +2391,76 @@
           }
         }
       }
+    },
+    "%@! %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@! %@"
+          }
+        }
+      }
+    },
+    "Incident: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kriz: %@"
+          }
+        }
+      }
+    },
+    "%@ is over.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ sona erdi."
+          }
+        }
+      }
+    },
+    "Incident over: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kriz bitti: %@"
+          }
+        }
+      }
+    },
+    "%lld files waiting at intake": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Girişte %lld dosya bekliyor"
+          }
+        }
+      }
+    },
+    "Throughput and incidents": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akış kapasitesi ve krizler"
+          }
+        }
+      }
+    },
+    "Every module handles one file at a time. If the intake queue grows past three, files arrive late and pay less: split the flow into parallel lines with a Splitter. From the third contract on, timed incidents hit now and then (zero-day wave, signature outage, rush order, audit); the banner shows the countdown.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Her modül aynı anda tek dosya işler. Giriş kuyruğu üçü aşarsa dosyalar geç varır ve az öder: akışı Ayırıcı ile paralel hatlara böl. Üçüncü sözleşmeden itibaren ara ara süreli krizler gelir (sıfırıncı gün dalgası, imza kesintisi, acil sipariş, denetim); şerit geri sayımı gösterir."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

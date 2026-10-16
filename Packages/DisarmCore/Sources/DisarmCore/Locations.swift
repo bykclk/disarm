@@ -59,7 +59,7 @@ public enum LocationCatalog {
                 sourcePos: GridPos(3, 0), sourceFacing: .down,
                 sinkPos: GridPos(4, 11),
                 unlockCost: 2500, unlockReputation: 20, airGapped: false,
-                availableModules: [.scanner, .parser, .filter, .transformer, .packager, .router, .quarantine],
+                availableModules: [.scanner, .parser, .filter, .transformer, .packager, .router, .splitter, .quarantine],
                 contracts: companyContracts)
         case .bank:
             LocationSpec(
@@ -169,14 +169,14 @@ public enum LocationCatalog {
         ContractSpec(id: "dc-1", customer: .designAgency, title: L("Streaming Studio"),
                      brief: L("Frame-perfect images and unsigned threats at thirty files a minute. A level 3 transformer keeps 95%; the Sandbox keeps 100% but takes its time. Build wide."),
                      tier: 5, targetFiles: 60, maxBreaches: 2, payPerFile: 90, completionBonus: 10000, reputationReward: 45,
-                     containerWeights: [.png: 5, .pdf: 3, .zip: 2, .docx: 1], filesPerMinute: 30),
+                     containerWeights: [.png: 5, .pdf: 3, .zip: 2, .docx: 1], filesPerMinute: 36),
         ContractSpec(id: "dc-2", customer: .forensicsLab, title: L("Forensics Lab"),
                      brief: L("Evidence must stay untouched: images above 97%, formulas intact. The transformer is out of the question; only the Sandbox detonates unsigned payloads without altering the file. Harmless macros still need the filter."),
                      tier: 5, targetFiles: 70, maxBreaches: 1, payPerFile: 110, completionBonus: 15000, reputationReward: 55,
-                     containerWeights: [.pdf: 4, .docx: 3, .xlsx: 3, .png: 3, .zip: 2], filesPerMinute: 32),
+                     containerWeights: [.pdf: 4, .docx: 3, .xlsx: 3, .png: 3, .zip: 2], filesPerMinute: 40),
         ContractSpec(id: "dc-3", customer: .bank, title: L("Hyperscale Exchange"),
-                     brief: L("The whole stack at once: encrypted archives, unsigned payloads, three-deep nesting, forty files a minute. The campaign ends here; the flow doesn't."),
+                     brief: L("The whole stack at once: encrypted archives, unsigned payloads, three-deep nesting, more files than any single line can swallow. Split the flow. The campaign ends here; the flow doesn't."),
                      tier: 6, targetFiles: 150, maxBreaches: 1, payPerFile: 140, completionBonus: 40000, reputationReward: 100,
-                     containerWeights: [.pdf: 4, .docx: 3, .xlsx: 3, .zip: 5, .png: 2], filesPerMinute: 40),
+                     containerWeights: [.pdf: 4, .docx: 3, .xlsx: 3, .zip: 5, .png: 2], filesPerMinute: 60),
     ]
 }

@@ -8,6 +8,8 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
     case bank, unknownThreat, encrypted
     case airGapped
     case dataCenter, forensics
+    /// Ayırıcı açıldı: paralel hat fikri.
+    case splitter
     /// Mekânın tüm sözleşmeleri bitti, sıradaki mekân kilitli: oyuncuyu Mekânlar sayfasına yönlendir.
     case officeDone, companyDone, bankDone, governmentDone
     case campaignDone
@@ -65,6 +67,8 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
             L("Top floor. The Sandbox detonates a file in isolation and removes whatever misbehaves: no signatures, no quality loss, closed files welcome. It is slow and blind to encryption and polyglots. At this flow rate, build parallel lines.")
         case .forensics:
             L("Evidence must stay untouched, so no transformer here. Put a Sandbox first for unsigned payloads, then Parser, Filter(Macro) and Packager for the harmless macros.")
+        case .splitter:
+            L("Files piling up at intake arrive late and pay less. The Splitter sends files down two lines in turn; build a second lane with its own slow modules so nothing waits.")
         case .officeDone, .companyDone, .bankDone, .governmentDone:
             Self.siteDoneText(from: finishedSite!)
         case .campaignDone:
@@ -90,6 +94,7 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
         case .airGapped: "antenna.radiowaves.left.and.right.slash"
         case .dataCenter: "flame"
         case .forensics: "magnifyingglass"
+        case .splitter: "arrow.triangle.swap"
         case .officeDone, .companyDone, .bankDone, .governmentDone: "map"
         case .campaignDone: "trophy.fill"
         }
@@ -132,6 +137,9 @@ public enum Hint: String, Codable, CaseIterable, Sendable {
         case .airGapped: return loc == .government
         case .dataCenter: return loc == .dataCenter
         case .forensics: return loc == .dataCenter && index == 1 && s.grid.positions(of: .sandbox).isEmpty
+        case .splitter:
+            return loc != .smallOffice && s.isUnlocked(.splitter) && s.location.availableModules.contains(.splitter)
+                && s.grid.positions(of: .splitter).isEmpty && index >= 1
         }
     }
 

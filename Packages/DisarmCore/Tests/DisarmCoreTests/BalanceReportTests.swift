@@ -59,17 +59,23 @@ import Testing
             ])
             routerToQuarantine(GridPos(1, 3), facing: .right)
         case .dataCenter:
-            lay(col(5, 1...13), [
-                GridPos(5, 1): (.router, nil), GridPos(5, 2): (.sandbox, nil), GridPos(5, 3): (.parser, nil),
-                GridPos(5, 4): (.filter, .macro), GridPos(5, 5): (.filter, .script), GridPos(5, 6): (.filter, .embeddedFile),
-                GridPos(5, 7): (.packager, nil),
-            ])
-            routerToQuarantine(GridPos(5, 1), facing: .down)
+            // 52 dosya/dk tek hattın sığası üstünde: yönlendirici→karantina, sonra ayırıcı ile iki paralel kol
+            // (sütun 5 ve sütun 4), (5,13)'te birleşip teslimata.
+            #expect(s.placeModule(.router, at: GridPos(5, 1), facing: .down).isSuccess)
+            routerToQuarantine(GridPos(5, 1), facing: .down) // karantina (4,1)
+            #expect(s.placeModule(.splitter, at: GridPos(5, 2), facing: .down).isSuccess) // düz (5,3), sağ = sol (4,2)
+            let line: (Int) -> [GridPos: (ModuleKind, PartKind?)] = { x in [
+                GridPos(x, 3): (.sandbox, nil), GridPos(x, 4): (.parser, nil), GridPos(x, 5): (.filter, .macro),
+                GridPos(x, 6): (.filter, .script), GridPos(x, 7): (.filter, .embeddedFile), GridPos(x, 8): (.packager, nil),
+            ] }
+            lay(col(5, 3...13), line(5))
+            lay([GridPos(4, 2)] + col(4, 3...13) + [GridPos(5, 13)], line(4))
         }
     }
 
     func play(_ s: inout GameState, maxSeconds: Double) -> Row {
         var sim = Simulation(seed: 77)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         var events: [GameEvent] = []
         var r = Row(location: s.location.displayName, contract: s.activeContract.title, tier: s.activeContract.tier,
                     seconds: 0, delivered: 0, accepted: 0, complaints: 0, breaches: 0, quarantined: 0, earned: 0)

@@ -92,6 +92,9 @@ final class GameEngine {
     var recentOutcomes: [(id: UUID, good: Bool, at: Date)] = []
     /// Son teslimatlar, en yenisi başta. Kayda girmez.
     var recentDeliveries: [DeliveryRecord] = []
+    /// HUD için seyrek güncellenen kopyalar (sim her karede değişir; bunlar yalnızca anlamlı değişince yazılır).
+    var incident: Incident?
+    var backlog = 0
     static let maxRecentDeliveries = 40
     /// Sahne her karede boşaltır.
     var fx: [FxEvent] = []
@@ -195,6 +198,11 @@ final class GameEngine {
             state.tutorialSeen = true
             sim = Simulation(seed: state.rngSeed)
             sheet = nil
+        }
+        if let i = args.firstIndex(of: "-incident"), i + 1 < args.count, let kind = IncidentKind(rawValue: args[i + 1]) {
+            // Krizi hemen başlat (şerit, ses ve etkileri denemek için): -incident zeroDay|signatureOutage|rushOrder|audit
+            sim.activeIncident = Incident(kind: kind, remaining: kind.duration)
+            if state.stats.contractsCompleted < Simulation.incidentMinContracts { state.stats.contractsCompleted = Simulation.incidentMinContracts }
         }
         if args.contains("-skipHelp") { sheet = nil }
         if let i = args.firstIndex(of: "-sheet"), i + 1 < args.count {
@@ -346,6 +354,11 @@ final class GameEngine {
         if s != state { state = s }
         sim = sm
         handle(events)
+        if sm.backlog != backlog { backlog = sm.backlog }
+        if sm.activeIncident?.kind != incident?.kind
+            || Int(sm.activeIncident?.remaining ?? 0) != Int(incident?.remaining ?? 0) {
+            incident = sm.activeIncident
+        }
 
         let now = Date()
         if toasts.contains(where: { $0.until < now }) { toasts.removeAll { $0.until < now } }
@@ -421,6 +434,15 @@ final class GameEngine {
                     toast(String(localized: "Module upgrades to level 3 are now available."), .info, 5)
                 }
                 addLog(String(localized: "Reached operator level \(level)"), .good)
+            case .incidentStarted(let kind):
+                UINotificationFeedbackGenerator().notificationOccurred(kind.isOpportunity ? .success : .warning)
+                audio.play(kind.isOpportunity ? .contract : .polyglot, volume: 0.9)
+                fx.append(kind.isOpportunity ? .contractCompleted : .contractFailed)
+                toast(String(localized: "\(kind.displayName)! \(kind.detail)"), kind.isOpportunity ? .good : .warn, 5)
+                addLog(String(localized: "Incident: \(kind.displayName)"), kind.isOpportunity ? .good : .warn)
+            case .incidentEnded(let kind):
+                toast(String(localized: "\(kind.displayName) is over."), .info, 3)
+                addLog(String(localized: "Incident over: \(kind.displayName)"), .info)
             case .achievementUnlocked(let a):
                 audio.play(.achievement, volume: 0.8)
                 toast(String(localized: "Achievement: \(a.displayName) (+\(money(a.rewardMoney)), +\(a.rewardXP) XP)"), .good, 4)

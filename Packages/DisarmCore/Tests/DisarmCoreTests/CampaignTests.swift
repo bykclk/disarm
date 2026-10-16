@@ -62,6 +62,7 @@ import Testing
         var s = nearlyFinished()
         simpleLine(&s)
         var sim = Simulation(seed: 3)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         let events = run(&s, sim: &sim, seconds: 120)
         #expect(events.contains(.campaignCompleted))
         #expect(events.filter { $0 == .campaignCompleted }.count == 1)
@@ -116,6 +117,7 @@ import Testing
             simpleLine(&s)
             let before = s.money
             var sim = Simulation(seed: 5)
+            sim.incidentsEnabled = false // krizler bu testin konusu değil
             let events = run(&s, sim: &sim, seconds: 90)
             let spawned = events.filter { if case .spawned = $0 { true } else { false } }.count
             let pay = events.compactMap { e -> Int? in

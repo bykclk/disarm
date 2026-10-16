@@ -1261,16 +1261,6 @@
         }
       }
     },
-    "The whole stack at once: encrypted archives, unsigned payloads, three-deep nesting, forty files a minute. The campaign ends here; the flow doesn't.": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hepsi bir arada: şifreli arşivler, imzasız yükler, üç kat iç içe, dakikada kırk dosya. Kampanya burada biter; akış bitmez."
-          }
-        }
-      }
-    },
     "Top floor. The Sandbox detonates a file in isolation and removes whatever misbehaves: no signatures, no quality loss, closed files welcome. It is slow and blind to encryption and polyglots. At this flow rate, build parallel lines.": {
       "localizations": {
         "tr": {
@@ -1607,6 +1597,156 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kampanyayı bitir."
+          }
+        }
+      }
+    },
+    "Splitter": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayırıcı"
+          }
+        }
+      }
+    },
+    "SPL": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AYI"
+          }
+        }
+      }
+    },
+    "Sends files alternately straight and to the right; if one side is blocked it uses the other. Build parallel lines so a slow module never holds up the whole flow.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosyaları sırayla düz ve sağa gönderir; bir taraf doluysa diğerini kullanır. Yavaş bir modül bütün akışı tutmasın diye paralel hatlar kur."
+          }
+        }
+      }
+    },
+    "Delivered late": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geç teslim edildi"
+          }
+        }
+      }
+    },
+    "Delivered late: the file waited too long at intake because the line couldn't keep up": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geç teslim edildi: hat yetişemediği için dosya girişte çok bekledi"
+          }
+        }
+      }
+    },
+    "Files piling up at intake arrive late and pay less. The Splitter sends files down two lines in turn; build a second lane with its own slow modules so nothing waits.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Girişte biriken dosyalar geç varır ve az öder. Ayırıcı dosyaları sırayla iki hatta gönderir; yavaş modüllerin kopyasıyla ikinci bir kol kur ki kimse beklemesin."
+          }
+        }
+      }
+    },
+    "Zero-day wave": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sıfırıncı gün dalgası"
+          }
+        }
+      }
+    },
+    "Signature outage": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İmza kesintisi"
+          }
+        }
+      }
+    },
+    "Rush order": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acil sipariş"
+          }
+        }
+      }
+    },
+    "Compliance audit": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uyum denetimi"
+          }
+        }
+      }
+    },
+    "Unsigned payloads are riding in on many files. Scanners can't see them; transformers and sandboxes can.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Birçok dosyaya imzasız yük bindi. Tarayıcılar göremez; dönüştürücü ve kum havuzu görür."
+          }
+        }
+      }
+    },
+    "The signature feed is down. Scanners recognize only ancient macros until it returns.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İmza akışı kesildi. Tarayıcılar dönene kadar yalnızca eski makroları tanır."
+          }
+        }
+      }
+    },
+    "A customer pays double and sends files half again as fast. Keep up without breaches.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bir müşteri iki kat ödüyor ve dosyaları bir buçuk kat hızlı gönderiyor. İhlalsiz yetiş."
+          }
+        }
+      }
+    },
+    "Regulators are watching: a single breach cancels the contract until the audit ends.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Denetçiler izliyor: denetim bitene kadar tek bir ihlal sözleşmeyi iptal eder."
+          }
+        }
+      }
+    },
+    "The whole stack at once: encrypted archives, unsigned payloads, three-deep nesting, more files than any single line can swallow. Split the flow. The campaign ends here; the flow doesn't.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hepsi bir arada: şifreli arşivler, imzasız yükler, üç kat iç içe ve tek bir hattın yutabileceğinden çok dosya. Akışı böl. Kampanya burada biter; akış bitmez."
           }
         }
       }

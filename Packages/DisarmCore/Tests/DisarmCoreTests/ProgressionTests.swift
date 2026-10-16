@@ -29,6 +29,7 @@ import Testing
 
     func play(_ s: inout GameState, untilContractIndex target: Int, maxSeconds: Double) -> Report {
         var sim = Simulation(seed: 99)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         var events: [GameEvent] = []
         var t = 0.0
         var breaches = 0, complaints = 0, delivered = 0

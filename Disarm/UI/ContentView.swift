@@ -152,6 +152,13 @@ struct HUDView: View {
                                 .tint(Color(Theme.accent))
                             Text("\(p.delivered)/\(c.targetFiles)")
                                 .font(.caption.monospacedDigit())
+                            if engine.backlog > 0 {
+                                // Girişte bekleyen dosyalar: eşiği aşınca gecikme başlar.
+                                Label("\(engine.backlog)", systemImage: "clock.badge.exclamationmark")
+                                    .font(.caption.monospacedDigit())
+                                    .foregroundStyle(engine.backlog >= Simulation.lateThreshold ? Color(Theme.danger) : Color(Theme.warning))
+                                    .accessibilityLabel("\(engine.backlog) files waiting at intake")
+                            }
                             Text("\(s.location.displayName)" + (s.location.airGapped ? " · air-gap" : ""))
                                 .font(.caption2).foregroundStyle(.secondary)
                                 .lineLimit(1).minimumScaleFactor(0.8)
@@ -385,7 +392,24 @@ struct GuidanceBanner: View {
     @Bindable var engine: GameEngine
 
     var body: some View {
-        if let step = engine.tutorialStep {
+        if let inc = engine.incident {
+            // Kriz şeridi: her şeyin üstünde, geri sayımlı.
+            let color = inc.kind.isOpportunity ? Theme.success : Theme.danger
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: inc.kind.icon).font(.title3).foregroundStyle(Color(color)).frame(width: 24).padding(.top, 2)
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack {
+                        Text(inc.kind.displayName).font(.caption.weight(.bold)).foregroundStyle(.white)
+                        Spacer()
+                        Text(countdown(inc.remaining)).font(.caption.monospacedDigit().weight(.bold)).foregroundStyle(Color(color))
+                    }
+                    Text(inc.kind.detail).font(.caption2).foregroundStyle(.white.opacity(0.9))
+                }
+            }
+            .padding(.horizontal, 12).padding(.vertical, 8)
+            .background(Color(color).opacity(0.18))
+            .accessibilityElement(children: .combine)
+        } else if let step = engine.tutorialStep {
             HStack(alignment: .top, spacing: 8) {
                 Text("\(step.rawValue + 1)/\(GameEngine.TutorialStep.allCases.count)")
                     .font(.caption.bold()).foregroundStyle(Color(Theme.accent))
@@ -430,6 +454,11 @@ struct GuidanceBanner: View {
             .padding(.horizontal, 12).padding(.vertical, 6)
             .background(Color(Theme.warning).opacity(0.15))
         }
+    }
+
+    func countdown(_ seconds: Double) -> String {
+        let s = max(0, Int(seconds.rounded(.up)))
+        return String(format: "%d:%02d", s / 60, s % 60)
     }
 
     func actionTitle(_ a: Hint.Action) -> LocalizedStringKey {

@@ -41,7 +41,7 @@ public extension ModuleKind {
         switch self {
         case .source, .sink, .parser, .filter, .packager: 1
         case .scanner: 2
-        case .quarantine: 3
+        case .quarantine, .splitter: 3
         case .router: 4
         case .transformer: 5
         case .sandbox: 7

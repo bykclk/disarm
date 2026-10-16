@@ -78,10 +78,11 @@ import Testing
         }
     }
 
-    struct Report { var seconds = 0.0; var delivered = 0; var breaches = 0; var complaints = 0 }
+    struct Report { var seconds = 0.0; var delivered = 0; var breaches = 0; var complaints = 0; var late = 0 }
 
     func play(_ s: inout GameState, maxSeconds: Double) -> Report {
         var sim = Simulation(seed: 99)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         var events: [GameEvent] = []
         var r = Report()
         let dt = 1.0 / 20.0
@@ -94,6 +95,7 @@ import Testing
                 switch e {
                 case .delivered(_, let o):
                     r.delivered += 1
+                    if o.issues.contains(.late) { r.late += 1 }
                     if o.breach { r.breaches += 1 } else if !o.accepted { r.complaints += 1 }
                 case .contractCompleted: done = true
                 default: break
@@ -142,24 +144,46 @@ import Testing
         #expect(r.complaints > r.delivered / 3, "every image passed through the transformer is a complaint")
     }
 
-    @Test func hyperscaleExchangeIsSurvivable() {
+    /// Hyperscale (60 dosya/dk) tek hattın sığasını aşar: dosyalar girişte birikir, geç teslim şikâyetleri gelir.
+    @Test func hyperscaleSingleLineFallsBehind() {
         var s = dataCenter(index: 2)
         #expect(s.activeContract.tier == 6)
         s.moduleLevels[.sandbox] = 3; s.moduleLevels[.parser] = 3; s.moduleLevels[.transformer] = 3
         s.moduleLevels[.filter] = 3; s.moduleLevels[.packager] = 3
         s.intakeLevel = 1
-        // Giriş (5,0) aşağı. Yönlendirici sağa bakar; saat yönü = aşağı → (6,2) karantina... hat: (5,1)→sağa (6,1)...
-        // Basit: sütun 5'ten aşağı, yönlendirici (5,1) aşağı bakar, saat yönü = sol → (4,1) karantina.
         let column = (1...13).map { GridPos(5, $0) }
         lay(&s, path: column, modules: [
-            GridPos(5, 1): (.router, nil), GridPos(5, 2): (.parser, nil), GridPos(5, 3): (.filter, .macro),
-            GridPos(5, 4): (.filter, .script), GridPos(5, 5): (.filter, .embeddedFile),
-            GridPos(5, 6): (.transformer, nil), GridPos(5, 7): (.packager, nil),
+            GridPos(5, 1): (.router, nil), GridPos(5, 2): (.sandbox, nil), GridPos(5, 3): (.parser, nil),
+            GridPos(5, 4): (.filter, .macro), GridPos(5, 5): (.filter, .script), GridPos(5, 6): (.filter, .embeddedFile),
+            GridPos(5, 7): (.packager, nil),
         ])
         s.configure(at: GridPos(5, 1)) { $0.routeEncrypted = true }
         #expect(s.placeModule(.quarantine, at: GridPos(5, 1).moved(Direction.down.clockwise), facing: .down).isSuccess)
         let r = play(&s, maxSeconds: 3600)
-        print("HYPERSCALE: \(Int(r.seconds))sn, teslim \(r.delivered), ihlal \(r.breaches), şikayet \(r.complaints)")
+        print("HYPERSCALE tek hat: \(Int(r.seconds))sn, teslim \(r.delivered), ihlal \(r.breaches), şikayet \(r.complaints)")
+        #expect(r.breaches == 0)
+        #expect(r.complaints > 10, "single line cannot keep up: late deliveries")
+        #expect(r.late > 10, "complaints are about lateness, not security")
+    }
+
+    /// Ayırıcı ile iki paralel kol: aynı talep, sıfır şikâyet.
+    @Test func hyperscaleParallelLinesSurvive() {
+        var s = dataCenter(index: 2)
+        s.moduleLevels[.sandbox] = 3; s.moduleLevels[.parser] = 3; s.moduleLevels[.transformer] = 3
+        s.moduleLevels[.filter] = 3; s.moduleLevels[.packager] = 3
+        s.intakeLevel = 1
+        #expect(s.placeModule(.router, at: GridPos(5, 1), facing: .down).isSuccess)
+        s.configure(at: GridPos(5, 1)) { $0.routeEncrypted = true }
+        #expect(s.placeModule(.quarantine, at: GridPos(4, 1), facing: .down).isSuccess)
+        #expect(s.placeModule(.splitter, at: GridPos(5, 2), facing: .down).isSuccess) // düz (5,3), yan (4,2)
+        let line: (Int) -> [GridPos: (ModuleKind, PartKind?)] = { x in [
+            GridPos(x, 3): (.sandbox, nil), GridPos(x, 4): (.parser, nil), GridPos(x, 5): (.filter, .macro),
+            GridPos(x, 6): (.filter, .script), GridPos(x, 7): (.filter, .embeddedFile), GridPos(x, 8): (.packager, nil),
+        ] }
+        lay(&s, path: (3...13).map { GridPos(5, $0) }, modules: line(5))
+        lay(&s, path: [GridPos(4, 2)] + (3...13).map { GridPos(4, $0) } + [GridPos(5, 13)], modules: line(4))
+        let r = play(&s, maxSeconds: 3600)
+        print("HYPERSCALE paralel: \(Int(r.seconds))sn, teslim \(r.delivered), ihlal \(r.breaches), şikayet \(r.complaints)")
         #expect(r.breaches == 0)
         #expect(r.complaints == 0)
         #expect(r.delivered >= 150)

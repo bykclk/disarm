@@ -25,6 +25,7 @@ enum Theme {
         case .router: UIColor(red: 0.95, green: 0.55, blue: 0.25, alpha: 1)
         case .quarantine: UIColor(red: 0.50, green: 0.30, blue: 0.30, alpha: 1)
         case .sandbox: UIColor(red: 0.95, green: 0.45, blue: 0.20, alpha: 1)
+        case .splitter: UIColor(red: 0.55, green: 0.75, blue: 0.95, alpha: 1)
         }
     }
 
@@ -40,6 +41,7 @@ enum Theme {
         case .router: "arrow.triangle.branch"
         case .quarantine: "trash.fill"
         case .sandbox: "flame.fill"
+        case .splitter: "arrow.triangle.swap"
         }
     }
 

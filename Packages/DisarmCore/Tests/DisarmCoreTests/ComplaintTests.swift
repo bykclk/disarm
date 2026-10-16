@@ -27,6 +27,7 @@ import Testing
         s.placeBelt(at: GridPos(6, 1), facing: .down)
         for y in 2...7 { s.placeBelt(at: GridPos(6, y), facing: .down) }
         var sim = Simulation(seed: 3)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         var events: [GameEvent] = []
         var t = 0.0
         while t < 90 && s.progress.index == 0 {
@@ -58,6 +59,7 @@ import Testing
         s.placeBelt(at: GridPos(6, 1), facing: .down)
         for y in 2...7 { s.placeBelt(at: GridPos(6, y), facing: .down) }
         var sim = Simulation(seed: 5)
+        sim.incidentsEnabled = false // krizler bu testin konusu değil
         var events: [GameEvent] = []
         var t = 0.0
         var breachLabels: [String] = []
