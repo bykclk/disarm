@@ -2,17 +2,11 @@
   "en-US": {
     "description": "Customer files roll in on a conveyor belt: spreadsheets with macros, PDFs with scripts, archives inside archives, images hiding data. You run the line that makes them safe.\n\nPlace parsers, filters, transformers and packagers; draw belts between them; deliver clean files and get paid. The catch is the real dilemma of content disarm and reconstruction: clean too hard and the file breaks, the customer refuses to pay. Go easy and malware slips through, and a breach costs you triple.\n\nEvery customer wants something different. The accountant needs formulas kept. The law firm needs text intact. The design agency pays for image quality. The software house keeps its scripts, because they are source code. The bank wants zero active content, and the forensics lab will not accept a single altered pixel.\n\n• Five sites, from a small office to a data center, each with its own grid and tools\n• 17 contracts across a growing threat ladder: macros, scripts, nested archives, polyglot files, hidden data, unsigned payloads, encrypted archives\n• Nine modules with upgrades: scanner, parser, filter, transformer, packager, router, quarantine, sandbox and more\n• Tap any file to see exactly what it carries; tap any complaint to see the file the customer received\n• Offline earnings while you are away, a campaign with a finish line, and prestige runs with permanent bonuses\n• No ads, no accounts, no data collection. Everything stays on your device.",
     "keywords": "factory,tycoon,conveyor,puzzle,security,files,malware,automation,logistics,strategy",
-    "whatsNew": "First release.",
-    "promotionalText": "A factory game about the one trade-off every security team knows: safe or usable.",
-    "supportURL": "https://REPLACE-ME/support",
-    "marketingURL": ""
+    "promotionalText": "A factory game about the one trade-off every security team knows: safe or usable."
   },
   "tr": {
     "description": "Müşteri dosyaları bantta akıyor: makrolu tablolar, betikli PDF'ler, arşiv içinde arşivler, veri saklayan görseller. Onları güvenli hale getiren hattı sen kuruyorsun.\n\nAyrıştırıcı, filtre, dönüştürücü ve paketleyici yerleştir; aralarına bant çiz; temiz dosyayı teslim et, parayı al. İşin püf noktası gerçek CDR ikilemi: fazla sert temizlersen dosya bozulur, müşteri ödemez. Gevşek bırakırsan zararlı kaçar, ihlal üç kat ceza getirir.\n\nHer müşteri başka bir şey ister. Muhasebeci formüllerin korunmasını, hukuk bürosu metnin bozulmamasını ister. Tasarım ajansı görsel kalitesine para öder. Yazılım evi betiklerini saklar, çünkü onlar kaynak kod. Banka sıfır aktif içerik ister, adli bilişim laboratuvarı tek bir pikselin bile değişmesine izin vermez.\n\n• Küçük ofisten veri merkezine beş mekân, her birinin kendi alanı ve araçları\n• Yükselen tehdit merdiveninde 17 sözleşme: makro, betik, iç içe arşiv, polyglot dosya, gizli veri, imzasız yük, şifreli arşiv\n• Yükseltilebilen dokuz modül: tarayıcı, ayrıştırıcı, filtre, dönüştürücü, paketleyici, yönlendirici, karantina, kum havuzu ve dahası\n• Her dosyaya dokunup ne taşıdığını gör; her şikayete dokunup müşterinin aldığı dosyayı incele\n• Sen yokken çevrimdışı kazanç, bitiş çizgisi olan bir kampanya, kalıcı bonuslu prestij turları\n• Reklam yok, hesap yok, veri toplama yok. Her şey cihazında kalır.",
     "keywords": "fabrika,tycoon,bant,bulmaca,güvenlik,dosya,zararlı,otomasyon,lojistik,strateji",
-    "whatsNew": "İlk sürüm.",
-    "promotionalText": "Her güvenlik ekibinin bildiği ikilem üzerine bir fabrika oyunu: güvenli mi, kullanılabilir mi?",
-    "supportURL": "https://REPLACE-ME/support",
-    "marketingURL": ""
+    "promotionalText": "Her güvenlik ekibinin bildiği ikilem üzerine bir fabrika oyunu: güvenli mi, kullanılabilir mi?"
   }
 }
