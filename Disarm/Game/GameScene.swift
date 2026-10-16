@@ -217,13 +217,13 @@ final class GameScene: SKScene {
 
     /// Köşe yayı: giriş kenarı ortasından çıkış kenarı ortasına çeyrek daire (dosyalarla aynı yol).
     /// `from` ile yayın bir kısmından başlanır (ikinci okun yarım fazı için).
-    private func cornerPath(entry e: Direction, exit h: Direction, from t0: CGFloat = 0) -> CGPath {
+    private func cornerPath(entry e: Direction, exit h: Direction, from t0: CGFloat = 0, to t1: CGFloat = 1) -> CGPath {
         let ev = vector(e), hv = vector(h), r = cs / 2
         let ox = -ev.dx * r + hv.dx * r, oy = -ev.dy * r + hv.dy * r
         let path = CGMutablePath()
         let n = 16
         for i in 0...n {
-            let t = t0 + (1 - t0) * CGFloat(i) / CGFloat(n)
+            let t = t0 + (t1 - t0) * CGFloat(i) / CGFloat(n)
             let th = t * .pi / 2
             let p = CGPoint(x: ox + (-hv.dx * cos(th) + ev.dx * sin(th)) * r,
                             y: oy + (-hv.dy * cos(th) + ev.dy * sin(th)) * r)
@@ -237,29 +237,27 @@ final class GameScene: SKScene {
         let outer = SKNode()
         outer.addChild(beltBody(connections: connections, color: Theme.belt))
 
-        // Köşe bant: tek bir yandan besleniyorsa oklar yayı izler, teğete döner.
+        // Köşe bant: tek bir yandan besleniyorsa hareketli ok yerine durağan, kıvrımlı tek ok.
+        // Yay giriş kenarından çıkışa doğru çizilir, ok ucu çıkış yönüne bakar; akış hissini dosyalar verir.
         let incoming = connections.subtracting([d])
         if incoming.count == 1, let feed = incoming.first, feed != d.opposite {
             let entry = feed.opposite
-            let full = cornerPath(entry: entry, exit: d)
-            let duration = Double((.pi / 4) * cs / (cs * 0.34 / 0.7)) // düz banttaki ok hızıyla aynı
-            let count = 2
-            for i in 0..<count {
-                let holder = SKNode()
-                let chev = chevron(size: cs * 0.15, wide: true)
-                chev.zRotation = -.pi / 2 // ok ucu +x: follow'un "ileri" yönü
-                chev.alpha = 0.6
-                holder.addChild(chev)
-                let loop = SKAction.repeatForever(.follow(full, asOffset: false, orientToPath: true, duration: duration))
-                if i == 0 {
-                    holder.run(loop)
-                } else {
-                    let t0 = CGFloat(i) / CGFloat(count)
-                    let partial = cornerPath(entry: entry, exit: d, from: t0)
-                    holder.run(.sequence([.follow(partial, asOffset: false, orientToPath: true, duration: duration * Double(1 - t0)), loop]))
-                }
-                outer.addChild(holder)
-            }
+            let arc = SKShapeNode(path: cornerPath(entry: entry, exit: d, from: 0.12, to: 0.78))
+            arc.strokeColor = Theme.beltArrow
+            arc.lineWidth = max(2, cs * 0.08)
+            arc.lineCap = .round
+            arc.alpha = 0.6
+            outer.addChild(arc)
+            // Ok ucu: yayın ucunda, çıkış yönüne bakar (teğet orada tam çıkış yönüdür).
+            let head = chevron(size: cs * 0.12)
+            let hv = vector(d), ev = vector(entry), r = cs / 2
+            let th = 0.86 * CGFloat.pi / 2
+            let ox = -ev.dx * r + hv.dx * r, oy = -ev.dy * r + hv.dy * r
+            head.position = CGPoint(x: ox + (-hv.dx * cos(th) + ev.dx * sin(th)) * r,
+                                    y: oy + (-hv.dy * cos(th) + ev.dy * sin(th)) * r)
+            head.zRotation = -CGFloat(d.angle)
+            head.alpha = 0.6
+            outer.addChild(head)
             return outer
         }
 
