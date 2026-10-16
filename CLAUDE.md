@@ -9,7 +9,9 @@
 - `make test` — çekirdek testleri (hızlı, önce bunu çalıştır)
 - `make build` — simülatör derlemesi
 - `make run ARGS="-demo"` — örnek hatla başlat; `-demoBank` (Özel Bankacılık, şifreli dosyalar, yönlendirici→karantina), `-demoEnd` (kampanyası bitmiş durum, prestij akışı), `-demoDC` (Veri Merkezi, kum havuzu hattı), `-skipHelp`, `-sheet contracts|upgrades|locations|log|campaign|module` dev argümanları
+- `make device ARGS="..."` — bağlı iPhone'a imzalı Debug derlemesi yükle ve başlat (ekip `project.yml`'de; `DEVICE=<udid>` ile cihaz seç)
 - `make screenshot` — ekran görüntüsü `.screens/` altına
+- `-fps` — sahnede fps/çizim/düğüm sayacı, SwiftUI gövde sıklığı günlükte `[render]` satırları (`xcrun simctl spawn <udid> log stream --predicate 'process == "Disarm"'`). Bu Mac'te `timeout` yok; süreli yakalama için arka plan + `sleep` + `kill`.
 
 ## Ses ve efektler
 - Sesler `scripts/make-sounds.swift` ile sentezlenir → `Disarm/Resources/Sounds/*.wav` (git'te). Yeni efekt: betiğe `sfx(...)` ekle, `AudioManager.Sfx` enum'una aynı adı ekle, betiği çalıştır.

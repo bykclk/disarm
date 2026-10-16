@@ -1,8 +1,11 @@
 SIM ?= iPhone 17
 BUNDLE = com.omerbuyukcelik.disarm
 DERIVED = $(HOME)/Library/Developer/Xcode/DerivedData
+# Bağlı fiziksel cihaz (ilk eşleşmiş iPhone). DEVICE=<udid> ile geçersiz kılınabilir.
+DEVICE ?= $(shell xcrun devicectl list devices 2>/dev/null | grep -i physical | grep -oE '[0-9A-F]{8}-[0-9A-F]{16}' | head -1)
+DEVICE_APP = $(shell ls -td $(DERIVED)/Disarm-*/Build/Products/Debug-iphoneos/Disarm.app 2>/dev/null | head -1)
 
-.PHONY: gen build test run screenshot clean
+.PHONY: gen build test run screenshot device device-build clean
 
 gen: ## project.yml -> Disarm.xcodeproj
 	xcodegen generate
@@ -25,6 +28,14 @@ run: build ## Simülatörde başlat (ARGS="-demo" ile örnek hat)
 	xcrun simctl terminate $(UDID) $(BUNDLE) 2>/dev/null || true
 	xcrun simctl launch $(UDID) $(BUNDLE) $(ARGS)
 	open -a Simulator 2>/dev/null || true
+
+device-build: gen ## Bağlı iPhone için imzalı Debug derlemesi (profil otomatik)
+	@test -n "$(DEVICE)" || { echo "Bağlı cihaz yok: xcrun devicectl list devices"; exit 1; }
+	xcodebuild -project Disarm.xcodeproj -scheme Disarm -destination 'id=$(DEVICE)' -configuration Debug build -allowProvisioningUpdates | grep -E "error:|warning: .*Disarm/|BUILD"
+
+device: device-build ## Bağlı iPhone'a yükle ve başlat (ARGS="-demo" ile)
+	xcrun devicectl device install app --device $(DEVICE) "$(DEVICE_APP)" | grep -E "installationURL|rror" || true
+	xcrun devicectl device process launch --terminate-existing --device $(DEVICE) $(BUNDLE) $(if $(ARGS),-- $(ARGS),)
 
 screenshot: ## Çalışan simülatörden ekran görüntüsü
 	mkdir -p .screens && xcrun simctl io $(UDID) screenshot .screens/$$(date +%H%M%S).png

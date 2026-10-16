@@ -21,6 +21,20 @@ Gereksinimler: Xcode 27, [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 ```sh
 make test                 # çekirdek testleri
 make run ARGS="-demo"     # simülatörde örnek hatla başlat
+make device ARGS="-demo"  # bağlı iPhone'a imzalı Debug derlemesi yükle ve başlat
+make screenshot           # çalışan simülatörden .screens/ altına görüntü
 ```
 
-Proje dosyası `project.yml`'den üretilir (`make gen`), repoya girmez.
+Proje dosyası `project.yml`'den üretilir (`make gen`), repoya girmez. Cihaz derlemesi `project.yml`'deki `DEVELOPMENT_TEAM` ile otomatik imzalanır; ilk eşleşmiş iPhone seçilir, `DEVICE=<udid>` ile değiştirilebilir.
+
+### Geliştirme argümanları
+| Argüman | Etki |
+|---|---|
+| `-demo` | Küçük ofiste örnek hat, yardım kapalı |
+| `-demoBank` | Özel Bankacılık: şifreli dosyalar, yönlendirici→karantina |
+| `-demoDC` | Veri Merkezi: Adli Bilişim için kum havuzu hattı |
+| `-demoEnd` | Kampanyası bitmiş durum, prestij akışı |
+| `-skipHelp` | İlk açılış yardımını atla |
+| `-sheet contracts\|upgrades\|locations\|log\|campaign\|deliveries\|module` | Açılışta ilgili sayfayı aç |
+| `-fps` | Sahnede fps/çizim/düğüm sayacı; SwiftUI gövde sıklığı günlüğe (`[render]`) |
+| `-AppleLanguages "(en)"` | Dil testi |
