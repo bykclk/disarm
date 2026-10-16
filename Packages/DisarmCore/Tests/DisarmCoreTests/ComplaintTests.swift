@@ -47,9 +47,39 @@ import Testing
         #expect(q.complaintReasons.isEmpty && q.complaints == 0)
     }
 
+    @Test func beltOnlyLineCountsBreachKinds() {
+        // Hiç modül yok: zararlı makrolar kapalı dosyada teslim edilir → ihlal, neden makro.
+        var s = GameState(seed: 5)
+        s.money = 10_000
+        s.tutorialSeen = true
+        for x in 1...5 { s.placeBelt(at: GridPos(x, 1), facing: .right) }
+        s.placeBelt(at: GridPos(6, 1), facing: .down)
+        for y in 2...7 { s.placeBelt(at: GridPos(6, y), facing: .down) }
+        var sim = Simulation(seed: 5)
+        var events: [GameEvent] = []
+        var t = 0.0
+        var breachLabels: [String] = []
+        while t < 120 && s.progress.breaches == 0 {
+            events.removeAll()
+            sim.tick(dt: 1.0 / 20.0, state: &s, events: &events)
+            t += 1.0 / 20.0
+            for e in events {
+                if case .delivered(_, let o) = e, o.breach { breachLabels.append(o.issues[0].shortText) }
+            }
+        }
+        #expect(s.progress.breaches == 1)
+        #expect(s.progress.breachReasons == [.macro: 1])
+        #expect(s.progress.sortedBreachReasons.first?.kind == .macro)
+        #expect(breachLabels.first?.contains(PartKind.macro.displayName) == true)
+        var q = s.progress
+        q.resetCounters()
+        #expect(q.breachReasons.isEmpty)
+    }
+
     @Test func reasonsSurviveSaveAndDefaultWhenMissing() throws {
         var s = GameState(seed: 4)
         s.progress.complaintReasons = [.left(.macro): 2, .lowImageQuality: 1, .lost(.formula): 4]
+        s.progress.breachReasons = [.macro: 1, .unknown: 2]
         let data = try SaveCodec.encode(state: s, sim: Simulation(seed: 4))
         #expect(try #require(SaveCodec.decode(data)).state == s)
 
@@ -58,10 +88,12 @@ import Testing
         var contracts = state["contracts"] as! [String: Any]
         var office = contracts["smallOffice"] as! [String: Any]
         office.removeValue(forKey: "complaintReasons")
+        office.removeValue(forKey: "breachReasons")
         contracts["smallOffice"] = office
         state["contracts"] = contracts
         obj["state"] = state
         let old = try #require(SaveCodec.decode(try JSONSerialization.data(withJSONObject: obj)))
         #expect(old.state.progress.complaintReasons.isEmpty)
+        #expect(old.state.progress.breachReasons.isEmpty)
     }
 }

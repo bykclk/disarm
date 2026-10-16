@@ -117,9 +117,10 @@ struct HUDView: View {
                             .font(.caption.monospacedDigit())
                             .foregroundStyle(p.complaints > 0 ? Color(Theme.warning) : .secondary)
                             .accessibilityLabel("Complaints \(p.complaints)")
-                        Text("Breach \(p.breaches)/\(c.maxBreaches)")
+                        Label("\(p.breaches)/\(c.maxBreaches)", systemImage: "xmark.octagon.fill")
                             .font(.caption.monospacedDigit())
                             .foregroundStyle(p.breaches > 0 ? Color(Theme.danger) : .secondary)
+                            .accessibilityLabel("Breaches \(p.breaches) of \(c.maxBreaches)")
                     }
                 }
                 .foregroundStyle(.white)

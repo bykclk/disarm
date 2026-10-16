@@ -1341,22 +1341,22 @@
         }
       }
     },
-    "BREACH": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "İHLAL"
-          }
-        }
-      }
-    },
     "Image %@ < %@": {
       "localizations": {
         "tr": {
           "stringUnit": {
             "state": "translated",
             "value": "Görsel %@ < %@"
+          }
+        }
+      }
+    },
+    "BREACH: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İHLAL: %@"
           }
         }
       }

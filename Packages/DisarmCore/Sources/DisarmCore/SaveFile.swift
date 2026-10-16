@@ -226,6 +226,7 @@ extension KeyedDecodingContainer {
 /// Enum anahtarlı sözlükler JSON nesnesi olarak yazılsın (bildirilmezse düz dizi olur).
 extension LocationKind: CodingKeyRepresentable {}
 extension ModuleKind: CodingKeyRepresentable {}
+extension PartKind: CodingKeyRepresentable {}
 
 // MARK: - Toleranslı init(from:) uygulamaları
 // Kodlama sentezlenir; yalnızca çözümleme elle yazılır ki eksik/bozuk alan kaydı düşürmesin.
@@ -251,7 +252,7 @@ extension Stats {
 
 extension ContractProgress {
     enum CodingKeys: String, CodingKey {
-        case index, delivered, accepted, breaches, complaints, completions, complaintReasons
+        case index, delivered, accepted, breaches, complaints, completions, complaintReasons, breachReasons
     }
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -262,6 +263,7 @@ extension ContractProgress {
         complaints = c.decodeOr(Int.self, .complaints, 0)
         completions = c.decodeOr(Int.self, .completions, 0)
         complaintReasons = c.decodeOr([ComplaintReason: Int].self, .complaintReasons, [:])
+        breachReasons = c.decodeEnumDict(.breachReasons)
     }
 }
 

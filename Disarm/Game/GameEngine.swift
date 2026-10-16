@@ -43,7 +43,8 @@ enum FxEvent {
     case delivered(pay: Int, good: Bool)
     /// Şikayetin kısa nedeni, teslimat noktasında uçar.
     case complaint(text: String)
-    case breach
+    /// Kaçan zararlı türleri etiketi + sarsıntı, flaş, halka.
+    case breach(text: String)
     case contractCompleted
     case contractFailed
     case campaignCompleted
@@ -297,7 +298,7 @@ final class GameEngine {
                 if o.breach {
                     UINotificationFeedbackGenerator().notificationOccurred(.error)
                     audio.play(.breach)
-                    fx.append(.breach)
+                    fx.append(.breach(text: o.issues.first?.shortText ?? ""))
                     toast(String(localized: "BREACH! \(o.issues.first?.text ?? "") \(money(o.pay))"), .bad, 3)
                     addLog(o.issues.first?.text ?? String(localized: "Breach"), .bad)
                 } else if o.usability < 0.9 {

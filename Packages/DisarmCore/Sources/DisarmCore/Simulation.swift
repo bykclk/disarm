@@ -248,6 +248,11 @@ public struct Simulation: Codable, Hashable, Sendable {
         if outcome.breach {
             progress.breaches += 1
             state.stats.totalBreaches += 1
+            for issue in outcome.issues {
+                if case .breach(let kinds) = issue {
+                    for k in Set(kinds) { progress.breachReasons[k, default: 0] += 1 }
+                }
+            }
         } else if outcome.accepted {
             progress.accepted += 1
             state.stats.totalAccepted += 1

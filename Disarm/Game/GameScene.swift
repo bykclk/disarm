@@ -452,7 +452,10 @@ final class GameScene: SKScene {
                 if good { burst(at: sinkPt, color: Theme.success, count: 14, speed: cs * 2.2) }
             case .complaint(let text):
                 floatLabel(text, at: CGPoint(x: sinkPt.x, y: sinkPt.y + cs * 0.1), color: Theme.warning, size: cs * 0.2, rise: cs * 0.9, duration: 1.4)
-            case .breach:
+            case .breach(let text):
+                if !text.isEmpty {
+                    floatLabel(text, at: CGPoint(x: sinkPt.x, y: sinkPt.y + cs * 0.1), color: Theme.danger, size: cs * 0.22, rise: cs * 1.0, duration: 1.6)
+                }
                 burst(at: sinkPt, color: Theme.danger, count: 24, speed: cs * 3.5)
                 let ring = SKShapeNode(circleOfRadius: cs * 0.5)
                 ring.strokeColor = Theme.danger

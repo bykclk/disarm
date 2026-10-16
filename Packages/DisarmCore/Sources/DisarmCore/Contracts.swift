@@ -112,6 +112,8 @@ public struct ContractProgress: Codable, Hashable, Sendable {
     public var completions: Int
     /// Bu sözleşme turundaki şikayet nedenleri ve sayıları; oyuncunun "neden ödemiyorlar" sorusuna cevap.
     public var complaintReasons: [ComplaintReason: Int]
+    /// İhlallerde teslim edilen zararlı parça türleri ve sayıları; "ne kaçtı" sorusuna cevap.
+    public var breachReasons: [PartKind: Int]
 
     public init(index: Int = 0) {
         self.index = index
@@ -121,6 +123,7 @@ public struct ContractProgress: Codable, Hashable, Sendable {
         complaints = 0
         completions = 0
         complaintReasons = [:]
+        breachReasons = [:]
     }
 
     public mutating func resetCounters() {
@@ -129,12 +132,18 @@ public struct ContractProgress: Codable, Hashable, Sendable {
         breaches = 0
         complaints = 0
         complaintReasons = [:]
+        breachReasons = [:]
     }
 
     /// Nedenler, en sık olandan başlayarak.
     public var sortedComplaintReasons: [(reason: ComplaintReason, count: Int)] {
         complaintReasons.map { (reason: $0.key, count: $0.value) }
             .sorted { $0.count != $1.count ? $0.count > $1.count : $0.reason.displayName < $1.reason.displayName }
+    }
+
+    public var sortedBreachReasons: [(kind: PartKind, count: Int)] {
+        breachReasons.map { (kind: $0.key, count: $0.value) }
+            .sorted { $0.count != $1.count ? $0.count > $1.count : $0.kind.displayName < $1.kind.displayName }
     }
 }
 
@@ -198,7 +207,7 @@ public enum DeliveryIssue: Equatable, Hashable, Sendable {
     /// Sahnede uçan kısa etiket.
     public var shortText: String {
         switch self {
-        case .breach: L("BREACH")
+        case .breach(let kinds): L("BREACH: \(Set(kinds).map(\.displayName).sorted().joined(separator: ", "))")
         case .lowImageQuality(let a, let m): L("Image \("\(a)%") < \("\(m)%")")
         default: reason?.displayName ?? ""
         }

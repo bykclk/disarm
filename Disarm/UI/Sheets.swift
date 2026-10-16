@@ -33,13 +33,22 @@ struct ContractsView: View {
                 Section("Active Contract") {
                     ContractRow(spec: active, progress: s.progress, isActive: true)
                 }
-                Section("Why customers complained") {
-                    let reasons = s.progress.sortedComplaintReasons
-                    if reasons.isEmpty {
-                        Text(s.progress.delivered > 0 ? "No complaints so far in this contract." : "No deliveries yet.")
+                Section("Why deliveries went wrong") {
+                    let complaints = s.progress.sortedComplaintReasons
+                    let breaches = s.progress.sortedBreachReasons
+                    if complaints.isEmpty && breaches.isEmpty {
+                        Text(s.progress.delivered > 0 ? "Every delivery so far was accepted." : "No deliveries yet.")
                             .font(.caption).foregroundStyle(.secondary)
                     } else {
-                        ForEach(reasons, id: \.reason) { r in
+                        ForEach(breaches, id: \.kind) { r in
+                            HStack {
+                                Image(systemName: "xmark.octagon.fill").foregroundStyle(Color(Theme.danger)).frame(width: 24)
+                                Text("Breach: \(r.kind.displayName) delivered").foregroundStyle(Color(Theme.danger))
+                                Spacer()
+                                Text("×\(r.count)").font(.body.monospacedDigit()).foregroundStyle(Color(Theme.danger))
+                            }
+                        }
+                        ForEach(complaints, id: \.reason) { r in
                             HStack {
                                 Image(systemName: "exclamationmark.bubble.fill").foregroundStyle(Color(Theme.warning)).frame(width: 24)
                                 Text(r.reason.displayName)
@@ -47,7 +56,7 @@ struct ContractsView: View {
                                 Text("×\(r.count)").font(.body.monospacedDigit()).foregroundStyle(.secondary)
                             }
                         }
-                        Text("Accepted \(s.progress.accepted) of \(s.progress.delivered) deliveries. A complaint still pays, but less, and earns no reputation.")
+                        Text("Accepted \(s.progress.accepted) of \(s.progress.delivered) deliveries. A complaint still pays, but less, and earns no reputation. A breach costs triple pay and reputation.")
                             .font(.caption).foregroundStyle(.secondary)
                     }
                 }

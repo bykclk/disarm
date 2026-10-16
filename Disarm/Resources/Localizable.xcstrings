@@ -1772,26 +1772,6 @@
         }
       }
     },
-    "Why customers complained": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Müşteriler neden şikayet etti"
-          }
-        }
-      }
-    },
-    "No complaints so far in this contract.": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bu sözleşmede henüz şikayet yok."
-          }
-        }
-      }
-    },
     "No deliveries yet.": {
       "localizations": {
         "tr": {
@@ -1812,12 +1792,52 @@
         }
       }
     },
-    "Accepted %lld of %lld deliveries. A complaint still pays, but less, and earns no reputation.": {
+    "Why deliveries went wrong": {
       "localizations": {
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%2$lld teslimatın %1$lld tanesi kabul edildi. Şikayetli teslimat yine öder ama daha az, itibar kazandırmaz."
+            "value": "Teslimatlar neden ters gitti"
+          }
+        }
+      }
+    },
+    "Every delivery so far was accepted.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şimdiye kadar her teslimat kabul edildi."
+          }
+        }
+      }
+    },
+    "Breach: %@ delivered": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İhlal: %@ teslim edildi"
+          }
+        }
+      }
+    },
+    "Breaches %lld of %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İhlal %lld / %lld"
+          }
+        }
+      }
+    },
+    "Accepted %lld of %lld deliveries. A complaint still pays, but less, and earns no reputation. A breach costs triple pay and reputation.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%2$lld teslimatın %1$lld tanesi kabul edildi. Şikayetli teslimat yine öder ama daha az, itibar kazandırmaz. İhlal üç kat ödeme ve itibar kaybettirir."
           }
         }
       }
