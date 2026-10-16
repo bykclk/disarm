@@ -11,6 +11,7 @@ struct ContentView: View {
     }()
 
     var body: some View {
+        let _ = RenderMeter.tick("Content")
         ZStack {
             Color(Theme.background).ignoresSafeArea()
             VStack(spacing: 0) {
@@ -33,10 +34,30 @@ struct ContentView: View {
 
 // MARK: - HUD
 
+/// Geliştirme: `-fps` ile SwiftUI gövde değerlendirme sıklığını konsola yazar (saniyede bir).
+@MainActor
+enum RenderMeter {
+    static let enabled = ProcessInfo.processInfo.arguments.contains("-fps")
+    private static var counts: [String: Int] = [:]
+    private static var last = Date()
+
+    static func tick(_ name: String) {
+        guard enabled else { return }
+        counts[name, default: 0] += 1
+        let now = Date()
+        if now.timeIntervalSince(last) >= 1 {
+            NSLog("[render] " + counts.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)/s" }.joined(separator: " "))
+            counts.removeAll()
+            last = now
+        }
+    }
+}
+
 struct HUDView: View {
     @Bindable var engine: GameEngine
 
     var body: some View {
+        let _ = RenderMeter.tick("HUD")
         let s = engine.state
         let c = s.activeContract
         let p = s.progress
@@ -157,6 +178,7 @@ struct PaletteView: View {
     @Bindable var engine: GameEngine
 
     var body: some View {
+        let _ = RenderMeter.tick("Palette")
         let s = engine.state
         VStack(spacing: 6) {
             ScrollView(.horizontal, showsIndicators: false) {

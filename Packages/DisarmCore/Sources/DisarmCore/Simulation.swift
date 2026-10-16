@@ -35,6 +35,10 @@ public struct Simulation: Codable, Hashable, Sendable {
     public var spawnAccumulator: Double = 0
     public var rng: SplitMix64
     public var elapsed: Double = 0
+    /// Kazanç hızı penceresi: durum saniyede bir güncellenir, her karede değil (UI gereksiz yere çizilmesin).
+    public var incomeAccumulator: Double = 0
+    public var incomeTimer: Double = 0
+    public static let incomeFlushInterval = 1.0
 
     public init(seed: UInt64) {
         rng = SplitMix64(seed: seed)
@@ -47,6 +51,7 @@ public struct Simulation: Codable, Hashable, Sendable {
 
     public mutating func tick(dt: Double, state: inout GameState, events: inout [GameEvent]) {
         elapsed += dt
+        let eventsBefore = events.count
         let grid = state.grid
         let spec = state.location
 
@@ -71,14 +76,21 @@ public struct Simulation: Codable, Hashable, Sendable {
         }
         for i in delivered.sorted(by: >) { items.remove(at: i) }
 
-        // Kazanç hızı: üssel ortalama (offline hesap için).
-        let earnedNow = events.reduce(0) { acc, e in
+        // Kazanç hızı: üssel ortalama (offline hesap için). Yalnızca bu çağrıda eklenen olaylar sayılır,
+        // ve durum saniyede bir yazılır.
+        let earnedNow = events[eventsBefore...].reduce(0) { acc, e in
             if case .delivered(_, let o) = e { return acc + max(0, o.pay) }
             return acc
         }
-        let alpha = min(1, dt / 120.0)
-        let instant = Double(earnedNow) / max(dt, 0.0001)
-        state.incomeRatePerSec += (instant - state.incomeRatePerSec) * alpha
+        incomeAccumulator += Double(earnedNow)
+        incomeTimer += dt
+        if incomeTimer >= Self.incomeFlushInterval {
+            let alpha = min(1, incomeTimer / 120.0)
+            let instant = incomeAccumulator / incomeTimer
+            state.incomeRatePerSec += (instant - state.incomeRatePerSec) * alpha
+            incomeAccumulator = 0
+            incomeTimer = 0
+        }
     }
 
     // MARK: - Spawn

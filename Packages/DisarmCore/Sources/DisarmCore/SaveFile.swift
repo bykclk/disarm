@@ -363,7 +363,7 @@ extension GameState {
 }
 
 extension Simulation {
-    enum CodingKeys: String, CodingKey { case items, spawnAccumulator, rng, elapsed }
+    enum CodingKeys: String, CodingKey { case items, spawnAccumulator, rng, elapsed, incomeAccumulator, incomeTimer }
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         // Üreteç durumu olmadan simülasyon tutarsız olur; o zaman tümü sıfırlanır.
@@ -373,5 +373,7 @@ extension Simulation {
         items = ((try? c.decodeIfPresent([Lossy<MovingItem>].self, forKey: .items)) ?? []).compactMap(\.value)
         spawnAccumulator = c.decodeOr(Double.self, .spawnAccumulator, 0)
         elapsed = c.decodeOr(Double.self, .elapsed, 0)
+        incomeAccumulator = c.decodeOr(Double.self, .incomeAccumulator, 0)
+        incomeTimer = c.decodeOr(Double.self, .incomeTimer, 0)
     }
 }
