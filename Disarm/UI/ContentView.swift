@@ -124,16 +124,16 @@ struct HUDView: View {
                             Image(systemName: Theme.symbol(c.customer))
                             Text(c.title).font(.subheadline.weight(.semibold))
                                 .lineLimit(1).minimumScaleFactor(0.75)
-                            Spacer(minLength: 4)
-                            Text("\(s.location.displayName)" + (s.location.airGapped ? " · air-gap" : ""))
-                                .font(.caption2).foregroundStyle(.secondary)
-                                .lineLimit(1).layoutPriority(-1)
+                            Spacer(minLength: 0)
                         }
                         HStack(spacing: 8) {
                             ProgressView(value: Double(p.delivered), total: Double(c.targetFiles))
                                 .tint(Color(Theme.accent))
                             Text("\(p.delivered)/\(c.targetFiles)")
                                 .font(.caption.monospacedDigit())
+                            Text("\(s.location.displayName)" + (s.location.airGapped ? " · air-gap" : ""))
+                                .font(.caption2).foregroundStyle(.secondary)
+                                .lineLimit(1).minimumScaleFactor(0.8)
                         }
                     }
                     .padding(8)

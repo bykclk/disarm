@@ -387,18 +387,32 @@ final class GameScene: SKScene {
             let base = point(for: item.pos)
             let target: CGPoint
             let targetScale: CGFloat
+            var targetLean: CGFloat = 0
             if item.inModule {
                 target = CGPoint(x: base.x, y: base.y + cs * 0.04)
                 targetScale = 0.8
                 node.setProgress(item.progress)
                 node.zPosition = 1
             } else {
-                // İlk yarı: giriş kenarından merkeze (giriş yönünde). İkinci yarı: merkezden çıkış kenarına (bant yönünde).
-                // Köşede yol L çizer; hücre sınırında çıkış kenarı = sonraki hücrenin giriş kenarı, sıçrama olmaz.
                 let p = CGFloat(item.progress)
-                let v = vector(p < 0.5 ? entry : item.heading)
-                let off = (p - 0.5) * cs
-                target = CGPoint(x: base.x + v.dx * off, y: base.y + v.dy * off)
+                let e = vector(entry), h = vector(item.heading)
+                if entry == item.heading || entry == item.heading.opposite {
+                    // Düz: giriş kenarından çıkış kenarına doğru çizgi.
+                    let off = (p - 0.5) * cs
+                    target = CGPoint(x: base.x + h.dx * off, y: base.y + h.dy * off)
+                    targetLean = 0
+                } else {
+                    // Köşe: giriş kenarı orta noktasından çıkış kenarı orta noktasına çeyrek daire.
+                    // Yay merkezi hücrenin iç köşesi: O = E + h·r. Dönüş yönüne doğru hafif yatma, ortada en fazla.
+                    let r = cs / 2
+                    let ox = base.x - e.dx * r + h.dx * r
+                    let oy = base.y - e.dy * r + h.dy * r
+                    let theta = p * .pi / 2
+                    target = CGPoint(x: ox + (-h.dx * cos(theta) + e.dx * sin(theta)) * r,
+                                     y: oy + (-h.dy * cos(theta) + e.dy * sin(theta)) * r)
+                    let cross = e.dx * h.dy - e.dy * h.dx // +: sola (saat yönü tersi), −: sağa
+                    targetLean = cross * 0.2 * sin(p * .pi)
+                }
                 targetScale = 1
                 node.setProgress(nil)
                 node.zPosition = 0
@@ -413,6 +427,7 @@ final class GameScene: SKScene {
                 node.position = CGPoint(x: node.position.x + (target.x - node.position.x) * k,
                                         y: node.position.y + (target.y - node.position.y) * k)
                 node.setScale(node.xScale + (targetScale - node.xScale) * k)
+                node.zRotation += (targetLean - node.zRotation) * k
             }
         }
         for (id, node) in itemNodes where !seen.contains(id) {
