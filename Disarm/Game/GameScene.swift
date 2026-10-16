@@ -253,12 +253,12 @@ final class GameScene: SKScene {
 
     // MARK: - Yuvarlatılmış hat yolu
 
-    /// Dönüş yarıçapı (hücre birimi). Yarım hücreden büyük: dönüş komşu hücrelere taşar, köşe geniş ve yumuşak olur.
-    /// Gövde yarı genişliği 0,36 hücre; yayın iç köşeye sapması (1−1/√2)·R = 0,25 hücre, gövde içinde kalır.
-    private let turnRadius: CGFloat = 0.85
+    /// Köşe eğrisinin kontrol noktası uzunluğu (hücre birimi). 0,276 çeyrek daire verir; büyüdükçe eğri hücre
+    /// merkezine yaklaşır, dış tarafa doğru yassılaşır ve dönüş daha geniş görünür. 0,5'te iki kontrol da merkezde.
+    private let turnPull: CGFloat = 0.46
 
-    /// Bir hücrenin içindeki yol: hücre merkezlerinden geçen hattın bu, önceki ve sonraki köşelerde yuvarlatılıp
-    /// hücre karesine kırpılmış parçası. Komşu hücreler aynı küresel geometriyi kullandığından sınırda süreklidir.
+    /// Bir hücrenin içindeki yol: giriş kenarı ortasından çıkış kenarı ortasına. Düz hücrede doğru, köşede
+    /// kenarlara teğet kübik Bézier. Uçlar kenar ortaları olduğundan komşu hücreyle sınırda süreklidir.
     struct CellPath {
         var points: [CGPoint]
         var cum: [CGFloat]
@@ -283,89 +283,36 @@ final class GameScene: SKScene {
     private struct CellPathKey: Hashable { let pos: GridPos; let entry: Direction; let heading: Direction }
     private var cellPathCache: [CellPathKey: CellPath] = [:]
 
-    /// Hücredeki hattın tek beslemeli köşe olup olmadığı: (giriş yönü, çıkış yönü) ya da nil.
-    private func cornerTurn(at q: GridPos, in g: Grid) -> (entry: Direction, exit: Direction)? {
-        guard case .belt(let qd) = g[q] else { return nil }
-        let feeds = beltConnections(at: q, facing: qd, in: g).subtracting([qd])
-        guard feeds.count == 1, let f = feeds.first, f != qd.opposite else { return nil }
-        return (f.opposite, qd)
-    }
-
     private func cellPath(pos: GridPos, entry: Direction, heading: Direction, grid g: Grid) -> CellPath {
         let key = CellPathKey(pos: pos, entry: entry, heading: heading)
         if let cached = cellPathCache[key] { return cached }
 
-        // Üç hücrelik pencere: önceki merkez → bu merkez → sonraki merkez; köşelerde yuvarlat.
-        let R = turnRadius * cs
         let e = vector(entry), h = vector(heading)
-        let prevPos = pos.moved(entry.opposite), nextPos = pos.moved(heading)
-        let prevTurn: (Direction, Direction)? = cornerTurn(at: prevPos, in: g).flatMap { $0.exit == entry ? ($0.entry, $0.exit) : nil }
-        let nextTurn: (Direction, Direction)? = {
-            if case .belt(let nd) = g[nextPos], nd != heading, nd != heading.opposite { return (heading, nd) }
-            return nil
-        }()
-        let thisTurn: (Direction, Direction)? = (entry != heading && entry != heading.opposite) ? (entry, heading) : nil
-
+        let start = CGPoint(x: -e.dx * cs / 2, y: -e.dy * cs / 2) // giriş kenarı ortası
+        let end = CGPoint(x: h.dx * cs / 2, y: h.dy * cs / 2)      // çıkış kenarı ortası
         var pts: [CGPoint] = []
         var crv: [CGFloat] = []
-        func add(_ p: CGPoint, _ c: CGFloat) { pts.append(p); crv.append(c) }
-        /// Köşe: V merkezli, a ile gelen, b ile çıkan; R yarıçaplı çeyrek yay. Düzse yalnızca V.
-        func vertex(_ v: CGPoint, turn: (Direction, Direction)?, straightDir: Direction) {
-            guard let (ad, bd) = turn else { add(v, 0); return }
-            let a = vector(ad), b = vector(bd)
-            let sign: CGFloat = (a.dx * b.dy - a.dy * b.dx) > 0 ? 1 : -1
-            let ox = v.x - a.dx * R + b.dx * R, oy = v.y - a.dy * R + b.dy * R
+        if entry == heading || entry == heading.opposite {
+            pts = [start, end]
+            crv = [0, 0]
+        } else {
+            // Kenarlara teğet kübik Bézier: kontroller giriş yönünde ve çıkış yönünün tersinde turnPull kadar.
+            let k = turnPull * cs
+            let c1 = CGPoint(x: start.x + e.dx * k, y: start.y + e.dy * k)
+            let c2 = CGPoint(x: end.x - h.dx * k, y: end.y - h.dy * k)
+            let sign: CGFloat = (e.dx * h.dy - e.dy * h.dx) > 0 ? 1 : -1
             let n = 24
             for i in 0...n {
-                let th = CGFloat(i) / CGFloat(n) * .pi / 2
-                add(CGPoint(x: ox + (-b.dx * cos(th) + a.dx * sin(th)) * R,
-                            y: oy + (-b.dy * cos(th) + a.dy * sin(th)) * R), sign)
+                let t = CGFloat(i) / CGFloat(n), u = 1 - t
+                let x = u * u * u * start.x + 3 * u * u * t * c1.x + 3 * u * t * t * c2.x + t * t * t * end.x
+                let y = u * u * u * start.y + 3 * u * u * t * c1.y + 3 * u * t * t * c2.y + t * t * t * end.y
+                pts.append(CGPoint(x: x, y: y))
+                crv.append(sign * sin(t * .pi)) // uçlarda 0, ortada tam: yatma yumuşak girer çıkar
             }
-        }
-        let prevC = CGPoint(x: -e.dx * cs, y: -e.dy * cs)
-        let nextC = CGPoint(x: h.dx * cs, y: h.dy * cs)
-        let prevIn = prevTurn?.0 ?? entry
-        let nextOut = nextTurn?.1 ?? heading
-        let pv = vector(prevIn), nv = vector(nextOut)
-        add(CGPoint(x: prevC.x - pv.dx * cs, y: prevC.y - pv.dy * cs), 0)
-        vertex(prevC, turn: prevTurn, straightDir: entry)
-        vertex(.zero, turn: thisTurn, straightDir: heading)
-        vertex(nextC, turn: nextTurn, straightDir: heading)
-        add(CGPoint(x: nextC.x + nv.dx * cs, y: nextC.y + nv.dy * cs), 0)
-
-        // Hücre karesine kırp: içeri giriş ve dışarı çıkış noktalarını kenarda tam hesapla.
-        let half = cs / 2 + 0.01
-        func inside(_ p: CGPoint) -> Bool { abs(p.x) <= half && abs(p.y) <= half }
-        func clip(_ a: CGPoint, _ b: CGPoint) -> CGPoint {
-            // a dışarıda, b içeride (ya da tersi): kare kenarıyla kesişim.
-            var lo: CGFloat = 0, hi: CGFloat = 1
-            for _ in 0..<20 {
-                let m = (lo + hi) / 2
-                let p = CGPoint(x: a.x + (b.x - a.x) * m, y: a.y + (b.y - a.y) * m)
-                if inside(p) == inside(b) { hi = m } else { lo = m }
-            }
-            return CGPoint(x: a.x + (b.x - a.x) * hi, y: a.y + (b.y - a.y) * hi)
-        }
-        var out: [CGPoint] = []
-        var outC: [CGFloat] = []
-        for i in 0..<pts.count {
-            let p = pts[i]
-            if inside(p) {
-                if out.isEmpty, i > 0, !inside(pts[i - 1]) { out.append(clip(pts[i - 1], p)); outC.append(crv[i]) }
-                out.append(p); outC.append(crv[i])
-            } else if !out.isEmpty {
-                out.append(clip(p, pts[i - 1])); outC.append(crv[i - 1])
-                break
-            }
-        }
-        if out.count < 2 {
-            // Beklenmedik geometri: düz çizgiye düş.
-            out = [CGPoint(x: -h.dx * cs / 2, y: -h.dy * cs / 2), CGPoint(x: h.dx * cs / 2, y: h.dy * cs / 2)]
-            outC = [0, 0]
         }
         var cum: [CGFloat] = [0]
-        for i in 1..<out.count { cum.append(cum[i - 1] + hypot(out[i].x - out[i - 1].x, out[i].y - out[i - 1].y)) }
-        let path = CellPath(points: out, cum: cum, curve: outC)
+        for i in 1..<pts.count { cum.append(cum[i - 1] + hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y)) }
+        let path = CellPath(points: pts, cum: cum, curve: crv)
         cellPathCache[key] = path
         return path
     }
