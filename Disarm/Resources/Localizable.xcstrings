@@ -1052,16 +1052,6 @@
         }
       }
     },
-    "Tap a module: settings · Tap a file: see contents · Tap a belt: rotate": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modüle dokun: ayarlar · Dosyaya dokun: içeriği gör · Banta dokun: döndür"
-          }
-        }
-      }
-    },
     "Tap or drag: remove (modules refund 50%)": {
       "localizations": {
         "tr": {
@@ -1948,6 +1938,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ · %@"
+          }
+        }
+      }
+    },
+    "Tap module: settings · Drag module: move · Tap file: contents · Tap belt: rotate": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modüle dokun: ayarlar · Modülü sürükle: taşı · Dosyaya dokun: içerik · Banda dokun: döndür"
+          }
+        }
+      }
+    },
+    "Undo": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geri al"
+          }
+        }
+      }
+    },
+    "Undone": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geri alındı"
           }
         }
       }

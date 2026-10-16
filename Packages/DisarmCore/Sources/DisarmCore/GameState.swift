@@ -167,6 +167,20 @@ public struct GameState: Codable, Hashable, Sendable {
         return .success(())
     }
 
+    /// Modülü başka hücreye taşır (ayarı ve yönü korunur). Hedefteki bant iade edilir; hedefte modül varsa olmaz.
+    @discardableResult
+    public mutating func moveModule(from a: GridPos, to b: GridPos) -> Result<Void, ActionError> {
+        guard grid.contains(a), grid.contains(b) else { return .failure(.outOfBounds) }
+        guard case .module(let m) = grid[a] else { return .failure(.outOfBounds) }
+        guard m.kind.isPlaceable else { return .failure(.protected) }
+        if a == b { return .success(()) }
+        if grid[b]?.module != nil { return .failure(.cellOccupied) }
+        if grid[b]?.beltDirection != nil { money += Self.beltCost }
+        grid[b] = .module(m)
+        grid[a] = nil
+        return .success(())
+    }
+
     @discardableResult
     public mutating func rotate(at p: GridPos) -> Result<Void, ActionError> {
         switch grid[p] {

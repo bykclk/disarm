@@ -96,6 +96,13 @@ final class GameEngine {
 
     private var saveTimer: Double = 0
     private var lastComplaintFx = Date.distantPast
+
+    /// Geri alma: yalnızca yerleşim düzenlemeleri (yerleştir, sil, döndür, ayarla, taşı, temizle).
+    /// Para farkı iade edilir; teslimat gelirleri korunur. Mekân değişince temizlenir.
+    private struct UndoEntry { var grid: Grid; var moneyDelta: Int; var key: String?; var at: Date }
+    private var undoStack: [UndoEntry] = []
+    private static let maxUndo = 30
+    var canUndo: Bool { !undoStack.isEmpty }
     private let store = SaveStore()
 
     init() {
@@ -401,21 +408,21 @@ final class GameEngine {
                 if m.kind == .sink { sheet = .deliveries }
                 else if m.kind.isPlaceable || m.kind == .source { sheet = .module(p) }
             } else if state.grid[p]?.beltDirection != nil {
-                report(state.rotate(at: p), sound: .rotate)
+                layoutEdit(state.rotate(at: p), sound: .rotate)
             }
         case .belt:
             if state.grid[p]?.beltDirection != nil {
-                report(state.rotate(at: p), sound: .rotate)
+                layoutEdit(state.rotate(at: p), sound: .rotate)
             } else {
-                report(state.placeBelt(at: p, facing: brush), sound: .place)
+                layoutEdit(state.placeBelt(at: p, facing: brush), sound: .place)
             }
         case .erase:
-            report(state.remove(at: p), sound: .remove)
+            layoutEdit(state.remove(at: p), sound: .remove)
         case .place(let kind):
             if let m = state.grid[p]?.module, m.kind == kind {
-                report(state.rotate(at: p), sound: .rotate)
+                layoutEdit(state.rotate(at: p), sound: .rotate)
             } else {
-                report(state.placeModule(kind, at: p, facing: brush), sound: .place)
+                layoutEdit(state.placeModule(kind, at: p, facing: brush), sound: .place)
             }
         }
     }
@@ -425,23 +432,65 @@ final class GameEngine {
         guard tool == .belt, a != b,
               let dir = Direction.from(dx: b.x - a.x, dy: b.y - a.y) else { return }
         if state.grid[a]?.beltDirection != nil {
-            state.placeBelt(at: a, facing: dir)
+            layoutEdit(state.placeBelt(at: a, facing: dir), quiet: true, coalesce: "belt")
         } else if state.grid[a] == nil {
-            report(state.placeBelt(at: a, facing: dir), quiet: true, sound: .tap)
+            layoutEdit(state.placeBelt(at: a, facing: dir), quiet: true, sound: .tap, coalesce: "belt")
         }
         if state.grid[b]?.module == nil {
-            report(state.placeBelt(at: b, facing: dir), quiet: true, sound: .tap)
+            layoutEdit(state.placeBelt(at: b, facing: dir), quiet: true, sound: .tap, coalesce: "belt")
         }
         layoutVersion += 1
     }
 
     func dragErase(_ p: GridPos) {
         guard tool == .erase, state.grid[p]?.beltDirection != nil else { return }
-        report(state.remove(at: p), quiet: true, sound: .tap)
+        layoutEdit(state.remove(at: p), quiet: true, sound: .tap, coalesce: "erase")
     }
 
     func itemTapped(_ id: UUID) {
         sheet = .file(id)
+    }
+
+    /// Yerleşim düzenlemesi: başarılıysa önceki yerleşimi geri alma yığınına koyar. `coalesce` aynı anahtarlı
+    /// ardışık düzenlemeleri (bant sürükleme) 1,5 sn içinde tek adımda toplar.
+    @discardableResult
+    private func layoutEdit(_ edit: @autoclosure () -> Result<Void, GameState.ActionError>,
+                            quiet: Bool = false, sound: AudioManager.Sfx? = nil, coalesce: String? = nil) -> Bool {
+        let beforeGrid = state.grid
+        let beforeMoney = state.money
+        let r = edit()
+        if case .success = r {
+            pushUndo(grid: beforeGrid, moneyDelta: beforeMoney - state.money, key: coalesce)
+        }
+        report(r, quiet: quiet, sound: sound)
+        return r.isSuccess
+    }
+
+    private func pushUndo(grid: Grid, moneyDelta: Int, key: String?) {
+        let now = Date()
+        if let key, var top = undoStack.last, top.key == key, now.timeIntervalSince(top.at) < 1.5 {
+            top.moneyDelta += moneyDelta
+            top.at = now
+            undoStack[undoStack.count - 1] = top
+            return
+        }
+        undoStack.append(UndoEntry(grid: grid, moneyDelta: moneyDelta, key: key, at: now))
+        if undoStack.count > Self.maxUndo { undoStack.removeFirst() }
+    }
+
+    func undo() {
+        guard let e = undoStack.popLast() else { return }
+        state.grid = e.grid
+        state.money += e.moneyDelta
+        layoutVersion += 1
+        sheet = nil
+        audio.play(.remove)
+        toast(String(localized: "Undone"), .info, 1.5)
+    }
+
+    func moveModule(from a: GridPos, to b: GridPos?) {
+        guard let b else { layoutVersion += 1; return } // ızgara dışına bırakıldı: yerine döner
+        if !layoutEdit(state.moveModule(from: a, to: b), sound: .place) { layoutVersion += 1 }
     }
 
     private func report(_ r: Result<Void, GameState.ActionError>, quiet: Bool = false, sound: AudioManager.Sfx? = nil) {
@@ -468,11 +517,11 @@ final class GameEngine {
 
     // MARK: - Eylemler
 
-    func rotate(at p: GridPos) { report(state.rotate(at: p), sound: .rotate) }
-    func remove(at p: GridPos) { report(state.remove(at: p), sound: .remove); sheet = nil }
-    func setFilter(at p: GridPos, _ k: PartKind) { report(state.configure(at: p) { $0.filterTarget = k }) }
-    func setRoute(at p: GridPos, _ c: ContainerKind) { report(state.configure(at: p) { $0.routeTarget = c }) }
-    func setRouteEncrypted(at p: GridPos, _ on: Bool) { report(state.configure(at: p) { $0.routeEncrypted = on }) }
+    func rotate(at p: GridPos) { layoutEdit(state.rotate(at: p), sound: .rotate) }
+    func remove(at p: GridPos) { layoutEdit(state.remove(at: p), sound: .remove); sheet = nil }
+    func setFilter(at p: GridPos, _ k: PartKind) { layoutEdit(state.configure(at: p) { $0.filterTarget = k }) }
+    func setRoute(at p: GridPos, _ c: ContainerKind) { layoutEdit(state.configure(at: p) { $0.routeTarget = c }) }
+    func setRouteEncrypted(at p: GridPos, _ on: Bool) { layoutEdit(state.configure(at: p) { $0.routeEncrypted = on }) }
     func upgrade(_ k: ModuleKind) { report(state.upgradeModule(k), sound: .upgrade); if state.level(of: k) > 1 { layoutVersion += 1 } }
     func upgradeBelt() { report(state.upgradeBelt(), sound: .upgrade) }
     func upgradeIntake() { report(state.upgradeIntake(), sound: .upgrade) }
@@ -495,11 +544,15 @@ final class GameEngine {
             sim.clear()
             tool = .select
             sheet = nil
+            undoStack.removeAll()
             layoutVersion += 1
         }
     }
 
     func clearLayout() {
+        let beforeGrid = state.grid
+        let beforeMoney = state.money
+        defer { pushUndo(grid: beforeGrid, moneyDelta: beforeMoney - state.money, key: nil) }
         for p in state.grid.allPositions where state.grid[p]?.module?.kind.isPlaceable != false {
             if state.grid[p] != nil { _ = state.remove(at: p) }
         }

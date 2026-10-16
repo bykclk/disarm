@@ -35,6 +35,8 @@ final class GameScene: SKScene {
     private var touchStartCell: GridPos?
     private var lastDragCell: GridPos?
     private var dragged = false
+    /// Seçim aracıyla modül sürükleme: başlangıç hücresi; düğüm parmağı izler, bırakınca taşınır.
+    private var dragModuleFrom: GridPos?
     private var lastTapTime: TimeInterval = 0
 
     override func didMove(to view: SKView) {
@@ -607,10 +609,24 @@ final class GameScene: SKScene {
         }
         touchStartCell = cell(at: pt)
         lastDragCell = touchStartCell
+        dragModuleFrom = nil
+        if engine.tool == .select, let c = touchStartCell, let m = engine.state.grid[c]?.module, m.kind.isPlaceable {
+            dragModuleFrom = c
+        }
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let engine, let t = touches.first, let c = cell(at: t.location(in: self)) else { return }
+        guard let engine, let t = touches.first else { return }
+        let pt = t.location(in: self)
+        if let from = dragModuleFrom, let node = moduleNodes[from] {
+            // Modül parmağı izler; hücre değişince bu bir sürüklemedir, dokunma değil.
+            node.position = pt
+            node.zPosition = 20
+            node.alpha = 0.85
+            if cell(at: pt) != from { dragged = true }
+            return
+        }
+        guard let c = cell(at: pt) else { return }
         guard let last = lastDragCell else { lastDragCell = c; return }
         guard c != last else { return }
         dragged = true
@@ -634,16 +650,33 @@ final class GameScene: SKScene {
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        defer { touchStartCell = nil; lastDragCell = nil; dragged = false }
-        guard let engine, !dragged, let c = touchStartCell else { return }
+        defer { touchStartCell = nil; lastDragCell = nil; dragged = false; dragModuleFrom = nil }
+        guard let engine else { return }
+        if let from = dragModuleFrom, dragged {
+            let target = touches.first.flatMap { cell(at: $0.location(in: self)) }
+            engine.moveModule(from: from, to: target)
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            return
+        }
+        snapBackDraggedModule()
+        guard !dragged, let c = touchStartCell else { return }
         engine.tapped(c)
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        snapBackDraggedModule()
         touchStartCell = nil
         lastDragCell = nil
         dragged = false
+        dragModuleFrom = nil
+    }
+
+    private func snapBackDraggedModule() {
+        guard let from = dragModuleFrom, let node = moduleNodes[from] else { return }
+        node.position = point(for: from)
+        node.zPosition = 0
+        node.alpha = 1
     }
 }
 

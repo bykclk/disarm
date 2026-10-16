@@ -198,6 +198,16 @@ struct PaletteView: View {
                         .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
                     }
                     .foregroundStyle(.white)
+                    Button { engine.undo() } label: {
+                        VStack(spacing: 2) {
+                            Image(systemName: "arrow.uturn.backward").font(.title3).frame(height: 24)
+                            Text("Undo").font(.caption2)
+                        }
+                        .frame(width: 58, height: 56)
+                        .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
+                    }
+                    .foregroundStyle(engine.canUndo ? .white : .white.opacity(0.35))
+                    .disabled(!engine.canUndo)
                     Divider().frame(height: 40)
                     ForEach(s.location.availableModules, id: \.self) { kind in
                         moduleButton(kind)
@@ -217,7 +227,7 @@ struct PaletteView: View {
 
     private var hint: String {
         switch engine.tool {
-        case .select: String(localized: "Tap a module: settings · Tap a file: see contents · Tap a belt: rotate")
+        case .select: String(localized: "Tap module: settings · Drag module: move · Tap file: contents · Tap belt: rotate")
         case .belt: String(localized: "Tap: place belt · Drag: draw belts · Tap existing belt: rotate")
         case .erase: String(localized: "Tap or drag: remove (modules refund 50%)")
         case .place(let k): String(localized: "\(k.displayName): tap an empty cell · facing \(engine.brush.displayName) · tap same module: rotate")
