@@ -10,6 +10,7 @@ final class AudioManager {
 
     enum Sfx: String, CaseIterable {
         case place, rotate, remove, deliver, complaint, breach, contract, unlock, upgrade, error, tap
+        case detonate, quarantine, polyglot, levelup, achievement
     }
 
     var sfxEnabled: Bool {

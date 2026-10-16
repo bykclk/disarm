@@ -113,6 +113,36 @@ sfx("error", 0.16, peak: 0.45) { s in
 sfx("tap", 0.04, peak: 0.35) { s in
     s.add(at: 0, dur: 0.04) { t in sine(2200, t) * env(t, attack: 0.001, decay: 0.006) }
 }
+// Kum havuzu: yalıtımda patlatma. Boğuk gümbürtü + kısa gürültü patlaması, sonra çıtırtı kuyruğu.
+sfx("detonate", 0.45, peak: 0.6) { s in
+    s.add(at: 0, dur: 0.35) { t in sine(90 - 50 * t / 0.35, t) * env(t, attack: 0.003, decay: 0.12) }
+    s.add(at: 0, dur: 0.12) { t in noise() * env(t, attack: 0.001, decay: 0.03) }
+    s.add(at: 0.1, dur: 0.35) { t in noise() * 0.25 * env(t, attack: 0.01, decay: 0.1) * Float(0.5 + 0.5 * sin(2 * .pi * 40 * t)) }
+    s.lowpass(cutoff: 1800)
+}
+// Karantina: dosya çöpe gidiyor. Aşağı kayan ıslık + kapak tıkırtısı.
+sfx("quarantine", 0.32, peak: 0.45) { s in
+    s.add(at: 0, dur: 0.22) { t in sine(900 * pow(0.25, t / 0.22), t) * env(t, attack: 0.004, decay: 0.08) }
+    s.add(at: 0.2, dur: 0.12) { t in (sine(160, t) + 0.4 * noise()) * env(t, attack: 0.001, decay: 0.03) }
+}
+// Polyglot uyarısı: iki hızlı yükselen bip (ikinci kimlik!).
+sfx("polyglot", 0.3, peak: 0.45) { s in
+    for i in 0..<2 {
+        s.add(at: Double(i) * 0.13, dur: 0.1) { t in (sine(1100 + 300 * Double(i), t) + 0.3 * sine(2200 + 600 * Double(i), t)) * env(t, attack: 0.003, decay: 0.03) }
+    }
+}
+// Seviye atlama: yükselen major arpej + parıltı; "unlock"tan daha kısa ve parlak.
+sfx("levelup", 0.9, peak: 0.55) { s in
+    for (i, m) in [72.0, 76, 79, 84, 88].enumerated() {
+        s.add(at: Double(i) * 0.07, dur: 0.5) { t in (sine(note(m), t) + 0.35 * sine(note(m + 12), t) + 0.15 * sine(note(m + 19), t)) * env(t, attack: 0.003, decay: 0.14) }
+    }
+    s.add(at: 0.3, dur: 0.6) { t in sine(note(100), t) * 0.15 * env(t, attack: 0.05, decay: 0.2) * Float(0.5 + 0.5 * sin(2 * .pi * 9 * t)) }
+}
+// Başarım: iki notalı çan + hafif titreşim.
+sfx("achievement", 0.55, peak: 0.5) { s in
+    s.add(at: 0, dur: 0.45) { t in (sine(note(83), t) + 0.5 * sine(note(83) * 2.76, t)) * env(t, attack: 0.003, decay: 0.12) }
+    s.add(at: 0.12, dur: 0.43) { t in (sine(note(90), t) + 0.5 * sine(note(90) * 2.76, t)) * env(t, attack: 0.003, decay: 0.15) * Float(0.8 + 0.2 * sin(2 * .pi * 6 * t)) }
+}
 
 // --- Müzik: A minör, 84 bpm, Am–F–C–G, 8 bar. İki kez render edilip ikinci döngü alınır: kuyruklar başa sarar.
 let bpm = 84.0

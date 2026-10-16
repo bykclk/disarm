@@ -406,7 +406,7 @@ final class GameEngine {
                 addLog(String(localized: "Contract cancelled: \(c.title). Reputation -5"), .bad)
             case .levelUp(let level):
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
-                audio.play(.unlock)
+                audio.play(.levelup)
                 fx.append(.contractCompleted)
                 let unlocked = GameState.modulesUnlocked(atLevel: level)
                 if unlocked.isEmpty {
@@ -422,7 +422,7 @@ final class GameEngine {
                 }
                 addLog(String(localized: "Reached operator level \(level)"), .good)
             case .achievementUnlocked(let a):
-                audio.play(.contract, volume: 0.8)
+                audio.play(.achievement, volume: 0.8)
                 toast(String(localized: "Achievement: \(a.displayName) (+\(money(a.rewardMoney)), +\(a.rewardXP) XP)"), .good, 4)
                 addLog(String(localized: "Achievement unlocked: \(a.displayName)"), .good)
             case .locationFinished(let site):
@@ -439,7 +439,12 @@ final class GameEngine {
                 fx.append(.campaignCompleted)
                 addLog(String(localized: "Campaign complete: every contract in every site delivered. A new campaign is available."), .good)
                 sheet = .campaign
-            case .processed(_, let pos, _, let notes):
+            case .processed(_, let pos, let kind, let notes):
+                // Özel sesler: kum havuzu bir şey patlattıysa, polyglot ikinci kimliği gizli kaldıysa.
+                if kind == .sandbox, notes.contains(where: { if case .removed = $0 { true } else { false } }) {
+                    audio.play(.detonate, volume: 0.7)
+                }
+                if notes.contains(.polyglotUnhandled) { audio.play(.polyglot, volume: 0.5) }
                 for n in notes {
                     switch n {
                     case .removed(let k, let c):
@@ -450,7 +455,9 @@ final class GameEngine {
                         break
                     }
                 }
-            case .dropped, .spawned, .quarantined:
+            case .quarantined:
+                audio.play(.quarantine, volume: 0.6)
+            case .dropped, .spawned:
                 break
             }
         }
