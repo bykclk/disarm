@@ -133,6 +133,22 @@ final class GameEngine {
             sim = Simulation(seed: 12)
             sheet = nil
         }
+        if args.contains("-demoBelt") {
+            // Görsel test: modülsüz S biçimli bant, art arda köşeler.
+            var s = GameState(seed: 7)
+            s.money = 5000
+            s.tutorialSeen = true
+            func belt(_ cells: [(Int, Int)], _ d: Direction) { for (x, y) in cells { s.placeBelt(at: GridPos(x, y), facing: d) } }
+            belt([(1, 1), (2, 1), (3, 1), (4, 1)], .right)
+            belt([(5, 1), (5, 2)], .down)
+            belt([(5, 3), (4, 3), (3, 3), (2, 3)], .left)
+            belt([(1, 3), (1, 4)], .down)
+            belt([(1, 5), (2, 5), (3, 5), (4, 5), (5, 5)], .right)
+            belt([(6, 5), (6, 6), (6, 7)], .down)
+            state = s
+            sim = Simulation(seed: 7)
+            sheet = nil
+        }
         if args.contains("-demoDC") {
             state = Self.demoDataCenterState()
             sim = Simulation(seed: 14)

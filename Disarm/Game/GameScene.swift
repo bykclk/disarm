@@ -242,11 +242,11 @@ final class GameScene: SKScene {
         if incoming.count == 1, let feed = incoming.first, feed != d.opposite {
             let entry = feed.opposite
             let full = cornerPath(entry: entry, exit: d)
-            let half = cornerPath(entry: entry, exit: d, from: 0.5)
             let duration = Double((.pi / 4) * cs / (cs * 0.34 / 0.7)) // düz banttaki ok hızıyla aynı
-            for i in 0..<2 {
+            let count = 2
+            for i in 0..<count {
                 let holder = SKNode()
-                let chev = chevron(size: cs * 0.15)
+                let chev = chevron(size: cs * 0.15, wide: true)
                 chev.zRotation = -.pi / 2 // ok ucu +x: follow'un "ileri" yönü
                 chev.alpha = 0.6
                 holder.addChild(chev)
@@ -254,7 +254,9 @@ final class GameScene: SKScene {
                 if i == 0 {
                     holder.run(loop)
                 } else {
-                    holder.run(.sequence([.follow(half, asOffset: false, orientToPath: true, duration: duration / 2), loop]))
+                    let t0 = CGFloat(i) / CGFloat(count)
+                    let partial = cornerPath(entry: entry, exit: d, from: t0)
+                    holder.run(.sequence([.follow(partial, asOffset: false, orientToPath: true, duration: duration * Double(1 - t0)), loop]))
                 }
                 outer.addChild(holder)
             }
@@ -283,11 +285,13 @@ final class GameScene: SKScene {
         return outer
     }
 
-    private func chevron(size s: CGFloat) -> SKShapeNode {
+    /// `wide`: 120° açılı ok; yay üzerinde 45° dönünce kolları eksene hizalanıp "L" gibi görünmesin.
+    private func chevron(size s: CGFloat, wide: Bool = false) -> SKShapeNode {
         let path = CGMutablePath()
-        path.move(to: CGPoint(x: -s, y: -s * 0.5))
-        path.addLine(to: CGPoint(x: 0, y: s * 0.5))
-        path.addLine(to: CGPoint(x: s, y: -s * 0.5))
+        let dx = wide ? s * 0.87 : s, dy = wide ? s * 0.5 : s
+        path.move(to: CGPoint(x: -dx, y: -dy * 0.5))
+        path.addLine(to: CGPoint(x: 0, y: dy * 0.5))
+        path.addLine(to: CGPoint(x: dx, y: -dy * 0.5))
         let n = SKShapeNode(path: path)
         n.strokeColor = Theme.beltArrow
         n.lineWidth = max(2, cs * 0.08)
