@@ -33,7 +33,7 @@
 ## Erişilebilirlik
 - SpriteKit sahnesi VoiceOver'a kapalı; `GridAccessibilityOverlay` (ContentView) yalnızca VoiceOver açıkken her hücreyi etiket + eylemle sunar, geometrisi `GameScene.relayout` ile aynı (12 pt pay, kare hücre, ortalı).
 - HUD ve palet `dynamicTypeSize(...accessibility1)` ile sınırlı; palet düğmeleri `minWidth/minHeight`, sabit `.system(size:)` kullanma. Test: `-UIPreferredContentSizeCategoryName UICTContentSizeCategoryAccessibilityM`.
-- iPad destekli (1,2); düzen aynı, ızgara ölçeklenir. Test: iPad Pro 13-inch simülatörü.
+- Yalnızca iPhone (`TARGETED_DEVICE_FAMILY` 1): 1.0 iPad olmadan yayınlandı; düzen ölçeklenir, iPad açılırsa 13 inç ekran görüntüleri gerekir.
 
 ## Kurallar
 - Oyun kuralı değişiklikleri önce `DisarmCore`'a, testiyle birlikte. UI yalnızca durumu gösterir.
